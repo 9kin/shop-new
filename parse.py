@@ -5,12 +5,13 @@ db.global_init('db/items.sqlite')
 session = db.create_session()
 
 
-f = open('ostatki.txt', 'r', encoding='windows-1251').readlines()
+f = open('Остатки.txt', 'r', encoding='windows-1251').readlines()
 f = list(map(lambda x: x.strip().split('\t'), f))
 
 
 def parse_price(string):
     return float(string.replace("'", ''))
+
 
 
 ban = []
