@@ -1,3 +1,7 @@
+parser1c.py 1c->db
+keywords.py edit db
+main.py show db
+
 add INI 
 
 new 2020 db

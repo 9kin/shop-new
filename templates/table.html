@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+{{menu}}
+<table border="2px">
+    <tr>
+        <th bgcolor="gray">
+            ТМЦ
+        </th>
+        <th>
+          Кол - во
+        </th>
+        <th bgcolor="gray"> 
+            Отпускная цена (руб.)
+        </th>
+    </tr>
+    {% for item in data %}
+    <tr bgcolor=
+    {% if item.group != "others" %} "gray" {% else %} "white"{%endif%}>
+      <td>{{ item.name }}</td>
+      <td>{{ item.count }}</td>
+      <td>{{ item.cost }}</td>
+      <td>{{ menu[item.group]}}</td>
+      </tr>
+    
+    {% endfor %}
+
+  
+</table>
+
+{% endblock %}

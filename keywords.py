@@ -1,11 +1,11 @@
 import configparser
-
+import re
 import data.db_session as db
 from data.__all_models import *
-from itertools import takewhile
 
-import re
-
+db.global_init('db/items.sqlite')
+session = db.create_session()
+items = session.query(items.Item).all()
 
 class Keyword:
 
@@ -22,10 +22,10 @@ class KeywordTable:
     def __init__(self, keywords):
         self.keywords = keywords
 
-    def __contains__(self, item):
-        for i in self.keywords:
-            if i == item:
-                return True
+    def contains(self, item):
+        for key in self.keywords:
+            if key == item:
+                return key.routing
         return False
 
 
@@ -37,26 +37,18 @@ def aslist_cronly(value):
 
 config = configparser.ConfigParser()
 config.read('table.INI')
-
-
 TABLE = []
 for key in config['table']:
     for keyword in aslist_cronly(config['table'][key]):
         TABLE.append(Keyword(keyword, key))
 TABLE = KeywordTable(TABLE)
 
-f = open('Остатки.txt', 'r', encoding='windows-1251').readlines()
-f = list(map(lambda x: x.strip().split('\t'), f))
-
-ban = []
-ind = 9
 p = 0
-while ind < len(f):
-    l = list(filter(lambda x: x.count(' ') != len(x), f[ind]))
-    item = items.Item()
-    item.name = str(l[0]).lower()
-    if item.name in TABLE:
+for item in items:
+    res = TABLE.contains(item.name.lower())
+    if res != False:
+        item.group = res
         p += 1
-    ind += 1
-# print(ban) # плохие их мало там \n
 print(p)
+
+session.commit()
