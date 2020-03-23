@@ -47,7 +47,8 @@ p = 0
 for item in items:
     res = TABLE.contains(item.name.lower())
     if res != False:
-        item.group = res
+        print(item.name)
+        #item.group = res
         p += 1
 print(p)
 
