@@ -41,7 +41,7 @@ class Items(Resource):
                 json_element = item.to_dict(only=(['id', 'cost', 'count']))
                 json_items[item.name] = json_element
                 json_items[item.name]['img'] = session.query(
-                    images.Image).filter(images.Image.id == item.id).one().path
+                    images.Image).filter(images.Image.name == item.id).one().path
                 # без limit offset
                 # TODO я не знаю как делать связи между бд
             return jsonify(json_items)

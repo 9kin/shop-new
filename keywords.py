@@ -3,9 +3,6 @@ import re
 import data.db_session as db
 from data.__all_models import *
 
-db.global_init('db/items.sqlite')
-session = db.create_session()
-items = session.query(items.Item).all()
 
 class Keyword:
 
@@ -35,23 +32,31 @@ def aslist_cronly(value):
     return list(value)
 
 
-config = configparser.ConfigParser()
-config.read('table.INI')
-TABLE = []
-for key in config['table']:
-    for keyword in aslist_cronly(config['table'][key]):
-        TABLE.append(Keyword(keyword, key))
-TABLE = KeywordTable(TABLE)
 
-p = 0
-for item in items:
-    file = images.Image()
-    session.add(file)
-    res = TABLE.contains(item.name.lower())
-    if res != False:
-        print(item.name)
-        item.group = res
-        p += 1
-print(p)
+def main(db_path='db/items.sqlite'):
+    db.global_init(db_path)
+    session = db.create_session()
+    db_items = session.query(items.Item).all()
 
-session.commit()
+    config = configparser.ConfigParser()
+    config.read('table.INI')
+    TABLE = []
+    for key in config['table']:
+        for keyword in aslist_cronly(config['table'][key]):
+            TABLE.append(Keyword(keyword, key))
+    TABLE = KeywordTable(TABLE)
+
+    p = 0
+    for item in db_items:
+        res = TABLE.contains(item.name.lower())
+        if res != False:
+            print(item.name)
+            item.group = res
+            p += 1
+    print(p)
+
+    session.commit()
+
+
+if __name__ == '__main__':
+    main()
