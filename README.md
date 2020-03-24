@@ -1,3 +1,9 @@
+api/items one item + id
+
+
+api/items limit offset + id
+
+
 parser1c.py 1c->db
 keywords.py edit db
 main.py show db

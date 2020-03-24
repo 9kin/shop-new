@@ -45,10 +45,12 @@ TABLE = KeywordTable(TABLE)
 
 p = 0
 for item in items:
+    file = images.Image()
+    session.add(file)
     res = TABLE.contains(item.name.lower())
     if res != False:
         print(item.name)
-        #item.group = res
+        item.group = res
         p += 1
 print(p)
 
