@@ -10,6 +10,7 @@ item = session.query(items.Item).all()
 
 app = Flask(__name__)
 api = Api(app)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 menu = list(map(str.strip, open('menu.txt', 'r').readlines()))
@@ -49,13 +50,15 @@ class Items(Resource):
 class Category(Resource):
     def get(self):
         args = parser.parse_args()
-        if args['path'] is not None:
+        if args['path'] == '':
+            return jsonify(categories = menu_map, name='')
+        elif args['path'] is not None:
             json = {}
             for key in menu_map:
-                print(key)
-                if key.startswith(args['path'] + '.'):
-                    json[key] = menu_map[key]
-            return jsonify(categories=json)
+                if key.startswith(args['path']) and key.count('.') - 1 == args['path'].count('.'):
+                    json[int(key.split('.')[-1])] = menu_map[key]
+            return jsonify(categories = json, name=menu_map[args['path']])
+            
 
 
 @app.errorhandler(404)
