@@ -1,6 +1,5 @@
 import parser1c
-import keywords
-
+import parse_keywords
 
 parser1c.main()
-keywords.main()
+parse_keywords.main()

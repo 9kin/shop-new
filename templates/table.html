@@ -2,11 +2,40 @@
 
 {% block content %}
 
+<div class="logo">Аварийный доступ</div>
+
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.regex_field.label }}<br>
+        {{ form.regex_field(class="form-control") }}<br>
+        {% for error in form.regex_field.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
 
 
-{{menu}}
+    <p>
+        {{ form.ini_field.label }}<br>
+        {{ form.ini_field(class="form-control", type="text") }}<br>
+        {% for error in form.ini_field.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+</form>
+   
+{{ data|length}}
 <table border="2px">
     <tr>
+        <th bgcolor="gray">
+            №
+        </th>
         <th bgcolor="gray">
             ТМЦ
         </th>
@@ -19,14 +48,24 @@
     </tr>
     {% for item in data %}
     <tr bgcolor=
-    {% if item.group != "others" %} "gray" {% else %} "white"{%endif%}>
+    {% if item.full_match %} "green" {% else %} "yellow"{%endif%}>
+        <td> {{ loop.index }}
       <td>{{ item.name }}</td>
       <td>{{ item.count }}</td>
       <td>{{ item.cost }}</td>
-      <td>{{ menu[item.group]}}</td>
+      </tr>
+    {% endfor %}
+    {% for item in ini %}
+    <tr bgcolor="red">
+        <td> {{ loop.index }}
+      <td>{{ item.name }}</td>
+      <td>{{ item.count }}</td>
+      <td>{{ item.cost }}</td>
+
       </tr>
     
     {% endfor %}
+
 
   
 </table>

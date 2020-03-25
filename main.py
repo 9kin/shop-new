@@ -1,12 +1,24 @@
+from keywords import Keyword, KeywordTable, aslist_cronly
+import configparser
+import re
 from flask import Flask, url_for, request, render_template, jsonify, make_response
 from flask_restful import reqparse, abort, Api, Resource
+
+
+from flask_wtf import FlaskForm
+from wtforms import SubmitField, StringField, PasswordField, BooleanField, SubmitField, TextField, TextAreaField
+from wtforms.validators import DataRequired
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+
 
 import data.db_session as db
 from data.__all_models import *
 
 db.global_init('db/items.sqlite')
 session = db.create_session()
+
 item = session.query(items.Item).all()
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -34,7 +46,7 @@ class Items(Resource):
         args = parser.parse_args()
         if args['id'] is not None:
             item = session.query(items.Item).filter(
-                    items.Item.id == int(args['id'])).first()
+                items.Item.id == int(args['id'])).first()
             if item is not None:
                 return jsonify(item.to_dict())
             else:
@@ -85,7 +97,6 @@ class Category(Resource):
                 json[i] = menu_map[f'{args["path"]}.{i}']
                 i += 1
             i -= 1
-
             path_list = []
             prev = ''
             first = True
@@ -104,9 +115,43 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/')
+class ReForm(FlaskForm):
+    regex_field = StringField('regex search', validators=[DataRequired()])
+    ini_field = TextAreaField('INI')
+
+    submit = SubmitField('найти')
+
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('table.html', data=item, menu=menu_map)
+    form = ReForm()
+    if form.validate_on_submit():
+        regex_field = form.regex_field.data
+        ini_field = form.ini_field.data
+        config = configparser.ConfigParser()
+        config.read_string(ini_field)
+
+        TABLE = KeywordTable([Keyword(keyword, key) for key in config['table']
+                              for keyword in aslist_cronly(config['table'][key])])
+
+        regex_search = []
+        ini_search = []
+        for obj in item:
+            res = TABLE.contains(obj.name.lower())
+            if res != False:
+                if obj == regex_field:
+                    obj.full_match = True
+                    regex_search.append(obj)
+                else:
+                    obj.full_match = False
+                    ini_search.append(obj)
+            elif obj == regex_field:
+                obj.full_match = False
+                regex_search.append(obj)
+            else:
+                obj.full_match = False
+        return render_template('table.html', form=form, menu=menu_map, data=regex_search, ini=ini_search)
+    return render_template('table.html', form=form, menu=menu_map, data=item)
 
 
 api.add_resource(Items, '/api/items')
