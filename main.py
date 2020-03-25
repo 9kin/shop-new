@@ -33,45 +33,44 @@ class Items(Resource):
     def get(self):
         args = parser.parse_args()
         if args['id'] is not None:
-
-            first = True
-            for i in args["path"].split('.'):
-                if first:
-                    first = False
-                else:
-                    prev += '.'
-                prev += str(i)
-                path_list.append(menu_map[prev])
-            return jsonify(items=item[int(args['id'])].to_dict(), name=path_list)
+            item = session.query(items.Item).filter(
+                    items.Item.id == int(args['id'])).first()
+            if item is not None:
+                return jsonify(item.to_dict())
+            else:
+                return not_found(404)
         else:
-            item_list = session.query(items.Item).filter(
-                items.Item.group == args['path']).all()
-            json_items = {}
-            for item in item_list:
-                json_element = item.to_dict(only=(['id', 'cost', 'count']))
-                json_items[item.name] = json_element
+            try:
+                item_list = session.query(items.Item).filter(
+                    items.Item.group == args['path']).all()
+                json_items = {}
+                for item in item_list:
+                    json_element = item.to_dict(only=(['id', 'cost', 'count']))
+                    json_items[item.name] = json_element
 
-                img_sql = session.query(images.Image).filter(
-                    images.Image.name == item.id).first()
-                if img_sql is None:
-                    json_items[item.name]['img'] = 'static/not.png'
-                else:
-                    json_items[item.name]['img'] = session.query(images.Image).filter(
-                        images.Image.name == item.id).first().path
-                # без limit offset
-                # TODO я не знаю как делать связи между бд
+                    img_sql = session.query(images.Image).filter(
+                        images.Image.name == item.id).first()
+                    if img_sql is None:
+                        json_items[item.name]['img'] = 'static/not.png'
+                    else:
+                        json_items[item.name]['img'] = session.query(images.Image).filter(
+                            images.Image.name == item.id).first().path
+                    # без limit offset
+                    # TODO я не знаю как делать связи между бд
 
-            path_list = []
-            prev = ''
-            first = True
-            for i in args["path"].split('.'):
-                if first:
-                    first = False
-                else:
-                    prev += '.'
-                prev += str(i)
-                path_list.append(menu_map[prev])
-            return jsonify(items=json_items, name=path_list)
+                path_list = []
+                prev = ''
+                first = True
+                for i in args["path"].split('.'):
+                    if first:
+                        first = False
+                    else:
+                        prev += '.'
+                    prev += str(i)
+                    path_list.append(menu_map[prev])
+                return jsonify(items=json_items, name=path_list)
+            except:
+                return not_found(404)
 
 
 class Category(Resource):
