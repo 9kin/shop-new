@@ -19,7 +19,7 @@
 
     <p>
         {{ form.ini_field.label }}<br>
-        {{ form.ini_field(class="form-control", type="text") }}<br>
+        {{ form.ini_field(class="form-control", type="text", style="height:300px;") }}<br>
         {% for error in form.ini_field.errors %}
     <div class="alert alert-danger" role="alert">
         {{ error }}
