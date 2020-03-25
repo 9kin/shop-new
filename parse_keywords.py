@@ -5,18 +5,20 @@ import data.db_session as db
 from data.__all_models import *
 
 
-
-
-def main(db_path='db/items.sqlite'):
+def main(db_path="db/items.sqlite"):
     db.global_init(db_path)
     session = db.create_session()
     db_items = session.query(items.Item).all()
 
     config = configparser.ConfigParser()
-    config.read('table.INI')
-    TABLE = KeywordTable([Keyword(keyword, key) for key in config['table']
-                      for keyword in aslist_cronly(config['table'][key])])
-
+    config.read("table.INI")
+    TABLE = KeywordTable(
+        [
+            Keyword(keyword, key)
+            for key in config["table"]
+            for keyword in aslist_cronly(config["table"][key])
+        ]
+    )
 
     p = 0
     for item in db_items:
@@ -29,5 +31,5 @@ def main(db_path='db/items.sqlite'):
     session.commit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

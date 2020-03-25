@@ -3,24 +3,23 @@ from data.__all_models import *
 
 
 def parse_price(string):
-    return float(string.replace("'", ''))
+    return float(string.replace("'", ""))
 
 
-def main(db_path='db/items.sqlite'):
+def main(db_path="db/items.sqlite"):
 
     db.global_init(db_path)
     session = db.create_session()
-
     for obj in session.query(items.Item).all():
         session.delete(obj)
-
-    f = open('Остатки.txt', 'r', encoding='windows-1251').readlines()
-    f = list(map(lambda x: x.strip().split('\t'), f))
+    session.commit()
+    f = open("Остатки.txt", "r", encoding="windows-1251").readlines()
+    f = list(map(lambda x: x.strip().split("\t"), f))
 
     ban = []
     ind = 9
     while ind < len(f):
-        l = list(filter(lambda x: x.count(' ') != len(x), f[ind]))
+        l = list(filter(lambda x: x.count(" ") != len(x), f[ind]))
         try:
             item = items.Item()
             item.name = l[0]
@@ -34,5 +33,5 @@ def main(db_path='db/items.sqlite'):
     print(ban)  # плохие их мало там \n
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

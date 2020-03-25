@@ -6,7 +6,15 @@ from flask_restful import reqparse, abort, Api, Resource
 
 
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, PasswordField, BooleanField, SubmitField, TextField, TextAreaField
+from wtforms import (
+    SubmitField,
+    StringField,
+    PasswordField,
+    BooleanField,
+    SubmitField,
+    TextField,
+    TextAreaField,
+)
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
@@ -14,70 +22,94 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 import data.db_session as db
 from data.__all_models import *
 
-db.global_init('db/items.sqlite')
+db.global_init("db/items.sqlite")
 session = db.create_session()
-
-item = session.query(items.Item).all()
-
 
 app = Flask(__name__)
 api = Api(app)
-app.config['JSON_SORT_KEYS'] = False
-app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['JSON_AS_ASCII'] = False
+app.config["JSON_SORT_KEYS"] = False
+app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
+app.config["JSON_AS_ASCII"] = False
 
-menu = list(map(str.strip, open('menu.txt', 'r').readlines()))
+menu = list(map(str.strip, open("menu.txt", "r").readlines()))
 
-menu_map = {'others': 'x'}
+menu_map = {"others": "x"}
 for el in menu:
-    ind = el.find(' ')
-    menu_map[el[:ind]] = el[ind + 1:]
+    ind = el.find(" ")
+    menu_map[el[:ind]] = el[ind + 1 :]
 
 
 parser = reqparse.RequestParser()
-parser.add_argument('id')
-parser.add_argument('limit')
-parser.add_argument('offset')
-parser.add_argument('path')
+parser.add_argument("id")
+parser.add_argument("limit")
+parser.add_argument("offset")
+parser.add_argument("path")
 
 
 class Items(Resource):
     def get(self):
         args = parser.parse_args()
-        if args['id'] is not None:
-            item = session.query(items.Item).filter(
-                items.Item.id == int(args['id'])).first()
+        if args["id"] is not None:
+            item = (
+                session.query(items.Item)
+                .filter(items.Item.id == int(args["id"]))
+                .first()
+            )
+
+            json = item.to_dict(only=(["id", "cost", "count"]))
+            img_sql = (
+                session.query(images.Image).filter(images.Image.name == item.id).first()
+            )
+            if img_sql is None:
+                json["img"] = "static/not.png"
+            else:
+                json["img"] = (
+                    session.query(images.Image)
+                    .filter(images.Image.name == item.id)
+                    .first()
+                    .path
+                )
             if item is not None:
-                return jsonify(item.to_dict())
+                return jsonify(json)
             else:
                 return not_found(404)
         else:
             try:
-                item_list = session.query(items.Item).filter(
-                    items.Item.group == args['path']).all()
+                item_list = (
+                    session.query(items.Item)
+                    .filter(items.Item.group == args["path"])
+                    .all()
+                )
                 json_items = {}
                 for item in item_list:
-                    json_element = item.to_dict(only=(['id', 'cost', 'count']))
+                    json_element = item.to_dict(only=(["id", "cost", "count"]))
                     json_items[item.name] = json_element
 
-                    img_sql = session.query(images.Image).filter(
-                        images.Image.name == item.id).first()
+                    img_sql = (
+                        session.query(images.Image)
+                        .filter(images.Image.name == item.id)
+                        .first()
+                    )
                     if img_sql is None:
-                        json_items[item.name]['img'] = 'static/not.png'
+                        json_items[item.name]["img"] = "static/not.png"
                     else:
-                        json_items[item.name]['img'] = session.query(images.Image).filter(
-                            images.Image.name == item.id).first().path
+                        json_items[item.name]["img"] = (
+                            session.query(images.Image)
+                            .filter(images.Image.name == item.id)
+                            .first()
+                            .path
+                        )
                     # без limit offset
                     # TODO я не знаю как делать связи между бд
 
                 path_list = []
-                prev = ''
+                prev = ""
                 first = True
-                for i in args["path"].split('.'):
+                for i in args["path"].split("."):
                     if first:
                         first = False
                     else:
-                        prev += '.'
+                        prev += "."
                     prev += str(i)
                     path_list.append(menu_map[prev])
                 return jsonify(items=json_items, name=path_list)
@@ -88,9 +120,9 @@ class Items(Resource):
 class Category(Resource):
     def get(self):
         args = parser.parse_args()
-        if args['path'] == '':
-            return jsonify(categories=menu_map, name='')
-        elif args['path'] is not None:
+        if args["path"] == "":
+            return jsonify(categories=menu_map, name="")
+        elif args["path"] is not None:
             json = {}
             i = 1
             while f'{args["path"]}.{i}' in menu_map:
@@ -98,13 +130,13 @@ class Category(Resource):
                 i += 1
             i -= 1
             path_list = []
-            prev = ''
+            prev = ""
             first = True
-            for i in args["path"].split('.'):
+            for i in args["path"].split("."):
                 if first:
                     first = False
                 else:
-                    prev += '.'
+                    prev += "."
                 prev += str(i)
                 path_list.append(menu_map[prev])
             return jsonify(categories=json, name=path_list)
@@ -112,18 +144,19 @@ class Category(Resource):
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+    return make_response(jsonify({"error": "Not found"}), 404)
 
 
 class ReForm(FlaskForm):
-    regex_field = StringField('regex search', validators=[DataRequired()])
-    ini_field = TextAreaField('INI')
+    regex_field = StringField("regex search", validators=[DataRequired()])
+    ini_field = TextAreaField("INI")
 
-    submit = SubmitField('найти')
+    submit = SubmitField("найти")
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def index():
+    item = session.query(items.Item).all()
     form = ReForm()
     if form.validate_on_submit():
         regex_field = form.regex_field.data
@@ -131,8 +164,13 @@ def index():
         config = configparser.ConfigParser()
         config.read_string(ini_field)
 
-        TABLE = KeywordTable([Keyword(keyword, key) for key in config['table']
-                              for keyword in aslist_cronly(config['table'][key])])
+        TABLE = KeywordTable(
+            [
+                Keyword(keyword, key)
+                for key in config["table"]
+                for keyword in aslist_cronly(config["table"][key])
+            ]
+        )
 
         regex_search = []
         ini_search = []
@@ -150,12 +188,14 @@ def index():
                 regex_search.append(obj)
             else:
                 obj.full_match = False
-        return render_template('table.html', form=form, menu=menu_map, data=regex_search, ini=ini_search)
-    return render_template('table.html', form=form, menu=menu_map, data=item)
+        return render_template(
+            "table.html", form=form, menu=menu_map, data=regex_search, ini=ini_search
+        )
+    return render_template("table.html", form=form, menu=menu_map, data=item)
 
 
-api.add_resource(Items, '/api/items')
-api.add_resource(Category, '/api/category')
+api.add_resource(Items, "/api/items")
+api.add_resource(Category, "/api/category")
 
-if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1')
+if __name__ == "__main__":
+    app.run(port=8080, host="127.0.0.1")

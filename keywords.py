@@ -8,7 +8,6 @@ def aslist_cronly(value):
 
 
 class Keyword:
-
     def __init__(self, keyword, routing):
         self.keyword = keyword
         self.routing = routing
@@ -18,7 +17,6 @@ class Keyword:
 
 
 class KeywordTable:
-
     def __init__(self, keywords):
         self.keywords = keywords
 
