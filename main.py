@@ -1,5 +1,8 @@
 from keywords import Keyword, KeywordTable, aslist_cronly
 import configparser
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
 import re
 from flask import Flask, url_for, request, render_template, jsonify, make_response
 from flask_restful import reqparse, abort, Api, Resource
@@ -30,6 +33,11 @@ api = Api(app)
 app.config["JSON_SORT_KEYS"] = False
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 app.config["JSON_AS_ASCII"] = False
+app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
+
+
+admin = Admin(app)
+admin.add_view(ModelView(items.Item, session))
 
 menu = list(map(str.strip, open("menu.txt", "r").readlines()))
 
