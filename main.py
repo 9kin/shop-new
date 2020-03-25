@@ -12,6 +12,7 @@ app = Flask(__name__)
 api = Api(app)
 app.config['JSON_SORT_KEYS'] = False
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config['JSON_AS_ASCII'] = False
 
 menu = list(map(str.strip, open('menu.txt', 'r').readlines()))
 
@@ -32,7 +33,16 @@ class Items(Resource):
     def get(self):
         args = parser.parse_args()
         if args['id'] is not None:
-            return jsonify(item[int(args['id'])].to_dict())
+
+            first = True
+            for i in args["path"].split('.'):
+                if first:
+                    first = False
+                else:
+                    prev += '.'
+                prev += str(i)
+                path_list.append(menu_map[prev])
+            return jsonify(items=item[int(args['id'])].to_dict(), name=path_list)
         else:
             item_list = session.query(items.Item).filter(
                 items.Item.group == args['path']).all()
@@ -40,25 +50,54 @@ class Items(Resource):
             for item in item_list:
                 json_element = item.to_dict(only=(['id', 'cost', 'count']))
                 json_items[item.name] = json_element
-                json_items[item.name]['img'] = session.query(
-                    images.Image).filter(images.Image.name == item.id).one().path
+
+                img_sql = session.query(images.Image).filter(
+                    images.Image.name == item.id).first()
+                if img_sql is None:
+                    json_items[item.name]['img'] = 'static/not.png'
+                else:
+                    json_items[item.name]['img'] = session.query(images.Image).filter(
+                        images.Image.name == item.id).first().path
                 # без limit offset
                 # TODO я не знаю как делать связи между бд
-            return jsonify(json_items)
+
+            path_list = []
+            prev = ''
+            first = True
+            for i in args["path"].split('.'):
+                if first:
+                    first = False
+                else:
+                    prev += '.'
+                prev += str(i)
+                path_list.append(menu_map[prev])
+            return jsonify(items=json_items, name=path_list)
 
 
 class Category(Resource):
     def get(self):
         args = parser.parse_args()
         if args['path'] == '':
-            return jsonify(categories = menu_map, name='')
+            return jsonify(categories=menu_map, name='')
         elif args['path'] is not None:
             json = {}
-            for key in menu_map:
-                if key.startswith(args['path']) and key.count('.') - 1 == args['path'].count('.'):
-                    json[int(key.split('.')[-1])] = menu_map[key]
-            return jsonify(categories = json, name=menu_map[args['path']])
-            
+            i = 1
+            while f'{args["path"]}.{i}' in menu_map:
+                json[i] = menu_map[f'{args["path"]}.{i}']
+                i += 1
+            i -= 1
+
+            path_list = []
+            prev = ''
+            first = True
+            for i in args["path"].split('.'):
+                if first:
+                    first = False
+                else:
+                    prev += '.'
+                prev += str(i)
+                path_list.append(menu_map[prev])
+            return jsonify(categories=json, name=path_list)
 
 
 @app.errorhandler(404)
