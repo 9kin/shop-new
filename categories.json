@@ -1,0 +1,24 @@
+{
+    "categories" : [
+        {
+            "id" : "1",
+            "name" : "Сантехника",
+            "img" : "santech.png"
+        },
+        {
+            "id" : "1",
+            "name" : "Другое",
+            "img" : "other.png"
+        },
+        {
+            "id" : "1",
+            "name" : "Другое",
+            "img" : "other.png"
+        },
+        {
+            "id" : "1",
+            "name" : "Другое",
+            "img" : "other.png"
+        }
+    ]
+}

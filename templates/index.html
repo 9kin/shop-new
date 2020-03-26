@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+
+
+<body>
+    {% for item in categories["categories"] %}
+    <div class="category" id="{{ item["id"] }}">
+        <div class="headcat">
+            <h2>{{ item["id"] }}: {{ item["name"] }}</h2>
+            <!--<img src="../img/{{ item["img"] }}" alt="Oups">-->
+        </div>
+        <div class="undercat"></div>
+    </div>
+    {% endfor %}
+
+    <!--<script>
+        const api_host = "http://localhost:8080";
+
+        document.addEventListener('DOMContentLoaded', function(){
+            let categories = document.getElementsByClassName("category");
+            console.log(categories);
+            for (var item = 0; item < 4; item++) {
+                let path = api_host + "/api/category?path=" + categories[item]['id'];
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', path, false);
+                xhr.send();
+
+                if (xhr.status != 200) {
+                    console.log(xhr.status + ': ' + xhr.statusText);
+                } else {
+                    console.log(xhr.responseText);
+                }
+            }
+        });
+    </script>-->
+</body>
+
+
+</html>
