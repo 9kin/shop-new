@@ -21,9 +21,19 @@ from wtforms import (
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
-
 import data.db_session as db
 from data.__all_models import *
+
+
+import os
+from flask import Flask, url_for, redirect, render_template, request
+from flask_sqlalchemy import SQLAlchemy
+from wtforms import form, fields, validators
+import flask_admin as admin
+import flask_login as login
+from flask_admin.contrib import sqla
+from flask_admin import helpers, expose
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db.global_init("db/items.sqlite")
 session = db.create_session()
@@ -36,8 +46,76 @@ app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 
 
-admin = Admin(app)
-admin.add_view(ModelView(items.Item, session))
+class LoginForm(form.Form):
+    login = fields.StringField()
+    password = fields.PasswordField()
+
+    def validate_login(self, field):
+        user = self.get_user()
+        if user is None:
+            raise validators.ValidationError("Invalid user")
+        if not check_password_hash(user.password, self.password.data):
+            raise validators.ValidationError("Invalid password")
+
+    def get_user(self):
+        return session.query(users.User).filter_by(login=self.login.data).first()
+
+
+def init_login():
+    login_manager = login.LoginManager()
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return session.query(users.User).get(user_id)
+
+
+class MyModelView(sqla.ModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated
+
+
+class MyAdminIndexView(admin.AdminIndexView):
+    @expose("/")
+    def index(self):
+        if not login.current_user.is_authenticated:
+            return redirect(url_for(".login_view"))
+        return super(MyAdminIndexView, self).index()
+
+    @expose("/login/", methods=("GET", "POST"))
+    def login_view(self):
+        form = LoginForm(request.form)
+        if helpers.validate_form_on_submit(form):
+            user = form.get_user()
+            login.login_user(user)
+        if login.current_user.is_authenticated:
+            return redirect(url_for(".index"))
+        self._template_args["form"] = form
+        return super(MyAdminIndexView, self).index()
+
+    @expose("/logout/")
+    def logout_view(self):
+        login.logout_user()
+        return redirect(url_for(".index"))
+
+
+init_login()
+
+admin = admin.Admin(
+    app, "admin", index_view=MyAdminIndexView(), base_template="my_master.html"
+)
+
+
+if session.query(users.User).filter_by(login="admin").count() < 1:
+    user = users.User(login="admin", password=generate_password_hash("admin"))
+    session.add(user)
+    session.commit()
+
+
+admin.add_view(MyModelView(items.Item, session))
+admin.add_view(MyModelView(images.Image, session))
+admin.add_view(MyModelView(users.User, session))
+
 
 menu = list(map(str.strip, open("menu.txt", "r").readlines()))
 
@@ -204,6 +282,7 @@ def index():
 
 api.add_resource(Items, "/api/items")
 api.add_resource(Category, "/api/category")
+
 
 if __name__ == "__main__":
     app.run(port=8080, host="127.0.0.1")
