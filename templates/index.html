@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/styles/main.css">
-    <script src="/static/scripts/libraries/jquery.min.js"></script>
-    <script src="/static/scripts/main.js"></script>
-</head>
-
-
-<body>
-
-    {% for item in categories["categories"] %}
+{% for item in categories["categories"] %}
     <input class="check" name="{{ item['id'] }}" type="checkbox" id="check{{ item['id'] }}" style="display: none;">
     <label for="check{{ item['id'] }}" class="category" id="{{ item['id'] }}">
         <div class="headcat">
@@ -24,8 +12,4 @@
         <div class="undercat"></div>
     </div>
     {% endfor %}
-    
-</body>
-
-
-</html>
+{% endblock %}
