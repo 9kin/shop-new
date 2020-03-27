@@ -211,6 +211,7 @@ class Category(Resource):
         elif args["path"] is not None:
             json = {}
             i = 1
+
             while f'{args["path"]}.{i}' in menu_map:
                 json[i] = menu_map[f'{args["path"]}.{i}']
                 i += 1
@@ -224,7 +225,11 @@ class Category(Resource):
                 else:
                     prev += "."
                 prev += str(i)
-                path_list.append(menu_map[prev])
+                if prev in menu_map:
+                    path_list.append(menu_map[prev])
+                else:
+                    return not_found(404)
+
             return jsonify(categories=json, name=path_list)
 
 
