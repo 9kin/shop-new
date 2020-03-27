@@ -142,7 +142,7 @@ class Items(Resource):
                 .first()
             )
 
-            json = item.to_dict(only=(["id", "cost", "count"]))
+            json = item.to_dict(only=(["name", "id", "cost", "count"]))
             img_sql = (
                 session.query(images.Image).filter(images.Image.name == item.id).first()
             )
