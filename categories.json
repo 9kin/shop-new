@@ -6,17 +6,17 @@
             "img" : "santech.png"
         },
         {
-            "id" : "1",
+            "id" : "2",
             "name" : "Другое",
             "img" : "other.png"
         },
         {
-            "id" : "1",
+            "id" : "3",
             "name" : "Другое",
             "img" : "other.png"
         },
         {
-            "id" : "1",
+            "id" : "4",
             "name" : "Другое",
             "img" : "other.png"
         }

@@ -1,7 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify, make_response
 import json, requests
+from flask_restful import reqparse
 
 app = Flask(__name__)
+
+
+parser = reqparse.RequestParser()
+parser.add_argument("path")
 
 
 @app.route('/')
@@ -14,11 +19,23 @@ def index():
 
 @app.route("/plumbing/<int:id>")
 def plumbing(id):
-	response = requests.get('http://localhost:8080/api/category?path=1.'+str(id))
-	if response.status_code == 200:
-		return "OK<br>" + str(response.json())
-	else:
-		return "Error: " + str(response.status_code)
+    response = requests.get('http://localhost:8080/api/category?path=1.'+str(id))
+    if response.status_code == 200:
+        return "OK<br>" + str(response.json())
+    else:
+        return "Error: " + str(response.status_code)
+
+
+@app.route("/api/category", methods=['GET'])
+def getCategory():
+    for _ in range(100000000):
+        pass
+    path = parser.parse_args()["path"]
+    response = requests.get('http://localhost:8080/api/category?path='+path)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return make_response(jsonify({"error code": response.status_code}), response.status_code)
 
 
 @app.route('/news')

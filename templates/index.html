@@ -5,41 +5,26 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <script src="/static/scripts/libraries/jquery.min.js"></script>
+    <script src="/static/scripts/main.js"></script>
 </head>
 
 
 <body>
+
     {% for item in categories["categories"] %}
-    <div class="category" id="{{ item["id"] }}">
+    <input class="check" name="{{ item['id'] }}" type="checkbox" id="check{{ item['id'] }}" style="display: none;">
+    <label for="check{{ item['id'] }}" class="category" id="{{ item['id'] }}">
         <div class="headcat">
             <h2>{{ item["id"] }}: {{ item["name"] }}</h2>
-            <!--<img src="../img/{{ item["img"] }}" alt="Oups">-->
+            <img src="/static/img/{{ item['img'] }}" alt="Oups">
         </div>
         <div class="undercat"></div>
     </div>
     {% endfor %}
-
-    <!--<script>
-        const api_host = "http://localhost:8080";
-
-        document.addEventListener('DOMContentLoaded', function(){
-            let categories = document.getElementsByClassName("category");
-            console.log(categories);
-            for (var item = 0; item < 4; item++) {
-                let path = api_host + "/api/category?path=" + categories[item]['id'];
-
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', path, false);
-                xhr.send();
-
-                if (xhr.status != 200) {
-                    console.log(xhr.status + ': ' + xhr.statusText);
-                } else {
-                    console.log(xhr.responseText);
-                }
-            }
-        });
-    </script>-->
+    
 </body>
 
 
