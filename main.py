@@ -9,6 +9,14 @@ parser = reqparse.RequestParser()
 parser.add_argument("path")
 
 
+@app.route('/item/<string:path>')
+def item(path):
+    response = requests.get(f'http://localhost:8080/api/items?path={path}')
+    if response.status_code == 200:
+        return render_template('item.html', data=response.json())
+    else:
+        return "Error: " + str(response.status_code) 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -19,7 +27,7 @@ def index():
 
 @app.route("/plumbing/<int:id>")
 def plumbing(id):
-    response = requests.get('http://localhost:8080/api/category?path=1.'+str(id))
+    response = requests.get(f'http://localhost:8080/api/category?path=1.{id}')
     if response.status_code == 200:
         return "OK<br>" + str(response.json())
     else:
