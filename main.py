@@ -1,3 +1,4 @@
+import search
 from keywords import Keyword, KeywordTable, aslist_cronly
 import configparser
 from flask_admin import Admin
@@ -35,6 +36,8 @@ from flask_admin.contrib import sqla
 from flask_admin import helpers, expose
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from elasticsearch import Elasticsearch
+
 db.global_init("db/items.sqlite")
 session = db.create_session()
 
@@ -44,6 +47,9 @@ app.config["JSON_SORT_KEYS"] = False
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
+
+
+# elasticsearch.indices.delete('items')
 
 
 class LoginForm(form.Form):
@@ -203,36 +209,6 @@ class Items(Resource):
                 return not_found(404)
 
 
-class Category(Resource):
-    def get(self):
-        args = parser.parse_args()
-        if args["path"] == "":
-            return jsonify(categories=menu_map, name="")
-        elif args["path"] is not None:
-            json = {}
-            i = 1
-
-            while f'{args["path"]}.{i}' in menu_map:
-                json[i] = menu_map[f'{args["path"]}.{i}']
-                i += 1
-            i -= 1
-            path_list = []
-            prev = ""
-            first = True
-            for i in args["path"].split("."):
-                if first:
-                    first = False
-                else:
-                    prev += "."
-                prev += str(i)
-                if prev in menu_map:
-                    path_list.append(menu_map[prev])
-                else:
-                    return not_found(404)
-
-            return jsonify(categories=json, name=path_list)
-
-
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
@@ -286,7 +262,6 @@ def index():
 
 
 api.add_resource(Items, "/api/items")
-api.add_resource(Category, "/api/category")
 
 
 if __name__ == "__main__":
