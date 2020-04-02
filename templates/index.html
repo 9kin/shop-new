@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/styles/main.css">
-    <script src="/static/scripts/libraries/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/styles/main.css">
+<script src="/static/scripts/libraries/jquery.min.js"></script>
 <script src="/static/scripts/main.js"></script>
 
 {% for item in categories["categories"] %}
@@ -15,5 +16,6 @@
         </div>
         <div class="undercat"></div>
     </div>
-    {% endfor %}
+{% endfor %}
+
 {% endblock %}
