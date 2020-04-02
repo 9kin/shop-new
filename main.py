@@ -221,8 +221,8 @@ class ReForm(FlaskForm):
     submit = SubmitField("найти")
 
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+@app.route("/ini", methods=["GET", "POST"])
+def ini():
     item = session.query(items.Item).all()
     form = ReForm()
     if form.validate_on_submit():
