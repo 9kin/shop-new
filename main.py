@@ -9,7 +9,7 @@ parser = reqparse.RequestParser()
 parser.add_argument("path")
 
 
-@app.route('/item/<string:path>')
+@app.route('/items/<string:path>')
 def item(path):
     response = requests.get(f'http://localhost:8080/api/items?path={path}')
     if response.status_code == 200:

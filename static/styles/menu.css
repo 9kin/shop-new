@@ -1,0 +1,89 @@
+:root {
+    --border-color: #55f0;
+}
+
+nav.main-menu > ul {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+nav.main-menu input[type="checkbox"] {
+    display: none;
+}
+
+nav.main-menu input[type="checkbox"] ~ ul {
+    display: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+nav.main-menu input[type="checkbox"] ~ ul:last-of-type {
+    border-bottom: 0;
+}
+
+nav.main-menu input[type="checkbox"]:checked ~ ul {
+    display: block;
+}
+
+nav.main-menu input[type="checkbox"]:checked ~ div {
+    border-bottom: 1px solid var(--border-color);
+}
+
+nav.main-menu ul {
+    display: block;
+    list-style-type: none;
+    padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+nav.main-menu ul div {
+    cursor: pointer;
+    padding: 10px 15px;
+}
+
+nav.main-menu li {
+    padding: 0;
+    margin: 10px;
+    overflow: hidden;
+}
+
+nav.main-menu li > label {
+    margin: 0;
+    padding: 0;
+}
+
+nav.main-menu li div {
+    border-bottom: 1px solid var(--border-color);
+    background-color: #bbf;
+    border-radius: 10px;
+}
+
+nav.main-menu li div:hover {
+    background-color: #99f;
+}
+
+nav.main-menu li:last-of-type div {
+    border-bottom: 0px;
+}
+
+nav.main-menu li.drop-end {
+    background-color: #eef;
+    margin: 0;
+    padding: 0;
+    border: 0px;
+}
+
+nav.main-menu li.drop-end:hover {
+    background-color: #ccf;
+}
+
+nav.main-menu li.drop-end:last-of-type {
+    border-bottom: 1px solid var(--border-color);
+}
+
+nav.main-menu ul a {
+    display: block;
+    padding: 5px 10px;
+    color: #000;
+    text-decoration: none;
+}

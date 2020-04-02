@@ -2,9 +2,15 @@ body {
     padding: 0;
     margin: 0;
     font-family: 'Montserrat', sans-serif;
+    display: grid;
+    grid-template-columns: 20vw auto;
+    grid-template-rows: auto auto;
 }
 
 header {
+    grid-column-start: 1;
+    grid-column-end: span 2;
+
     padding: 10px;
     margin: 0;
     margin-bottom: 50px;
@@ -12,7 +18,7 @@ header {
     background-color: #eee;
     box-shadow: 0 5px 30px #00f5;
 
-    display: flex;
+    display: flex !important;
     flex-direction: row;
     align-items: stretch;
     justify-content: space-between;
@@ -24,7 +30,7 @@ header > h1 {
 }
 
 header > nav {
-    display: flex;
+    display: flex !important;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;

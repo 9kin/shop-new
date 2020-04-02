@@ -1,0 +1,57 @@
+{% macro main() %}
+
+<link rel="stylesheet" href="/static/styles/menu.css">
+
+<nav class="main-menu">
+    <ul>
+        <li>
+            <label>
+                <input type="checkbox" name="radio"/>
+                <div>First Menu</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Home</a></li>
+                    <li class="drop-end"><a href="#">About Us</a></li>
+                    <li class="drop-end"><a href="#">Services</a></li>
+                    <li class="drop-end"><a href="#">Contact</a></li>
+                </ul>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Second Menu</div>
+                <ul>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="radio2" />
+                            <div>Third Menu</div>
+                            <ul>
+                                <li class="drop-end"><a href="#">Home</a></li>
+                                <li class="drop-end"><a href="#">About Us</a></li>
+                                <li class="drop-end"><a href="#">Services</a></li>
+                                <li class="drop-end"><a href="#">Contact</a></li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li class="drop-end"><a href="#">About Us</a></li>
+                    <li class="drop-end"><a href="#">Services</a></li>
+                    <li class="drop-end"><a href="#">Contact</a></li>
+                </ul>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Third Menu</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Home</a></li>
+                    <li class="drop-end"><a href="#">About Us</a></li>
+                    <li class="drop-end"><a href="#">Services</a></li>
+                    <li class="drop-end"><a href="#">Contact</a></li>
+                </ul>
+            </label>
+        </li>
+    </ul>
+</nav>
+
+{% endmacro %}
