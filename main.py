@@ -36,7 +36,7 @@ def plumbing(id):
 
 @app.route("/api/category", methods=['GET'])
 def getCategory():
-    for _ in range(100000000):
+    for _ in range(1000000):
         pass
     path = parser.parse_args()["path"]
     response = requests.get('http://localhost:8080/api/category?path='+path)

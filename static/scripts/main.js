@@ -16,7 +16,7 @@ function loadSubcat(obj) {
             $obb.html("");
             let subcat = list_of_messages["categories"];
             for(let id in subcat) {
-                $obb.append("<a href='/plumbing/"+id+"'>"+id+": "+subcat[id]+"</a><br>");
+                $obb.append("<a href='/plumbing/"+id+"'>"+id+": "+subcat[id]+"</a>");
             }
         },
         error: function(error) {
