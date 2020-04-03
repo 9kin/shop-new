@@ -263,6 +263,36 @@ def ini():
     return render_template("table.html", form=form, menu=menu_map, data=item)
 
 
+class Category(Resource):
+    def get(self):
+        args = parser.parse_args()
+        if args["path"] == "":
+            return jsonify(categories=menu_map, name="")
+        elif args["path"] is not None:
+            json = {}
+            i = 1
+
+            while f'{args["path"]}.{i}' in menu_map:
+                json[i] = menu_map[f'{args["path"]}.{i}']
+                i += 1
+            i -= 1
+            path_list = []
+            prev = ""
+            first = True
+            for i in args["path"].split("."):
+                if first:
+                    first = False
+                else:
+                    prev += "."
+                prev += str(i)
+                if prev in menu_map:
+                    path_list.append(menu_map[prev])
+                else:
+                    return not_found(404)
+
+            return jsonify(categories=json, name=path_list)
+
+
 class SearchForm(FlaskForm):
     q = StringField("Search", validators=[DataRequired()])
 
@@ -306,7 +336,7 @@ def item(path):
 
 
 api.add_resource(Items, "/api/items")
-
+api.add_resource(Category, "/api/category")
 
 if __name__ == "__main__":
     app.run(port=8080, host="127.0.0.1")
