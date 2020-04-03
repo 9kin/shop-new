@@ -1,3 +1,5 @@
+from flask import g
+import requests
 import search
 from keywords import Keyword, KeywordTable, aslist_cronly
 import configparser
@@ -259,6 +261,48 @@ def ini():
             "table.html", form=form, menu=menu_map, data=regex_search, ini=ini_search
         )
     return render_template("table.html", form=form, menu=menu_map, data=item)
+
+
+class SearchForm(FlaskForm):
+    q = StringField("Search", validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(SearchForm, self).__init__(*args, **kwargs)
+
+
+@app.route("/")
+def index():
+    return render_template("base.html")
+
+
+@app.before_request
+def before_request():
+    g.search_form = SearchForm()
+
+
+@app.route("/search")
+def search_route():
+    # add search api
+    if not g.search_form.validate():
+        return redirect(url_for("."))
+    query = search.search(items.Item, g.search_form.q.data, 1, 5, session)
+    json = {}
+    for item in query.all():
+        element = item.to_dict(only=(["id", "cost", "count"]))
+        # img
+        json[item.name] = element
+    return jsonify(json)
+
+
+@app.route("/items/<string:path>")
+def item(path):
+    response = requests.get(f"http://localhost:8080/api/items?path={path}")
+
+    return render_template("item.html", data=response.json())
 
 
 api.add_resource(Items, "/api/items")
