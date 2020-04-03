@@ -135,21 +135,17 @@ parser.add_argument("id")
 parser.add_argument("limit")
 parser.add_argument("offset")
 parser.add_argument("path")
+parser.add_argument("q")
 
 
 def item_to_json(item):
     json = {}
     json[item.name] = item.to_dict(only=(["id", "cost", "count"]))
-    img_sql = session.query(images.Image).filter(images.Image.name == item.id).first()
+    img_sql = session.query(images.Image).filter(images.Image.name == item.name).first()
     if img_sql is None:
-        json[item.name]["img"] = "static/not.png"
+        json[item.name]["img"] = "not.png"
     else:
-        json[item.name]["img"] = (
-            session.query(images.Image)
-            .filter(images.Image.name == item.id)
-            .first()
-            .path
-        )
+        json[item.name]["img"] = img_sql.path
     return json
 
 
@@ -162,7 +158,6 @@ class Items(Resource):
                 .filter(items.Item.id == int(args["id"]))
                 .first()
             )
-            
 
             path_list = []
             prev = ""
@@ -202,6 +197,20 @@ class Items(Resource):
                 return jsonify(items=json, path=path_list)
             except:
                 return not_found(404)
+
+
+class Search(Resource):
+    def get(self):
+        args = parser.parse_args()
+        if args["q"] is not None:
+            query = search.search(items.Item, args["q"], 1, 200, session)
+            if query is None:
+                return jsonify(items={})
+            json = {}
+            for item in query.all():
+                json[item.name] = item_to_json(item)[item.name]
+            return jsonify(items=json)
+        return jsonify({"error": "q Not found"})
 
 
 @app.errorhandler(404)
@@ -309,16 +318,13 @@ def before_request():
 
 @app.route("/search")
 def search_route():
-    # add search api
     if not g.search_form.validate():
         return redirect(url_for("."))
-    query = search.search(items.Item, g.search_form.q.data, 1, 5, session)
-    json = {}
-    for item in query.all():
-        element = item.to_dict(only=(["id", "cost", "count"]))
-        # img
-        json[item.name] = element
-    return jsonify(json)
+    response = requests.get(
+        f"http://localhost:8080/api/search?q={g.search_form.q.data}"
+    )
+    print(response.json())
+    return render_template("item.html", data=response.json())
 
 
 @app.route("/items/<string:path>")
@@ -330,6 +336,7 @@ def item(path):
 
 api.add_resource(Items, "/api/items")
 api.add_resource(Category, "/api/category")
+api.add_resource(Search, "/api/search")
 
 if __name__ == "__main__":
     app.run(port=8080, host="127.0.0.1")
