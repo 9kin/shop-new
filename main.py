@@ -1,3 +1,6 @@
+from flask import g
+import requests
+import search
 from keywords import Keyword, KeywordTable, aslist_cronly
 import configparser
 from flask_admin import Admin
@@ -35,6 +38,8 @@ from flask_admin.contrib import sqla
 from flask_admin import helpers, expose
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from elasticsearch import Elasticsearch
+
 db.global_init("db/items.sqlite")
 session = db.create_session()
 
@@ -44,6 +49,9 @@ app.config["JSON_SORT_KEYS"] = False
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
+
+
+# elasticsearch.indices.delete('items')
 
 
 class LoginForm(form.Form):
@@ -203,36 +211,6 @@ class Items(Resource):
                 return not_found(404)
 
 
-class Category(Resource):
-    def get(self):
-        args = parser.parse_args()
-        if args["path"] == "":
-            return jsonify(categories=menu_map, name="")
-        elif args["path"] is not None:
-            json = {}
-            i = 1
-
-            while f'{args["path"]}.{i}' in menu_map:
-                json[i] = menu_map[f'{args["path"]}.{i}']
-                i += 1
-            i -= 1
-            path_list = []
-            prev = ""
-            first = True
-            for i in args["path"].split("."):
-                if first:
-                    first = False
-                else:
-                    prev += "."
-                prev += str(i)
-                if prev in menu_map:
-                    path_list.append(menu_map[prev])
-                else:
-                    return not_found(404)
-
-            return jsonify(categories=json, name=path_list)
-
-
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
@@ -245,8 +223,8 @@ class ReForm(FlaskForm):
     submit = SubmitField("найти")
 
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+@app.route("/ini", methods=["GET", "POST"])
+def ini():
     item = session.query(items.Item).all()
     form = ReForm()
     if form.validate_on_submit():
@@ -285,8 +263,49 @@ def index():
     return render_template("table.html", form=form, menu=menu_map, data=item)
 
 
+class SearchForm(FlaskForm):
+    q = StringField("Search", validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(SearchForm, self).__init__(*args, **kwargs)
+
+
+@app.route("/")
+def index():
+    return render_template("base.html")
+
+
+@app.before_request
+def before_request():
+    g.search_form = SearchForm()
+
+
+@app.route("/search")
+def search_route():
+    # add search api
+    if not g.search_form.validate():
+        return redirect(url_for("."))
+    query = search.search(items.Item, g.search_form.q.data, 1, 5, session)
+    json = {}
+    for item in query.all():
+        element = item.to_dict(only=(["id", "cost", "count"]))
+        # img
+        json[item.name] = element
+    return jsonify(json)
+
+
+@app.route("/items/<string:path>")
+def item(path):
+    response = requests.get(f"http://localhost:8080/api/items?path={path}")
+
+    return render_template("item.html", data=response.json())
+
+
 api.add_resource(Items, "/api/items")
-api.add_resource(Category, "/api/category")
 
 
 if __name__ == "__main__":

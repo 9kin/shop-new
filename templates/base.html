@@ -15,10 +15,18 @@
 <header>
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#">Наше приложение</a>
+        {% if g.search_form %}
+        <form class="navbar-form navbar-left" method="get" action="{{ url_for('search_route') }}">
+          {{ g.search_form.q(size=20, class='form-control', placeholder=g.search_form.q.label.text) }}
+        </form>
+        {% endif %}
+
     </nav>
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">
+
+
 
     {% block content %}{% endblock %}
 
