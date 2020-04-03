@@ -51,9 +51,6 @@ app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 
 
-# elasticsearch.indices.delete('items')
-
-
 class LoginForm(form.Form):
     login = fields.StringField()
     password = fields.PasswordField()
@@ -140,6 +137,22 @@ parser.add_argument("offset")
 parser.add_argument("path")
 
 
+def item_to_json(item):
+    json = {}
+    json[item.name] = item.to_dict(only=(["id", "cost", "count"]))
+    img_sql = session.query(images.Image).filter(images.Image.name == item.id).first()
+    if img_sql is None:
+        json[item.name]["img"] = "static/not.png"
+    else:
+        json[item.name]["img"] = (
+            session.query(images.Image)
+            .filter(images.Image.name == item.id)
+            .first()
+            .path
+        )
+    return json
+
+
 class Items(Resource):
     def get(self):
         args = parser.parse_args()
@@ -149,52 +162,32 @@ class Items(Resource):
                 .filter(items.Item.id == int(args["id"]))
                 .first()
             )
+            
 
-            json = item.to_dict(only=(["name", "id", "cost", "count"]))
-            img_sql = (
-                session.query(images.Image).filter(images.Image.name == item.id).first()
-            )
-            if img_sql is None:
-                json["img"] = "static/not.png"
-            else:
-                json["img"] = (
-                    session.query(images.Image)
-                    .filter(images.Image.name == item.id)
-                    .first()
-                    .path
-                )
+            path_list = []
+            prev = ""
+            first = True
+            for i in item.group.split("."):
+                if first:
+                    first = False
+                else:
+                    prev += "."
+                prev += str(i)
+                path_list.append(menu_map[prev])
             if item is not None:
-                return jsonify(json)
+                return jsonify(item=item_to_json(item), path=path_list)
             else:
                 return not_found(404)
         else:
             try:
-                item_list = (
+                all_items = (
                     session.query(items.Item)
                     .filter(items.Item.group == args["path"])
                     .all()
                 )
-                json_items = {}
-                for item in item_list:
-                    json_element = item.to_dict(only=(["id", "cost", "count"]))
-                    json_items[item.name] = json_element
-
-                    img_sql = (
-                        session.query(images.Image)
-                        .filter(images.Image.name == item.id)
-                        .first()
-                    )
-                    if img_sql is None:
-                        json_items[item.name]["img"] = "static/not.png"
-                    else:
-                        json_items[item.name]["img"] = (
-                            session.query(images.Image)
-                            .filter(images.Image.name == item.id)
-                            .first()
-                            .path
-                        )
-                    # без limit offset
-                    # TODO я не знаю как делать связи между бд
+                json = {}
+                for item in all_items:
+                    json[item.name] = item_to_json(item)[item.name]
 
                 path_list = []
                 prev = ""
@@ -206,7 +199,7 @@ class Items(Resource):
                         prev += "."
                     prev += str(i)
                     path_list.append(menu_map[prev])
-                return jsonify(items=json_items, name=path_list)
+                return jsonify(items=json, path=path_list)
             except:
                 return not_found(404)
 
