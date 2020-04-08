@@ -51,9 +51,6 @@ app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 
 
-# elasticsearch.indices.delete('items')
-
-
 class LoginForm(form.Form):
     login = fields.StringField()
     password = fields.PasswordField()
@@ -138,6 +135,18 @@ parser.add_argument("id")
 parser.add_argument("limit")
 parser.add_argument("offset")
 parser.add_argument("path")
+parser.add_argument("q")
+
+
+def item_to_json(item):
+    json = {}
+    json[item.name] = item.to_dict(only=(["id", "cost", "count"]))
+    img_sql = session.query(images.Image).filter(images.Image.name == item.name).first()
+    if img_sql is None:
+        json[item.name]["img"] = "not.png"
+    else:
+        json[item.name]["img"] = img_sql.path
+    return json
 
 
 class Items(Resource):
@@ -150,51 +159,30 @@ class Items(Resource):
                 .first()
             )
 
-            json = item.to_dict(only=(["name", "id", "cost", "count"]))
-            img_sql = (
-                session.query(images.Image).filter(images.Image.name == item.id).first()
-            )
-            if img_sql is None:
-                json["img"] = "static/not.png"
-            else:
-                json["img"] = (
-                    session.query(images.Image)
-                    .filter(images.Image.name == item.id)
-                    .first()
-                    .path
-                )
+            path_list = []
+            prev = ""
+            first = True
+            for i in item.group.split("."):
+                if first:
+                    first = False
+                else:
+                    prev += "."
+                prev += str(i)
+                path_list.append(menu_map[prev])
             if item is not None:
-                return jsonify(json)
+                return jsonify(item=item_to_json(item), path=path_list)
             else:
                 return not_found(404)
         else:
             try:
-                item_list = (
+                all_items = (
                     session.query(items.Item)
                     .filter(items.Item.group == args["path"])
                     .all()
                 )
-                json_items = {}
-                for item in item_list:
-                    json_element = item.to_dict(only=(["id", "cost", "count"]))
-                    json_items[item.name] = json_element
-
-                    img_sql = (
-                        session.query(images.Image)
-                        .filter(images.Image.name == item.id)
-                        .first()
-                    )
-                    if img_sql is None:
-                        json_items[item.name]["img"] = "static/not.png"
-                    else:
-                        json_items[item.name]["img"] = (
-                            session.query(images.Image)
-                            .filter(images.Image.name == item.id)
-                            .first()
-                            .path
-                        )
-                    # без limit offset
-                    # TODO я не знаю как делать связи между бд
+                json = {}
+                for item in all_items:
+                    json[item.name] = item_to_json(item)[item.name]
 
                 path_list = []
                 prev = ""
@@ -206,9 +194,23 @@ class Items(Resource):
                         prev += "."
                     prev += str(i)
                     path_list.append(menu_map[prev])
-                return jsonify(items=json_items, name=path_list)
+                return jsonify(items=json, path=path_list)
             except:
                 return not_found(404)
+
+
+class Search(Resource):
+    def get(self):
+        args = parser.parse_args()
+        if args["q"] is not None:
+            query = search.search(items.Item, args["q"], 1, 200, session)
+            if query is None:
+                return jsonify(items={})
+            json = {}
+            for item in query.all():
+                json[item.name] = item_to_json(item)[item.name]
+            return jsonify(items=json)
+        return jsonify({"error": "q Not found"})
 
 
 @app.errorhandler(404)
@@ -316,16 +318,13 @@ def before_request():
 
 @app.route("/search")
 def search_route():
-    # add search api
     if not g.search_form.validate():
         return redirect(url_for("."))
-    query = search.search(items.Item, g.search_form.q.data, 1, 5, session)
-    json = {}
-    for item in query.all():
-        element = item.to_dict(only=(["id", "cost", "count"]))
-        # img
-        json[item.name] = element
-    return jsonify(json)
+    response = requests.get(
+        f"http://localhost:8080/api/search?q={g.search_form.q.data}"
+    )
+    print(response.json())
+    return render_template("item.html", data=response.json())
 
 
 @app.route("/items/<string:path>")
@@ -337,6 +336,7 @@ def item(path):
 
 api.add_resource(Items, "/api/items")
 api.add_resource(Category, "/api/category")
+api.add_resource(Search, "/api/search")
 
 if __name__ == "__main__":
     app.run(port=8080, host="127.0.0.1")
