@@ -36,12 +36,38 @@ header > nav {
     justify-content: space-between;
 }
 
+a.search {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 180px;
+    background-color: #fff;
+    border-radius: 50vh;
+    padding: 8px 10px;
+    color: #777;
+}
+
+a.search:hover {
+    color: #777;
+}
+
+svg.search {
+    height: 20px;
+    fill: #777;
+}
+
+p.search {
+    margin: 0 10px;
+}
+
 header a {
     margin: 0 10px;
     color: #000;
     text-decoration: none;
 }
 
-img {
-    width: 50px;
+header a:hover {
+    text-decoration: none;
+    color: #005;
 }

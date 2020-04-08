@@ -6,14 +6,13 @@
 
     <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/static/styles/main.css">
-    <script src="/static/scripts/libraries/jquery.min.js"></script>
     <script src="/static/scripts/main.js"></script>
 
     {% for item in categories["categories"] %}
         <input class="check" name="{{ item['id'] }}" type="checkbox" id="check{{ item['id'] }}" style="display: none;">
         <label for="check{{ item['id'] }}" class="category" id="{{ item['id'] }}">
             <div class="headcat">
-                <h2>{{ item["id"] }}: {{ item["name"] }}</h2>
+                <h2><!--{{ item["id"] }}: -->{{ item["name"] }}</h2>
                 <img src="/static/img/{{ item['img'] }}" alt="Oups">
             </div>
             <div class="undercat"></div>

@@ -10,10 +10,25 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <script src="/static/scripts/item.js"></script>
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.13.0/css/all.css">
+    <link rel="stylesheet" href="/static/styles/item.css">
 
-
+    {% set path = data['path'] %}
     {% set keys = data['items'].keys()|list %}
     {% set data = data['items'] %}
+
+    <div class="path">
+    {% for item in path %}
+        {% if loop.first %}
+        {% else %}
+            <span>></span>
+        {% endif %}
+        {% if loop.last %}
+            <span>{{ item }}</span>
+        {% else %}
+            <a href="#">{{ item }}</a>
+        {% endif %}
+    {% endfor %}
+    </div>
 
     <div class="container">
     {% for line in range(0, data|length, 4) %}

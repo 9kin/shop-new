@@ -19,6 +19,26 @@
             "id" : "4",
             "name" : "Другое",
             "img" : "other.png"
+        },
+        {
+            "id" : "5",
+            "name" : "Другое",
+            "img" : "other.png"
+        },
+        {
+            "id" : "6",
+            "name" : "Другое",
+            "img" : "other.png"
+        },
+        {
+            "id" : "7",
+            "name" : "Другое",
+            "img" : "other.png"
+        },
+        {
+            "id" : "8",
+            "name" : "Другое",
+            "img" : "other.png"
         }
     ]
 }
