@@ -46,12 +46,19 @@ def getCategory():
         return make_response(jsonify({"error code": response.status_code}), response.status_code)
 
 
-@app.route('/news')
-def news():
-    with open("news.json", "rt", encoding="utf8") as f:
-        news_list = json.loads(f.read())
-    print(news_list)
-    return render_template('news.html', news=news_list)
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
+
+@app.route('/contacts')
+def contacts():
+    return render_template('contacts.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 
 if __name__ == '__main__':
