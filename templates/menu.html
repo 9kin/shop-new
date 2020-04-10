@@ -1,0 +1,304 @@
+{% macro main() %}
+
+<link rel="stylesheet" href="/static/styles/menu.css">
+
+<nav class="main-menu">
+    <ul>
+        <li> <!--1-->
+            <label>
+                <input type="checkbox"/>
+                <div>Сантехника</div>
+                <ul>
+                    <li> <!--1.1-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>Смеситель</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.1.1">Смеситель для раковины</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.1.2">Смеситель для кухни</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.1.3">Смеситель для ванной</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.1.4">Лейка для душа</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li> <!--1.2-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>Подводка</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.2.1">Подводка к смесителю</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.2.2">Подводка воды</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.2.3">Подводка для газа</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.2.4">Шланг стиральной машине</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li> <!--1.3-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>Инженерная сантехника</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.3.1">Кран шаровой</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.3.2">Фитинги</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.3.3">трубы</a>
+                                </li>
+                                <li> <!--1.3.4-->
+                                    <label>
+                                        <input type="checkbox"/>
+                                        <div>ППР</div>
+                                        <ul>
+                                            <li class="drop-end">
+                                                <a href="/items/1.3.4.1">муфта</a>
+                                            </li>
+                                            <li class="drop-end">
+                                                <a href="/items/1.3.4.2">тройник</a>
+                                            </li>
+                                            <li class="drop-end">
+                                                <a href="/items/1.3.4.3">уголок</a>
+                                            </li>
+                                            <li class="drop-end">
+                                                <a href="/items/1.3.4.4">заглушка</a>
+                                            </li>
+                                            <li class="drop-end">
+                                                <a href="/items/1.3.4.5">американка</a>
+                                            </li>
+                                        </ul>
+                                    </label>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li> <!--1.4-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>Арматура для слива</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.4.1">сифон</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.4.2">гибкие соединения</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.4.3">арматура бачка</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li> <!--1.5-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>Внутренняя канализация</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.1">крестовина</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.2">отвод</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.3">патрубок</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.4">ревизия</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.5">муфта</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.6">тройник</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.7">труба</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.5.8">хомут</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li> <!--1.6-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>Акссесуары ванных комнат</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.1">бумагодержатель</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.2">мыльница</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.3">крючок</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.4">полочка</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.5">полотенцедержатель</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.6">ершик</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.7">дозатор</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.6.8">вантуз</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li> <!--1.7-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>принадлежности ванной комнаты</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.7.1">шторка</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.7.2">коврик</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.7.3">карниз</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.7.4">экран</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.7.5">сиденье</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.7.6">сушилка</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li><!--1.8-->
+                        <label>
+                            <input type="checkbox"/>
+                            <div>унитаз</div>
+                            <ul>
+                                <li class="drop-end">
+                                    <a href="/items/1.8.1">унитаз</a>
+                                </li>
+                                <li class="drop-end">
+                                    <a href="/items/1.8.2">крышка для унитаза</a>
+                                </li>
+                            </ul>
+                        </label>
+                    </li>
+                    <li class="drop-end">
+                        <a href="/items/1.9">зеркала</a>
+                    </li>
+                    <li class="drop-end">
+                        <a href="/items/1.10">полотенцесушитель</a>
+                    </li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--2-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--3-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--4-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--5-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--6-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--7-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+        <li> <!--8-->
+            <label>
+                <input type="checkbox" name="radio" />
+                <div>Other</div>
+                <ul>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                    <li class="drop-end"><a href="#">Other</a></li>
+                </ul>
+            </label>
+        </li>
+    </ul>
+</nav>
+
+<script src="/static/scripts/menu.js"></script>
+
+{% endmacro %}

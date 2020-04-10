@@ -1,3 +1,4 @@
+import json
 from flask import g
 import requests
 import search
@@ -136,6 +137,7 @@ parser.add_argument("limit")
 parser.add_argument("offset")
 parser.add_argument("path")
 parser.add_argument("q")
+parser.add_argument("path")
 
 
 def item_to_json(item):
@@ -306,11 +308,6 @@ class SearchForm(FlaskForm):
         super(SearchForm, self).__init__(*args, **kwargs)
 
 
-@app.route("/")
-def index():
-    return render_template("base.html")
-
-
 @app.before_request
 def before_request():
     g.search_form = SearchForm()
@@ -321,22 +318,66 @@ def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
     response = requests.get(
-        f"http://localhost:8080/api/search?q={g.search_form.q.data}"
+        f"http://localhost:8000/api/search?q={g.search_form.q.data}"
     )
     print(response.json())
     return render_template("item.html", data=response.json())
 
 
-@app.route("/items/<string:path>")
-def item(path):
-    response = requests.get(f"http://localhost:8080/api/items?path={path}")
-
-    return render_template("item.html", data=response.json())
 
 
 api.add_resource(Items, "/api/items")
 api.add_resource(Category, "/api/category")
 api.add_resource(Search, "/api/search")
 
-if __name__ == "__main__":
-    app.run(port=8080, host="127.0.0.1")
+
+
+
+
+@app.route('/items/<string:path>')
+def item(path):
+
+    response = requests.get(f'http://localhost:8000/api/items?path={path}')
+    if response.status_code == 200:
+        return render_template('item.html', data=response.json())
+    else:
+        return "Error: " + str(response.status_code) 
+
+@app.route('/')
+@app.route('/index')
+def index():
+    with open("categories.json", "rt", encoding="utf8") as f:
+        categories = json.loads(f.read())
+    return render_template('index.html', categories=categories)
+
+
+
+
+@app.route("/api/category", methods=['GET'])
+def getCategory():
+    for _ in range(1000000):
+        pass
+    path = parser.parse_args()["path"]
+    response = requests.get('http://localhost:8000/api/category?path='+path)
+
+
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return make_response(jsonify({"error code": response.status_code}), response.status_code)
+
+
+
+
+@app.route('/contacts')
+def contacts():
+    return render_template('contacts.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+if __name__ == '__main__':
+    app.run(port=8000, host='127.0.0.1')

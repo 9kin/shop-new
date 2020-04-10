@@ -1,0 +1,13 @@
+div.path {
+    margin-bottom: 20px;
+    margin-left: 15px;
+}
+
+div.path > a {
+    text-decoration: underline;
+    color: #00f;
+}
+
+div.path > a:hover {
+    color: #00a;
+}
