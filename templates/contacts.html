@@ -3,33 +3,27 @@
 
 {% block content %}
 
-    <link rel="stylesheet" href="/static/styles/contacts.css">
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=c0fdf45d-b9f5-4767-8bd0-432b06a3e7da" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="https://yastatic.net/bootstrap/3.3.4/css/bootstrap.min.css">
 <script type="text/javascript">
-// Функция ymaps.ready() будет вызвана, когда
-// загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+
 ymaps.ready(init);
 function init(){
 
 var myMap = new ymaps.Map("map", {
         center: [58.008119, 56.208917],
-        zoom: 9
+        zoom: 7
     });
 
 
-        
-
-
+    
 var myPlacemark1 = new ymaps.Placemark([58.008119, 56.208917], {
     balloonContentHeader: 'Петропавловская улица, 99',
     balloonContentBody: [
-        '<address>',
-        '<strong>Офис Яндекса в Москве</strong>',
+        'Почта: petropav99@mail.ru',
         '<br/>',
-        'Адрес: 119021, Москва, ул. Льва Толстого, 16',
+        'Телефон: 236-16-34',
         '<br/>',
-        '<img src="http://img-fotki.yandex.ru/get/6114/82599242.2d6/0_88b97_ec425cf5_M" />'
+        '<img width="300px" src="https://i1.photo.2gis.com/images/branch/16/2251799859344995_886e.jpg" />'
     ].join(''),
     iconCaption: 'Петропавловская улица, 99',
     }, {
@@ -39,12 +33,11 @@ var myPlacemark1 = new ymaps.Placemark([58.008119, 56.208917], {
 var myPlacemark2 = new ymaps.Placemark([58.049350, 56.086989], {
     balloonContentHeader: 'Хабаровская улица, 56',
     balloonContentBody: [
-        '<address>',
-        '<strong>Офис Яндекса в Москве</strong>',
+        'Почта: xab56dom5@mail.ru',
         '<br/>',
-        'Адрес: 119021, Москва, ул. Льва Толстого, 16',
+        'Телефон: 206-05-67',
         '<br/>',
-        '<img src="http://img-fotki.yandex.ru/get/6114/82599242.2d6/0_88b97_ec425cf5_M" />'
+        '<img width="300px" src="https://i1.photo.2gis.com/images/branch/16/2251799845812460_12d0.jpg" />'
     ].join(''),
     iconCaption: 'Хабаровская улица, 56',
     }, {
@@ -52,8 +45,40 @@ var myPlacemark2 = new ymaps.Placemark([58.049350, 56.086989], {
     
 });
 
+var myPlacemark3 = new ymaps.Placemark([58.011976, 55.969570], {
+    balloonContentHeader: 'Маршала Рыбалко, 91',
+    balloonContentBody: [
+        'Почта: ryb91dom2@mail.ru',
+        '<br/>',
+        'Телефон: 284-12-21',
+        '<br/>',
+        '<img width="300px" src="https://i1.photo.2gis.com/images/branch/16/2251799857473565_82dc.jpg" />'
+    ].join(''),
+    iconCaption: 'Маршала Рыбалко, 91',
+    }, {
+    preset: 'islands#redIcon',
+    
+});
+
+
+var myPlacemark4 = new ymaps.Placemark([58.035935, 56.143232], {
+    balloonContentHeader: 'Докучаева, 42',
+    balloonContentBody: [
+        'Почта: dok42dom3@mail.ru',
+        '<br/>',
+        'Телефон: 213-90-60',
+        '<br/>',
+        '<img width="300px" src="https://i1.photo.2gis.com/images/branch/16/2251799859348758_7431.jpg" />'
+    ].join(''),
+    iconCaption: 'Докучаева, 42',
+    }, {
+    preset: 'islands#redIcon',
+});
+
         myMap.geoObjects.add(myPlacemark1);
         myMap.geoObjects.add(myPlacemark2);
+        myMap.geoObjects.add(myPlacemark3);
+        myMap.geoObjects.add(myPlacemark4);
 
         myMap.setBounds(myMap.geoObjects.getBounds(), {checkZoomRange:true})
         .then(function() {
@@ -66,10 +91,61 @@ var myPlacemark2 = new ymaps.Placemark([58.049350, 56.086989], {
 </script>
 
 <main>
-Петропавловская, 99 
- <div id="map" style="width: 600px; height: 400px"></div>
-</main>
 
+<table>
+    <tr>
+    <td><div id="map" style="width: 600px; height: 400px"></div></td>
+    <td> <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Адрес</th>
+      <th scope="col">Телефон</th>
+      <th scope="col">Эл. почта</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Петропавловская, 99</td>
+      <td>236-16-34</td>
+      <td>petropav99@mail.ru</td>
+    </tr>
+    <tr>
+      <td>Хабаровская, 56</td>
+      <td>206-05-67</td>
+      <td>xab56dom5@mail.ru</td>
+    </tr>
+    <tr>
+      <td>М.Рыбалко, 91</td>
+      <td>284-12-21</td>
+      <td>ryb91dom2@mail.ru</td>
+    </tr>
+    <tr>
+      <td>Докучаева, 42</td>
+      <td>213-90-60</td>
+      <td>dok42dom3@mail.ru</td>
+    </tr>
+
+    <tr>
+      <td>Пушкина, 23</td>
+      <td>233-47-07</td>
+      <td>**@mail.ru</td>
+    </tr>
+
+  </tbody>
+</table> 
+
+</td>
+  </tr>
+
+</table>
+
+
+
+
+ 
+
+
+</main>
 
 
 {% endblock %}
