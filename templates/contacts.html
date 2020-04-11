@@ -4,9 +4,72 @@
 {% block content %}
 
     <link rel="stylesheet" href="/static/styles/contacts.css">
-    <script src="/static/scripts/contacts.js"></script>
-<main>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=c0fdf45d-b9f5-4767-8bd0-432b06a3e7da" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="https://yastatic.net/bootstrap/3.3.4/css/bootstrap.min.css">
+<script type="text/javascript">
+// Функция ymaps.ready() будет вызвана, когда
+// загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+ymaps.ready(init);
+function init(){
 
+var myMap = new ymaps.Map("map", {
+        center: [58.008119, 56.208917],
+        zoom: 9
+    });
+
+
+        
+
+
+var myPlacemark1 = new ymaps.Placemark([58.008119, 56.208917], {
+    balloonContentHeader: 'Петропавловская улица, 99',
+    balloonContentBody: [
+        '<address>',
+        '<strong>Офис Яндекса в Москве</strong>',
+        '<br/>',
+        'Адрес: 119021, Москва, ул. Льва Толстого, 16',
+        '<br/>',
+        '<img src="http://img-fotki.yandex.ru/get/6114/82599242.2d6/0_88b97_ec425cf5_M" />'
+    ].join(''),
+    iconCaption: 'Петропавловская улица, 99',
+    }, {
+    preset: 'islands#redIcon'
+});
+
+var myPlacemark2 = new ymaps.Placemark([58.049350, 56.086989], {
+    balloonContentHeader: 'Хабаровская улица, 56',
+    balloonContentBody: [
+        '<address>',
+        '<strong>Офис Яндекса в Москве</strong>',
+        '<br/>',
+        'Адрес: 119021, Москва, ул. Льва Толстого, 16',
+        '<br/>',
+        '<img src="http://img-fotki.yandex.ru/get/6114/82599242.2d6/0_88b97_ec425cf5_M" />'
+    ].join(''),
+    iconCaption: 'Хабаровская улица, 56',
+    }, {
+    preset: 'islands#redIcon',
+    
+});
+
+        myMap.geoObjects.add(myPlacemark1);
+        myMap.geoObjects.add(myPlacemark2);
+
+        myMap.setBounds(myMap.geoObjects.getBounds(), {checkZoomRange:true})
+        .then(function() {
+            if(myMap.getZoom() > 15) 
+                myMap.setZoom(15);
+        });
+}
+
+
+</script>
+
+<main>
+Петропавловская, 99 
+ <div id="map" style="width: 600px; height: 400px"></div>
 </main>
+
+
 
 {% endblock %}

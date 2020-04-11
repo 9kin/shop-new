@@ -324,60 +324,53 @@ def search_route():
     return render_template("item.html", data=response.json())
 
 
-
-
 api.add_resource(Items, "/api/items")
 api.add_resource(Category, "/api/category")
 api.add_resource(Search, "/api/search")
 
 
-
-
-
-@app.route('/items/<string:path>')
+@app.route("/items/<string:path>")
 def item(path):
 
-    response = requests.get(f'http://localhost:8000/api/items?path={path}')
+    response = requests.get(f"http://localhost:8000/api/items?path={path}")
     if response.status_code == 200:
-        return render_template('item.html', data=response.json())
+        return render_template("item.html", data=response.json())
     else:
-        return "Error: " + str(response.status_code) 
+        return "Error: " + str(response.status_code)
 
-@app.route('/')
-@app.route('/index')
+
+@app.route("/")
+@app.route("/index")
 def index():
     with open("categories.json", "rt", encoding="utf8") as f:
         categories = json.loads(f.read())
-    return render_template('index.html', categories=categories)
+    return render_template("index.html", categories=categories)
 
 
-
-
-@app.route("/api/category", methods=['GET'])
+@app.route("/api/category", methods=["GET"])
 def getCategory():
     for _ in range(1000000):
         pass
     path = parser.parse_args()["path"]
-    response = requests.get('http://localhost:8000/api/category?path='+path)
-
+    response = requests.get("http://localhost:8000/api/category?path=" + path)
 
     if response.status_code == 200:
         return jsonify(response.json())
     else:
-        return make_response(jsonify({"error code": response.status_code}), response.status_code)
+        return make_response(
+            jsonify({"error code": response.status_code}), response.status_code
+        )
 
 
-
-
-@app.route('/contacts')
+@app.route("/contacts")
 def contacts():
-    return render_template('contacts.html')
+    return render_template("contacts.html")
 
 
-@app.route('/about')
+@app.route("/about")
 def about():
-    return render_template('about.html')
+    return render_template("about.html")
 
 
-if __name__ == '__main__':
-    app.run(port=8000, host='127.0.0.1')
+if __name__ == "__main__":
+    app.run(port=8000, host="127.0.0.1")
