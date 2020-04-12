@@ -7,6 +7,7 @@
 
 
     <link rel="stylesheet" href="/static/styles/item.css">
+    <script src="/static/scripts/item.js"></script>
 
     {% set path = data['path'] %}
     {% set keys = data['items'].keys()|list %}
@@ -28,7 +29,7 @@
 
     <div class="container">
     {% for line in range(0, data|length, 4) %}
-        <div class="card-deck">
+        <!--<div class="card-deck">-->
         {% for item in range(4) %}
             {% if line + item < data|length %}
                 <div class="card">
@@ -46,7 +47,7 @@
                 <div class="card"></div>
             {% endif %}
         {% endfor %}
-        </div>
+        <!--</div>-->
     {% endfor %}
     </div>
 

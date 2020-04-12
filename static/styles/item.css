@@ -1,3 +1,7 @@
+main {
+    --item-width: 240px;
+}
+
 div.path {
     margin-bottom: 20px;
     margin-left: 15px;
@@ -10,4 +14,31 @@ div.path > a {
 
 div.path > a:hover {
     color: #00a;
+}
+
+main * {
+    overflow: hidden;
+}
+
+main div.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: space-around;
+}
+
+main div.card {
+    flex-grow: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    margin: 10px;
+    max-width: var(--item-width);
+}
+
+main div.card img {
+    max-width: var(--item-width);
 }

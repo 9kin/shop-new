@@ -10,10 +10,17 @@
     background-color: #ccc;
 }
 
+* {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+i {
+    font-family: "Font Awesome 5 Pro" !important;
+}
+
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Montserrat', sans-serif !important;
     display: grid;
     grid-template-columns: 20vw auto;
     grid-template-rows: auto auto;
@@ -80,6 +87,7 @@ header nav {
 }
 
 header a {
+    flex-shrink: 0;
     margin: 0 10px;
     color: #000;
     text-decoration: none;
