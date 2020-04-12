@@ -66,12 +66,15 @@ header label {
 }
 
 header label input {
-    border: 0;
+    border: 0 !important;
     font-size: 1em;
+    outline: none !important:
 }
 
 header input:focus {
-    outline: none;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 0;
 }
 
 header label svg {
