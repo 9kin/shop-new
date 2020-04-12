@@ -28,6 +28,11 @@ main div.container {
     justify-content: space-around;
 }
 
+main div.container::after {
+  content: "";
+  flex: auto;
+}
+
 main div.card {
     flex-grow: 0;
 
