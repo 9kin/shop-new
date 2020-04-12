@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main>
+<link rel="stylesheet" href="/static/styles/item.css">
+
+{% set path = data['path'] %}
+    {% set keys = data['items'].keys()|list %}
+    {% set data = data['items'] %}
+
+    <div class="path">
+    {% for item in path %}
+        {% if loop.first %}
+        {% else %}
+            <span>></span>
+        {% endif %}
+        {% if loop.last %}
+            <span>{{ item }}</span>
+        {% else %}
+            <a href="#">{{ item }}</a>
+        {% endif %}
+    {% endfor %}
+    </div>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Длина</th>
+      <th scope="col">Название</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Количество</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for line in data %}
+        <tr>
+          <td>121</td>
+          <td>{{line}}</td>
+          <td>{{data[line]['cost']}}</td>
+          <td>{{data[line]['count']}}</td>
+        </tr>
+
+    {% endfor %}
+    
+    
+
+  </tbody>
+</table> 
+
+
+
+</main>
+
+{% endblock %}

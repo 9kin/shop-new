@@ -50,6 +50,11 @@ header > nav {
     justify-content: space-between;
 }
 
+header > img {
+    width: 300px;
+    margin: 0;
+}
+
 a.search {
     display: flex !important;
     flex-direction: row;
@@ -85,3 +90,4 @@ header a:hover {
     text-decoration: none;
     color: #005;
 }
+
