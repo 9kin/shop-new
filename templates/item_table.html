@@ -22,7 +22,10 @@
     {% endfor %}
     </div>
 
+<table> 
+<td>
 <table class="table">
+
   <thead class="thead-dark">
     <tr>
       <th scope="col">Длина</th>
@@ -32,7 +35,6 @@
     </tr>
   </thead>
   <tbody>
-
     {% for line in data %}
         <tr>
           <td>121</td>
@@ -40,14 +42,15 @@
           <td>{{data[line]['cost']}}</td>
           <td>{{data[line]['count']}}</td>
         </tr>
-
     {% endfor %}
-    
-    
-
   </tbody>
 </table> 
-
+</td>
+<td>
+    <img src="/static/img/gibkaya-podvodka.jpg" width="400px">
+    <img src="/static/img/gibkaya-podvodka-d-smesitelya.jpg" width="400px">
+    </td>
+</table> 
 
 
 </main>
