@@ -21,7 +21,7 @@ main {
     align-items: stretch;
 }
 
-label {
+main > label {
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -74,14 +74,14 @@ div.undercat > a {
     line-height: 1.5em;
 }
 
-input[type="checkbox"]:checked + label > div.headcat {
+main > input[type="checkbox"]:checked + label > div.headcat {
     flex-shrink: 1;
 }
 
-input[type="checkbox"]:checked + label > div.undercat {
+main > input[type="checkbox"]:checked + label > div.undercat {
     flex-shrink: 0;
 }
 
-label:hover {
+main > label:hover {
     background-color: #eee;
 }

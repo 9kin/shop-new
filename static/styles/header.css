@@ -36,48 +36,47 @@ header {
     justify-content: space-between;
 }
 
-header > h1 {
-    margin: 0;
-    cursor: pointer;
-
-    font-weight: bold;
+header div.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
-header > nav {
+header div.logo h1 {
+    font-weight: normal;
+    font-size: 1em;
+}
+
+header label {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    padding: 8px 10px;
+    border-radius: 50vh;
+}
+
+header label input {
+    border: 0;
+    font-size: 1em;
+}
+
+header input:focus {
+    outline: none;
+}
+
+header label svg {
+    width: 20px;
+    margin-right: 5px;
+}
+
+header nav {
     display: flex !important;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-}
-
-header > img {
-    width: 300px;
-    margin: 0;
-}
-
-a.search {
-    display: flex !important;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    width: 180px;
-    background-color: #fff;
-    border-radius: 50vh;
-    padding: 8px 10px;
-    color: #777;
-}
-
-a.search:hover {
-    color: #777;
-}
-
-svg.search {
-    height: 20px;
-    fill: #777;
-}
-
-p.search {
-    margin: 0 10px;
 }
 
 header a {
