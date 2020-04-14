@@ -89,3 +89,11 @@ nav.main-menu ul a {
     text-decoration: none;
     text-overflow: ellipsis;
 }
+
+input.here ~ div {
+    background-color: #acf !important;
+}
+
+li.here {
+    background-color: #aef !important;
+}
