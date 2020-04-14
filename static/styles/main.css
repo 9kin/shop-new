@@ -16,17 +16,29 @@ body {
 }
 
 main {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(450px, 1fr) );
+    gap: 10px;
+    width: 100%;
+    overflow: visible;
 }
 
-main > label {
+main label {
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     height: var(--block-height);
+    border-radius: 20px;
+    box-shadow: 0 0 20px #00f3;
+    margin: 10px;
+    padding: 0 20px;
+    background-color: #fff;
+}
+
+main label:hover {
+    background-color: #fff;
+    box-shadow: 0 0 20px #00f7;
 }
 
 div.headcat {
@@ -36,21 +48,27 @@ div.headcat {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 0 5vw;
+    padding: 0;
     
-    transition: flex-shrink 1s;
+    transition: flex-shrink .7s;
 }
 
 div.headcat > h2 {
+    flex-shrink: 0;
     font-size: 3em;
 }
 
 div.headcat > img {
+    flex-shrink: 1;
     margin: 1vh;
     height: calc(var(--block-height) - 2vh);
 }
 
-label:nth-of-type(even) div.headcat {
+label:nth-of-type(4n-3) div.headcat {
+    flex-direction: row-reverse;
+}
+
+label:nth-of-type(4n-2) div.headcat {
     flex-direction: row-reverse;
 }
 
@@ -74,14 +92,10 @@ div.undercat > a {
     line-height: 1.5em;
 }
 
-main > input[type="checkbox"]:checked + label > div.headcat {
+main input[type="checkbox"]:checked ~ div.headcat {
     flex-shrink: 1;
 }
 
-main > input[type="checkbox"]:checked + label > div.undercat {
+main input[type="checkbox"]:checked ~ div.undercat {
     flex-shrink: 0;
-}
-
-main > label:hover {
-    background-color: #eee;
 }

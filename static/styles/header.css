@@ -22,8 +22,9 @@ body {
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: 20vw auto;
+    grid-template-columns: 300px auto;
     grid-template-rows: auto auto;
+    background-color: #eee;
 }
 
 header {
@@ -34,8 +35,8 @@ header {
     margin: 0;
     margin-bottom: 50px;
     overflow: hidden;
-    background-color: #eee;
-    box-shadow: 0 5px 30px #00f5;
+    background-color: #fff;
+    box-shadow: 0 0 30px #00f5;
 
     display: flex !important;
     flex-direction: row;
@@ -55,6 +56,10 @@ header div.logo h1 {
     font-size: 1em;
 }
 
+header form {
+    overflow: visible;
+}
+
 header label {
     display: flex !important;
     flex-direction: row;
@@ -63,12 +68,14 @@ header label {
     background-color: #fff;
     padding: 8px 10px;
     border-radius: 50vh;
+    box-shadow: 0 0 10px #00f3;
 }
 
 header label input {
     border: 0 !important;
     font-size: 1em;
-    outline: none !important:
+    outline: none !important;
+    padding: 10px !important;
 }
 
 header input:focus {
@@ -87,6 +94,7 @@ header nav {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    overflow: visible;
 }
 
 header a {

@@ -34,6 +34,7 @@ nav.main-menu ul {
     padding: 0;
     border-radius: 10px;
     overflow: hidden;
+    margin-top: 10px;
 }
 
 nav.main-menu ul div {
@@ -44,7 +45,6 @@ nav.main-menu ul div {
 nav.main-menu li {
     padding: 0;
     margin: 10px;
-    overflow: hidden;
 }
 
 nav.main-menu li > label {
@@ -55,12 +55,14 @@ nav.main-menu li > label {
 
 nav.main-menu li div {
     border-bottom: 1px solid var(--border-color);
-    background-color: #bbf;
+    background-color: #fff;
+    box-shadow: 0 0 10px #00f3;
     border-radius: 10px;
 }
 
 nav.main-menu li div:hover {
-    background-color: #99f;
+    background-color: #fff;
+    box-shadow: 0 0 10px #00f7;
 }
 
 nav.main-menu li:last-of-type div {
@@ -68,14 +70,14 @@ nav.main-menu li:last-of-type div {
 }
 
 nav.main-menu li.drop-end {
-    background-color: #eef;
+    background-color: #fafaff;
     margin: 0;
     padding: 0;
-    border: 0px;
+    border: 0;
 }
 
 nav.main-menu li.drop-end:hover {
-    background-color: #ccf;
+    background-color: #eef;
 }
 
 nav.main-menu li.drop-end:last-of-type {
@@ -91,9 +93,10 @@ nav.main-menu ul a {
 }
 
 input.here ~ div {
-    background-color: #acf !important;
+    background-color: #f5f5ff !important;
+    /*box-shadow: 0 0 10px #f5f7 !important;*/
 }
 
 li.here {
-    background-color: #aef !important;
+    background-color: #ddf !important;
 }

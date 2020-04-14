@@ -1,5 +1,5 @@
 main {
-    --item-width: 240px;
+    --item-width: 230px;
 }
 
 div.path {
@@ -26,11 +26,12 @@ main div.container {
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: space-around;
+    overflow: visible;
 }
 
 main div.container::after {
-  content: "";
-  flex: auto;
+    content: "";
+    flex: auto;
 }
 
 main div.card {
@@ -42,6 +43,9 @@ main div.card {
     justify-content: stretch;
     margin: 10px;
     max-width: var(--item-width);
+    border: 0;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #00f3;
 }
 
 main div.card img {
