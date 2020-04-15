@@ -7,8 +7,8 @@ main > div.content-table {
 }
 
 main table {
-    background-color: #fff;
-    box-shadow: 0 0 20px #00f3;
+    background-color: var(--item-table-bg);
+    box-shadow: var(--item-table-shadow);
 }
 
 main div.content-img {
@@ -22,5 +22,5 @@ main img {
     flex-shrink: 0;
     margin: 10px;
     border-radius: 20px;
-    box-shadow: 0 0 20px #00f5;
+    box-shadow: var(--item-table-img-shadow);
 }

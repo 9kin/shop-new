@@ -6,11 +6,11 @@ main {
     padding: 0 2vw;
 }
 
-main > div {
-    box-shadow: 0 0 20px #00f3;
+main > div { /* map */
+    box-shadow: var(--contacts-map-shadow);
 }
 
 main > table {
-    background-color: #fff;
-    box-shadow: 0 0 20px #00f3;
+    background-color: var(--contacts-table-bg);
+    box-shadow: var(--contacts-table-shadow);
 }

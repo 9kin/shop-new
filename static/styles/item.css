@@ -9,11 +9,15 @@ div.path {
 
 div.path > a {
     text-decoration: underline;
-    color: #00f;
+    color: var(--item-path-a-color);
 }
 
 div.path > a:hover {
-    color: #00a;
+    color: var(--item-path-a-color-hover);
+}
+
+div.path > span {
+    color: var(--item-path-span-color);
 }
 
 main * {
@@ -36,7 +40,6 @@ main div.container::after {
 
 main div.card {
     flex-grow: 0;
-
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -45,7 +48,8 @@ main div.card {
     max-width: var(--item-width);
     border: 0;
     border-radius: 20px;
-    box-shadow: 0 0 20px #00f3;
+    box-shadow: var(--item-card-shadow);
+    background-color: var(--item-card-bg);
 }
 
 main div.card img {
