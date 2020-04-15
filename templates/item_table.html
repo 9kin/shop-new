@@ -2,7 +2,7 @@
 {% block content %}
 
 <main>
-<link rel="stylesheet" href="/static/styles/item.css">
+<link rel="stylesheet" href="/static/styles/item_table.css">
 
 {% set path = data['path'] %}
     {% set keys = data['items'].keys()|list %}
@@ -22,36 +22,33 @@
     {% endfor %}
     </div>
 
-<table> 
-<td>
-<table class="table">
+<div class="content-table">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Длина</th>
+        <th scope="col">Название</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Количество</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in data %}
+          <tr>
+            <td>121</td>
+            <td>{{line}}</td>
+            <td>{{data[line]['cost']}}</td>
+            <td>{{data[line]['count']}}</td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Длина</th>
-      <th scope="col">Название</th>
-      <th scope="col">Цена</th>
-      <th scope="col">Количество</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for line in data %}
-        <tr>
-          <td>121</td>
-          <td>{{line}}</td>
-          <td>{{data[line]['cost']}}</td>
-          <td>{{data[line]['count']}}</td>
-        </tr>
-    {% endfor %}
-  </tbody>
-</table> 
-</td>
-<td>
+  <div class="content-img">
     <img src="/static/img/gibkaya-podvodka.jpg" width="400px">
     <img src="/static/img/gibkaya-podvodka-d-smesitelya.jpg" width="400px">
-    </td>
-</table> 
-
+  </div>
+</div>
 
 </main>
 

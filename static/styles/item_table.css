@@ -1,0 +1,26 @@
+main > div.content-table {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, auto));
+    width: 100%;
+    gap: 10px;
+}
+
+main table {
+    background-color: #fff;
+    box-shadow: 0 0 20px #00f3;
+}
+
+main div.content-img {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 420px;
+}
+
+main img {
+    flex-shrink: 0;
+    margin: 10px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #00f5;
+}

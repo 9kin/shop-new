@@ -76,12 +76,12 @@ div.undercat {
     flex-shrink: 0;
     height: var(--block-height);
 
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(auto-fit, 1fr);
+    gap: 5px;
 
-    padding: 1vh 5vw;
+    padding: 0 3vw 0 0;
 
     transition: flex-shrink 1s;
 }
@@ -90,6 +90,13 @@ div.undercat > a {
     flex-shrink: 0;
     letter-spacing: .1em;
     line-height: 1.5em;
+    text-decoration: none;
+    color: #00f;
+}
+
+div.undercat > a:hover {
+    background-color: #eef;
+    color: #00a;
 }
 
 main input[type="checkbox"]:checked ~ div.headcat {

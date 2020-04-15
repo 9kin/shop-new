@@ -1,0 +1,16 @@
+main {
+    display: grid;
+    gap: 20px;
+    grid-template-columns:
+        repeat(auto-fit, minmax(600px, 1fr));
+    padding: 0 2vw;
+}
+
+main > div {
+    box-shadow: 0 0 20px #00f3;
+}
+
+main > table {
+    background-color: #fff;
+    box-shadow: 0 0 20px #00f3;
+}
