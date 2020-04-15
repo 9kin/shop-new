@@ -1,3 +1,21 @@
+div.path {
+    margin-bottom: 20px;
+    margin-left: 15px;
+}
+
+div.path > a {
+    text-decoration: underline;
+    color: var(--item-path-a-color);
+}
+
+div.path > a:hover {
+    color: var(--item-path-a-color-hover);
+}
+
+div.path > span {
+    color: var(--item-path-span-color);
+}
+
 main > div.content-table {
     padding: 20px;
     display: grid;
