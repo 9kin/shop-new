@@ -1,3 +1,4 @@
+import argparse
 import sys
 from tqdm import tqdm
 import time
@@ -5,47 +6,78 @@ from ext import Parser
 import search
 from data.__all_models import *
 
+
+# sudo systemctl start elasticsearch.service
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument(
+    "--sql", action="store_true", default=False, help="build db from 1c txt file"
+)
+arg_parser.add_argument(
+    "--key",
+    action="store_true",
+    default=False,
+    help="build path db with keywords (table.INI)",
+)
+arg_parser.add_argument(
+    "--search", action="store_true", default=False, help="index db with elasticsearch"
+)
+
+args = arg_parser.parse_args()
+
 parser = Parser()
 
-parser.delete_items()
-parser.get_data()
-first = tqdm(
-    range(len(parser.data)),
-    desc="parse 1c",
-    unit="line",
-    bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
-)
-for i in first:
-    parser.next_1c()
-parser.session.commit()
+
+def sql():
+    parser.delete_items()
+    parser.get_data()
+    bar = tqdm(
+        range(len(parser.data)),
+        desc="parse 1c",
+        unit="line",
+        bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+    )
+    for i in bar:
+        parser.next_1c()
+    parser.session.commit()
 
 
-parser.read_cfg()
-parser.get_items()
-second = tqdm(
-    range(len(parser.items)),
-    desc="keywords",
-    unit="line",
-    bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
-)
-
-for i in second:
-    parser.next_keyword()
-parser.session.commit()
-
-try:
-    search.elasticsearch.indices.delete("items")
-except:
-    pass
-items = parser.session.query(items.Item).all()[:50]
-
-third = tqdm(
-    range(len(items)),
-    desc="elasticsearch add",
-    unit="line",
-    bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
-)
+def keywords():
+    parser.read_cfg()
+    parser.get_items()
+    bar = tqdm(
+        range(len(parser.items)),
+        desc="keywords",
+        unit="line",
+        bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+    )
+    for i in bar:
+        parser.next_keyword()
+    parser.session.commit()
 
 
-for i in third:
-    search.add_to_index("items", items[i])
+def elasticsearch():
+    try:
+        search.elasticsearch.indices.delete("items")
+    except:
+        pass
+    items_ = parser.session.query(items.Item).all()[:50]
+    bar = tqdm(
+        range(len(items_)),
+        desc="elasticsearch add",
+        unit="line",
+        bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+    )
+    for i in bar:
+        search.add_to_index("items", items_[i])
+
+
+if args.sql:
+    sql()
+if args.key:
+    keywords()
+if args.search:
+    elasticsearch()
+if not args.sql and not args.key and not args.search:
+    sql()
+    keywords()
+    elasticsearch()

@@ -333,7 +333,7 @@ api.add_resource(Search, "/api/search")
 def item(path):
     response = requests.get(f"http://localhost:8000/api/items?path={path}")
     if response.status_code == 200:
-        if path.startswith('1.2'):
+        if path.startswith("1.2"):
             return render_template("item_table.html", data=response.json())
         return render_template("item.html", data=response.json())
     else:
