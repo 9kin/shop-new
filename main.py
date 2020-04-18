@@ -205,7 +205,7 @@ class Search(Resource):
     def get(self):
         args = parser.parse_args()
         if args["q"] is not None:
-            query = search.search(items.Item, args["q"], 1, 200, session)
+            query = search.search(items.Item, args["q"], session)
             if query is None:
                 return jsonify(items={})
             json = {}
@@ -320,7 +320,6 @@ def search_route():
     response = requests.get(
         f"http://localhost:8000/api/search?q={g.search_form.q.data}"
     )
-    print(response.json())
     return render_template("item.html", data=response.json())
 
 
