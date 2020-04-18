@@ -42,7 +42,6 @@ def sql():
 
 
 def keywords():
-    parser.read_cfg()
     parser.get_items()
     bar = tqdm(
         range(len(parser.items)),

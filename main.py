@@ -1,3 +1,4 @@
+import ext
 import json
 from flask import g
 import requests
@@ -40,6 +41,9 @@ from flask_admin import helpers, expose
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from elasticsearch import Elasticsearch
+
+
+config = ext.Parser()
 
 db.global_init("db/items.sqlite")
 session = db.create_session()
@@ -318,7 +322,7 @@ def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
     response = requests.get(
-        f"http://localhost:8000/api/search?q={g.search_form.q.data}"
+        f"http://localhost:{config.port}/api/search?q={g.search_form.q.data}"
     )
     return render_template("item.html", data=response.json())
 
@@ -330,7 +334,7 @@ api.add_resource(Search, "/api/search")
 
 @app.route("/items/<string:path>")
 def item(path):
-    response = requests.get(f"http://localhost:8000/api/items?path={path}")
+    response = requests.get(f"http://localhost:{config.port}/api/items?path={path}")
     if response.status_code == 200:
         if path.startswith("1.2"):
             return render_template("item_table.html", data=response.json())
@@ -352,7 +356,7 @@ def getCategory():
     for _ in range(1000000):
         pass
     path = parser.parse_args()["path"]
-    response = requests.get("http://localhost:8000/api/category?path=" + path)
+    response = requests.get(f"http://localhost:{config.port}/api/category?path=" + path)
 
     if response.status_code == 200:
         return jsonify(response.json())
@@ -373,4 +377,4 @@ def about():
 
 
 if __name__ == "__main__":
-    app.run(port=8000, host="127.0.0.1")
+    app.run(port=config.port, host="127.0.0.1")
