@@ -16,8 +16,8 @@ class Parser:
         self.session = db.create_session()
         self.cur_1c = 0
         self.cur_key = 0
-
         self.ban = []
+        self.read_cfg()
 
     def next_1c(self):
         if self.cur_1c < len(self.data):
@@ -44,7 +44,7 @@ class Parser:
         self.data = list(
             map(
                 lambda x: x.strip().split("\t"),
-                open("Остатки.txt", "r", encoding="windows-1251").readlines(),
+                open(self.remains, "r", encoding="windows-1251").readlines(),
             )
         )[9:]
 
@@ -58,7 +58,7 @@ class Parser:
 
     def read_cfg(self):
         config = configparser.ConfigParser()
-        config.read("table.INI")
+        config.read("config.INI")
         self.TABLE = KeywordTable(
             [
                 Keyword(keyword, key)
@@ -66,6 +66,8 @@ class Parser:
                 for keyword in aslist_cronly(config["table"][key])
             ]
         )
+        self.remains = config["app"]["remains"]
+        self.port = config["app"]["port"]
 
     def get_items(self):
         self.items = self.session.query(items.Item).all()
