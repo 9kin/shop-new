@@ -4,6 +4,7 @@
 {% block content %}
 
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=c0fdf45d-b9f5-4767-8bd0-432b06a3e7da" type="text/javascript"></script>
+    <link rel="stylesheet" href="/static/styles/contacts.css">
 <script type="text/javascript">
 
 ymaps.ready(init);
@@ -92,57 +93,43 @@ var myPlacemark4 = new ymaps.Placemark([58.035935, 56.143232], {
 
 <main>
 
-<table>
-    <td><div id="map" style="width: 600px; height: 400px"></div></td>
-    <td> <table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Адрес</th>
-      <th scope="col">Телефон</th>
-      <th scope="col">Эл. почта</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Петропавловская, 99</td>
-      <td>236-16-34</td>
-      <td>petropav99@mail.ru</td>
-    </tr>
-    <tr>
-      <td>Хабаровская, 56</td>
-      <td>206-05-67</td>
-      <td>xab56dom5@mail.ru</td>
-    </tr>
-    <tr>
-      <td>М.Рыбалко, 91</td>
-      <td>284-12-21</td>
-      <td>ryb91dom2@mail.ru</td>
-    </tr>
-    <tr>
-      <td>Докучаева, 42</td>
-      <td>213-90-60</td>
-      <td>dok42dom3@mail.ru</td>
-    </tr>
-
-    <tr>
-      <td>Пушкина, 23</td>
-      <td>233-47-07</td>
-      <td>**@mail.ru</td>
-    </tr>
-
-  </tbody>
-</table> 
-
-</td>
-  </tr>
-
-</table>
-
-
-
-
- 
-
+  <div id="map" style="width: 600px; height: 400px"></div>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Адрес</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">Эл. почта</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Петропавловская, 99</td>
+        <td>236-16-34</td>
+        <td>petropav99@mail.ru</td>
+      </tr>
+      <tr>
+        <td>Хабаровская, 56</td>
+        <td>206-05-67</td>
+        <td>xab56dom5@mail.ru</td>
+      </tr>
+      <tr>
+        <td>М.Рыбалко, 91</td>
+        <td>284-12-21</td>
+        <td>ryb91dom2@mail.ru</td>
+      </tr>
+      <tr>
+        <td>Докучаева, 42</td>
+        <td>213-90-60</td>
+        <td>dok42dom3@mail.ru</td>
+      </tr>
+      <tr>
+        <td>Пушкина, 23</td>
+        <td>233-47-07</td>
+        <td>**@mail.ru</td>
+      </tr>
+    </tbody>
+  </table>
 
 </main>
 

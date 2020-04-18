@@ -34,6 +34,7 @@ nav.main-menu ul {
     padding: 0;
     border-radius: 10px;
     overflow: hidden;
+    margin-top: 10px;
 }
 
 nav.main-menu ul div {
@@ -44,7 +45,6 @@ nav.main-menu ul div {
 nav.main-menu li {
     padding: 0;
     margin: 10px;
-    overflow: hidden;
 }
 
 nav.main-menu li > label {
@@ -55,12 +55,15 @@ nav.main-menu li > label {
 
 nav.main-menu li div {
     border-bottom: 1px solid var(--border-color);
-    background-color: #bbf;
+    background-color: var(--div-bg);
+    color: #000;
+    box-shadow: var(--div-shadow);
     border-radius: 10px;
 }
 
 nav.main-menu li div:hover {
-    background-color: #99f;
+    background-color: var(--div-bg-hover);
+    box-shadow: var(--div-shadow-hover);
 }
 
 nav.main-menu li:last-of-type div {
@@ -68,14 +71,14 @@ nav.main-menu li:last-of-type div {
 }
 
 nav.main-menu li.drop-end {
-    background-color: #eef;
+    background-color: var(--drop-end-bg);
     margin: 0;
     padding: 0;
-    border: 0px;
+    border: 0;
 }
 
 nav.main-menu li.drop-end:hover {
-    background-color: #ccf;
+    background-color: var(--drop-end-bg-hover);
 }
 
 nav.main-menu li.drop-end:last-of-type {
@@ -85,15 +88,15 @@ nav.main-menu li.drop-end:last-of-type {
 nav.main-menu ul a {
     display: block;
     padding: 5px 10px;
-    color: #000;
+    color: var(--drop-end-text-color);
     text-decoration: none;
     text-overflow: ellipsis;
 }
 
-input.here ~ div {
-    background-color: #acf !important;
+nav.main-menu input.here ~ div {
+    background-color: var(--div-here-bg) !important;
 }
 
-li.here {
-    background-color: #aef !important;
+nav.main-menu li.here {
+    background-color: var(--drop-end-here-bg) !important;
 }

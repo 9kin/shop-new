@@ -1,13 +1,13 @@
 @import url('/static/styles/fonts/Montserrat.css');
 
 ::-webkit-scrollbar {
-    background-color: #fff0;
+    background-color: var(--scrollbar-bg);
 }
 
 ::-webkit-scrollbar-thumb {
     margin: 0 2px;
     border-radius: 3px;
-    background-color: #ccc;
+    background-color: var(--scrollbar-thumb-bg);
 }
 
 * {
@@ -22,8 +22,9 @@ body {
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: 20vw auto;
+    grid-template-columns: 300px auto;
     grid-template-rows: auto auto;
+    background-color: var(--body-bg);
 }
 
 header {
@@ -34,8 +35,8 @@ header {
     margin: 0;
     margin-bottom: 50px;
     overflow: hidden;
-    background-color: #eee;
-    box-shadow: 0 5px 30px #00f5;
+    background-color: var(--header-bg);
+    box-shadow: var(--box-shadow);
 
     display: flex !important;
     flex-direction: row;
@@ -53,6 +54,11 @@ header div.logo {
 header div.logo h1 {
     font-weight: normal;
     font-size: 1em;
+    color: var(--logo-text-color);
+}
+
+header form {
+    overflow: visible;
 }
 
 header label {
@@ -60,15 +66,19 @@ header label {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--search-label-bg);
     padding: 8px 10px;
     border-radius: 50vh;
+    box-shadow: var(--search-label-shadow);
 }
 
 header label input {
     border: 0 !important;
     font-size: 1em;
-    outline: none !important:
+    outline: none !important;
+    padding: 10px !important;
+    background-color: var(--search-label-bg);
+    color: var(--search-text-color);
 }
 
 header input:focus {
@@ -80,6 +90,7 @@ header input:focus {
 header label svg {
     width: 20px;
     margin-right: 5px;
+    fill: var(--search-text-color);
 }
 
 header nav {
@@ -87,17 +98,18 @@ header nav {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    overflow: visible;
 }
 
 header a {
     flex-shrink: 0;
     margin: 0 10px;
-    color: #000;
+    color: var(--menu-text-color);
     text-decoration: none;
 }
 
 header a:hover {
     text-decoration: none;
-    color: #005;
+    color: var(--menu-hover-text-color);
 }
 

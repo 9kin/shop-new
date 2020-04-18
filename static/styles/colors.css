@@ -1,0 +1,67 @@
+:root {
+    --first-bg-color: #fff;
+    --second-bg-color: #eef;
+    --first-text-color: #000;
+
+    --shadow-color-3: #00f3;
+    --shadow-color-5: #00f5;
+    --shadow-color-7: #00f7;
+
+    --h-text-color: #000;
+    --a-text-color: #00a;
+    --a-hover-color: #00f;
+
+    --scrollbar-thumb-bg: #ccf;
+    --scrollbar-bg: #fff0;
+
+    --body-bg: var(--second-bg-color);
+}
+
+header {
+    --logo-text-color: var(--first-text-color);
+    --header-bg: var(--first-bg-color);
+    --box-shadow: 0 0 30px var(--shadow-color-5);
+    --search-label-bg: var(--first-bg-color);
+    --search-label-shadow: 0 0 10px var(--shadow-color-3);
+    --search-text-color: var(--first-text-color);
+    --menu-text-color: var(--a-text-color);
+    --menu-hover-text-color: var(--a-hover-color);
+}
+
+nav.main-menu {
+    --div-shadow: 0 0 10px var(--shadow-color-3);
+    --div-shadow-hover: 0 0 10px var(--shadow-color-7);
+    --div-bg: var(--first-bg-color);
+    --div-bg-hover: var(--first-bg-color);
+    --div-text-color: var(--first-text-color);
+    --drop-end-bg: #fafaff;
+    --drop-end-bg-hover: #eef;
+    --drop-end-text-color: var(--first-text-color);
+    --div-here-bg: #f5f5ff;
+    --drop-end-here-bg: #ddf;
+}
+
+main {
+    --index-label-bg: var(--first-bg-color);
+    --index-label-shadow: 0 0 20px var(--shadow-color-3);
+    --index-label-bg-hover: var(--first-bg-color);
+    --index-label-shadow-hover: 0 0 20px var(--shadow-color-7);
+    --index-h1-color: var(--first-text-color);
+    --index-a-color: var(--a-hover-color);
+    --index-a-color-hover: var(--a-text-color);
+    --index-a-bg-hover: var(--second-bg-color);
+
+    --item-path-a-color: var(--a-text-color);
+    --item-path-a-color-hover: var(--a-hover-color);
+    --item-path-span-color: var(--first-text-color);
+    --item-card-bg: var(--first-bg-color);
+    --item-card-shadow: 0 0 20px var(--shadow-color-3);
+
+    --item-table-bg: var(--first-bg-color);
+    --item-table-shadow: 0 0 20px var(--shadow-color-3);
+    --item-table-img-shadow: 0 0 20px var(--shadow-color-5);
+
+    --contacts-map-shadow: 0 0 20px var(--shadow-color-3);
+    --contacts-table-bg: var(--first-bg-color);
+    --contacts-table-shadow: 0 0 20px var(--shadow-color-3);
+}

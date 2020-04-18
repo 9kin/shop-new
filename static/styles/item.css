@@ -1,5 +1,5 @@
 main {
-    --item-width: 240px;
+    --item-width: 230px;
 }
 
 div.path {
@@ -9,11 +9,15 @@ div.path {
 
 div.path > a {
     text-decoration: underline;
-    color: #00f;
+    color: var(--item-path-a-color);
 }
 
 div.path > a:hover {
-    color: #00a;
+    color: var(--item-path-a-color-hover);
+}
+
+div.path > span {
+    color: var(--item-path-span-color);
 }
 
 main * {
@@ -26,22 +30,26 @@ main div.container {
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: space-around;
+    overflow: visible;
 }
 
 main div.container::after {
-  content: "";
-  flex: auto;
+    content: "";
+    flex: auto;
 }
 
 main div.card {
     flex-grow: 0;
-
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
     margin: 10px;
     max-width: var(--item-width);
+    border: 0;
+    border-radius: 20px;
+    box-shadow: var(--item-card-shadow);
+    background-color: var(--item-card-bg);
 }
 
 main div.card img {

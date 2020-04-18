@@ -1,0 +1,16 @@
+main {
+    display: grid;
+    gap: 20px;
+    grid-template-columns:
+        repeat(auto-fit, minmax(600px, 1fr));
+    padding: 0 2vw;
+}
+
+main > div { /* map */
+    box-shadow: var(--contacts-map-shadow);
+}
+
+main > table {
+    background-color: var(--contacts-table-bg);
+    box-shadow: var(--contacts-table-shadow);
+}

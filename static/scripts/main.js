@@ -20,7 +20,7 @@ function loadSubcat(obj) {
             }
         },
         error: function(error) {
-            $obb.html("<p style='color: darkred;'>ERROR!</p>");
+            $obb.html("<h1 style='color: darkred;'>ERROR!</h1>");
             console.error(error);
         },
         complete: function() {
