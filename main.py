@@ -1,24 +1,31 @@
 import configparser
 import json
-import os
-import re
-
 import flask_admin as admin
 import flask_login as login
 import requests
-from elasticsearch import Elasticsearch
-from flask import (Flask, g, jsonify, make_response, redirect, render_template,
-                   request, url_for)
-from flask_admin import Admin, expose, helpers
+from flask import (
+    Flask,
+    g,
+    jsonify,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from flask_admin import expose, helpers
 from flask_admin.contrib import sqla
-from flask_admin.contrib.sqla import ModelView
-from flask_restful import Api, Resource, abort, reqparse
-from flask_sqlalchemy import SQLAlchemy
+from flask_restful import Api, Resource, reqparse
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms import (BooleanField, PasswordField, StringField, SubmitField,
-                     TextAreaField, TextField, fields, form, validators)
+from wtforms import (
+    PasswordField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+    form,
+    validators,
+)
 from wtforms.validators import DataRequired
 
 import data.db_session as db
@@ -41,8 +48,8 @@ app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 
 
 class LoginForm(form.Form):
-    login = fields.StringField()
-    password = fields.PasswordField()
+    login = StringField()
+    password = PasswordField()
 
     def validate_login(self, field):
         user = self.get_user()
@@ -284,7 +291,7 @@ class Category(Resource):
                     return not_found(404)
 
             return jsonify(categories=json, name=path_list)
-
+        return not_found(404)
 
 class SearchForm(FlaskForm):
     q = StringField("Search", validators=[DataRequired()])
@@ -324,20 +331,19 @@ def item(path):
         if path.startswith("1.2"):
             return render_template("item_table.html", data=response.json())
         return render_template("item.html", data=response.json())
-    else:
-        return "Error: " + str(response.status_code)
+    return not_found(response.status_code)
 
 
 @app.route("/")
 @app.route("/index")
 def index():
-    with open("categories.json", "rt", encoding="utf8") as f:
-        categories = json.loads(f.read())
+    with open("categories.json", "rt", encoding="utf8") as file:
+        categories = json.loads(file.read())
     return render_template("index.html", categories=categories)
 
 
 @app.route("/api/category", methods=["GET"])
-def getCategory():
+def get_category():
     for _ in range(1000000):
         pass
     path = parser.parse_args()["path"]
@@ -345,10 +351,9 @@ def getCategory():
 
     if response.status_code == 200:
         return jsonify(response.json())
-    else:
-        return make_response(
-            jsonify({"error code": response.status_code}), response.status_code
-        )
+    return make_response(
+        jsonify({"error code": response.status_code}), response.status_code
+    )
 
 
 @app.route("/contacts")
