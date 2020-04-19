@@ -1,3 +1,4 @@
+from multiprocessing import Pool
 import argparse
 import sys
 from tqdm import tqdm
@@ -5,6 +6,8 @@ import time
 from ext import Parser
 import search
 from data.__all_models import *
+
+parser = Parser()
 
 
 # sudo systemctl start elasticsearch.service
@@ -23,8 +26,6 @@ arg_parser.add_argument(
 )
 
 args = arg_parser.parse_args()
-
-parser = Parser()
 
 
 def sql():
@@ -54,20 +55,26 @@ def keywords():
     parser.session.commit()
 
 
+def indexing(new_item):
+    search.add_to_index("items", new_item)
+
+
 def elasticsearch():
     try:
         search.elasticsearch.indices.delete("items")
     except:
         pass
-    items_ = parser.session.query(items.Item).all()[:50]
-    bar = tqdm(
-        range(len(items_)),
-        desc="elasticsearch add",
-        unit="line",
-        bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
-    )
-    for i in bar:
-        search.add_to_index("items", items_[i])
+    new_items = parser.session.query(items.Item).all()
+    if __name__ == "__main__":
+        with Pool(processes=100) as p:
+            bar = tqdm(
+                range(len(new_items)),
+                desc="elasticsearch add",
+                unit="line",
+                bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+            )
+            for i, _ in enumerate(p.imap_unordered(indexing, new_items)):
+                bar.update()
 
 
 if args.sql:
