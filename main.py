@@ -77,6 +77,7 @@ def init_login():
 
     @login_manager.user_loader
     def load_user(user_id):
+        session = db.create_session()
         return session.query(users.User).get(user_id)
 
 
