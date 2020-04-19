@@ -2,7 +2,6 @@
 from elasticsearch import Elasticsearch
 from sqlalchemy import case
 
-
 elasticsearch = Elasticsearch([{"host": "localhost", "port": 9200}])
 
 

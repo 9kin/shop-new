@@ -1,47 +1,31 @@
-import ext
-import json
-from flask import g
-import requests
-import search
-from keywords import Keyword, KeywordTable, aslist_cronly
 import configparser
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-
-import re
-from flask import Flask, url_for, request, render_template, jsonify, make_response
-from flask_restful import reqparse, abort, Api, Resource
-
-
-from flask_wtf import FlaskForm
-from wtforms import (
-    SubmitField,
-    StringField,
-    PasswordField,
-    BooleanField,
-    SubmitField,
-    TextField,
-    TextAreaField,
-)
-from wtforms.validators import DataRequired
-from flask_wtf.file import FileField, FileRequired, FileAllowed
-
-import data.db_session as db
-from data.__all_models import *
-
-
+import json
 import os
-from flask import Flask, url_for, redirect, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-from wtforms import form, fields, validators
+import re
+
 import flask_admin as admin
 import flask_login as login
-from flask_admin.contrib import sqla
-from flask_admin import helpers, expose
-from werkzeug.security import generate_password_hash, check_password_hash
-
+import requests
 from elasticsearch import Elasticsearch
+from flask import (Flask, g, jsonify, make_response, redirect, render_template,
+                   request, url_for)
+from flask_admin import Admin, expose, helpers
+from flask_admin.contrib import sqla
+from flask_admin.contrib.sqla import ModelView
+from flask_restful import Api, Resource, abort, reqparse
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField, FileRequired
+from werkzeug.security import check_password_hash, generate_password_hash
+from wtforms import (BooleanField, PasswordField, StringField, SubmitField,
+                     TextAreaField, TextField, fields, form, validators)
+from wtforms.validators import DataRequired
 
+import data.db_session as db
+import ext
+import search
+from data.__all_models import *
+from keywords import Keyword, KeywordTable, aslist_cronly
 
 config = ext.Parser()
 

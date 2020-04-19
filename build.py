@@ -1,9 +1,11 @@
-from multiprocessing import Pool
 import argparse
+from multiprocessing import Pool
+
 from tqdm import tqdm
-from ext import Parser
+
 import search
 from data.__all_models import *
+from ext import Parser
 
 parser = Parser()
 

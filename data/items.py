@@ -1,6 +1,8 @@
-from sqlalchemy_serializer import SerializerMixin
 import re
+
 import sqlalchemy
+from sqlalchemy_serializer import SerializerMixin
+
 from .db_session import SqlAlchemyBase
 
 

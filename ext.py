@@ -1,7 +1,8 @@
+import configparser
+
 import data.db_session as db
 from data.__all_models import *
 from keywords import Keyword, KeywordTable, aslist_cronly
-import configparser
 
 total = None
 
