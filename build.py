@@ -1,8 +1,6 @@
 from multiprocessing import Pool
 import argparse
-import sys
 from tqdm import tqdm
-import time
 from ext import Parser
 import search
 from data.__all_models import *
