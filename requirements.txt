@@ -1,0 +1,9 @@
+flask
+flask_admin
+flask_login
+flask_restful
+flask_wtf
+elasticsearch
+sqlalchemy
+tqdm
+requests
