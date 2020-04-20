@@ -1,5 +1,6 @@
 import configparser
 import json
+
 import flask_admin as admin
 import flask_login as login
 import requests
@@ -31,13 +32,15 @@ from wtforms.validators import DataRequired
 import data.db_session as db
 import ext
 import search
-from data.__all_models import *
+from data.images import Image
+from data.items import Item
+from data.users import User
 from keywords import Keyword, KeywordTable, aslist_cronly
 
 config = ext.Parser()
 
 db.global_init("db/items.sqlite")
-session = db.create_session()
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -52,14 +55,15 @@ class LoginForm(form.Form):
     password = PasswordField()
 
     def validate_login(self, field):
-        user = self.get_user()
-        if user is None:
+        cur_user = self.get_user()
+        if cur_user is None:
             raise validators.ValidationError("Invalid user")
         if not check_password_hash(user.password, self.password.data):
             raise validators.ValidationError("Invalid password")
 
     def get_user(self):
-        return session.query(users.User).filter_by(login=self.login.data).first()
+        session = db.create_session()
+        return session.query(User).filter_by(login=self.login.data).first()
 
 
 def init_login():
@@ -69,7 +73,7 @@ def init_login():
     @login_manager.user_loader
     def load_user(user_id):
         session = db.create_session()
-        return session.query(users.User).get(user_id)
+        return session.query(User).get(user_id)
 
 
 class MyModelView(sqla.ModelView):
@@ -88,8 +92,8 @@ class MyAdminIndexView(admin.AdminIndexView):
     def login_view(self):
         form = LoginForm(request.form)
         if helpers.validate_form_on_submit(form):
-            user = form.get_user()
-            login.login_user(user)
+            cur_user = form.get_user()
+            login.login_user(cur_user)
         if login.current_user.is_authenticated:
             return redirect(url_for(".index"))
         self._template_args["form"] = form
@@ -103,20 +107,26 @@ class MyAdminIndexView(admin.AdminIndexView):
 
 init_login()
 
+
 admin = admin.Admin(
     app, "admin", index_view=MyAdminIndexView(), base_template="my_master.html"
 )
 
 
-if session.query(users.User).filter_by(login="admin").count() < 1:
-    user = users.User(login="admin", password=generate_password_hash("admin"))
-    session.add(user)
-    session.commit()
+def create_admin():
+    session = db.create_session()
+    if session.query(User).filter_by(login="admin").count() < 1:
+        user = User(login="admin", password=generate_password_hash("admin"))
+        session.add(user)
+        session.commit()
 
 
-admin.add_view(MyModelView(items.Item, session))
-admin.add_view(MyModelView(images.Image, session))
-admin.add_view(MyModelView(users.User, session))
+create_admin()
+
+session = db.create_session()
+admin.add_view(MyModelView(Item, session))
+admin.add_view(MyModelView(Image, session))
+admin.add_view(MyModelView(User, session))
 
 
 menu = list(map(str.strip, open("menu.txt", "r").readlines()))
@@ -137,14 +147,14 @@ parser.add_argument("path")
 
 
 def item_to_json(item):
-    json = {}
-    json[item.name] = item.to_dict(only=(["id", "cost", "count"]))
-    img_sql = session.query(images.Image).filter(images.Image.name == item.name).first()
+    json_obj = {}
+    json_obj[item.name] = item.to_dict(only=(["id", "cost", "count"]))
+    img_sql = session.query(Image).filter(Image.name == item.name).first()
     if img_sql is None:
-        json[item.name]["img"] = "not.png"
+        json_obj[item.name]["img"] = "not.png"
     else:
-        json[item.name]["img"] = img_sql.path
-    return json
+        json_obj[item.name]["img"] = img_sql.path
+    return json_obj
 
 
 class Items(Resource):
@@ -152,11 +162,10 @@ class Items(Resource):
         args = parser.parse_args()
         if args["id"] is not None:
             item = (
-                session.query(items.Item)
-                .filter(items.Item.id == int(args["id"]))
-                .first()
+                session.query(Item).filter(Item.id == int(args["id"])).first()
             )
-
+            if item is None:
+                return not_found(404)
             path_list = []
             prev = ""
             first = True
@@ -169,39 +178,35 @@ class Items(Resource):
                 path_list.append(menu_map[prev])
             if item is not None:
                 return jsonify(item=item_to_json(item), path=path_list)
-            else:
-                return not_found(404)
-        else:
-            try:
-                all_items = (
-                    session.query(items.Item)
-                    .filter(items.Item.group == args["path"])
-                    .all()
-                )
-                json = {}
-                for item in all_items:
-                    json[item.name] = item_to_json(item)[item.name]
+            return not_found(404)
 
-                path_list = []
-                prev = ""
-                first = True
-                for i in args["path"].split("."):
-                    if first:
-                        first = False
-                    else:
-                        prev += "."
-                    prev += str(i)
-                    path_list.append(menu_map[prev])
-                return jsonify(items=json, path=path_list)
-            except:
-                return not_found(404)
+        all_items = (
+            session.query(Item).filter(Item.group == args["path"]).all()
+        )
+        if all_items is None:
+            return not_found(404)
+        json_objects = {}
+        for item in all_items:
+            json_objects[item.name] = item_to_json(item)[item.name]
+
+        path_list = []
+        prev = ""
+        first = True
+        for i in args["path"].split("."):
+            if first:
+                first = False
+            else:
+                prev += "."
+            prev += str(i)
+            path_list.append(menu_map[prev])
+        return jsonify(items=json_objects, path=path_list)
 
 
 class Search(Resource):
     def get(self):
         args = parser.parse_args()
         if args["q"] is not None:
-            query = search.search(items.Item, args["q"], session)
+            query = search.search(Item, args["q"], session)
             if query is None:
                 return jsonify(items={})
             json = {}
@@ -213,7 +218,7 @@ class Search(Resource):
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({"error": "Not found"}), 404)
+    return make_response(jsonify({"error": "Not found"}), error)
 
 
 class ReForm(FlaskForm):
@@ -225,7 +230,7 @@ class ReForm(FlaskForm):
 
 @app.route("/ini", methods=["GET", "POST"])
 def ini():
-    item = session.query(items.Item).all()
+    item = session.query(Item).all()
     form = ReForm()
     if form.validate_on_submit():
         regex_field = form.regex_field.data
@@ -233,7 +238,7 @@ def ini():
         config = configparser.ConfigParser()
         config.read_string(ini_field)
 
-        TABLE = KeywordTable(
+        table = KeywordTable(
             [
                 Keyword(keyword, key)
                 for key in config["table"]
@@ -244,8 +249,8 @@ def ini():
         regex_search = []
         ini_search = []
         for obj in item:
-            res = TABLE.contains(obj.name.lower())
-            if res != False:
+            res = table.contains(obj.name.lower())
+            if not res:
                 if obj == regex_field:
                     obj.full_match = True
                     regex_search.append(obj)
@@ -258,7 +263,11 @@ def ini():
             else:
                 obj.full_match = False
         return render_template(
-            "table.html", form=form, menu=menu_map, data=regex_search, ini=ini_search
+            "table.html",
+            form=form,
+            menu=menu_map,
+            data=regex_search,
+            ini=ini_search,
         )
     return render_template("table.html", form=form, menu=menu_map, data=item)
 
@@ -269,11 +278,11 @@ class Category(Resource):
         if args["path"] == "":
             return jsonify(categories=menu_map, name="")
         elif args["path"] is not None:
-            json = {}
+            json_obj = {}
             i = 1
 
             while f'{args["path"]}.{i}' in menu_map:
-                json[i] = menu_map[f'{args["path"]}.{i}']
+                json_obj[i] = menu_map[f'{args["path"]}.{i}']
                 i += 1
             i -= 1
             path_list = []
@@ -289,9 +298,9 @@ class Category(Resource):
                     path_list.append(menu_map[prev])
                 else:
                     return not_found(404)
-
-            return jsonify(categories=json, name=path_list)
+            return jsonify(categories=json_obj, name=path_list)
         return not_found(404)
+
 
 class SearchForm(FlaskForm):
     q = StringField("Search", validators=[DataRequired()])
@@ -326,7 +335,9 @@ api.add_resource(Search, "/api/search")
 
 @app.route("/items/<string:path>")
 def item(path):
-    response = requests.get(f"http://localhost:{config.port}/api/items?path={path}")
+    response = requests.get(
+        f"http://localhost:{config.port}/api/items?path={path}"
+    )
     if response.status_code == 200:
         if path.startswith("1.2"):
             return render_template("item_table.html", data=response.json())
@@ -347,7 +358,9 @@ def get_category():
     for _ in range(1000000):
         pass
     path = parser.parse_args()["path"]
-    response = requests.get(f"http://localhost:{config.port}/api/category?path=" + path)
+    response = requests.get(
+        f"http://localhost:{config.port}/api/category?path=" + path
+    )
 
     if response.status_code == 200:
         return jsonify(response.json())

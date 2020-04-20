@@ -51,7 +51,9 @@ class Parser:
 
     def add_item(self, item):
         self.session.add(
-            items.Item(name=item[0], cost=parse_price(item[2]), count=float(item[3]))
+            items.Item(
+                name=item[0], cost=parse_price(item[2]), count=float(item[3])
+            )
         )
 
     def split_(self, line):
@@ -60,7 +62,7 @@ class Parser:
     def read_cfg(self):
         config = configparser.ConfigParser()
         config.read("config.INI")
-        self.TABLE = KeywordTable(
+        self.table = KeywordTable(
             [
                 Keyword(keyword, key)
                 for key in config["table"]
@@ -76,7 +78,7 @@ class Parser:
     def next_keyword(self):
         if self.cur_key < len(self.items):
             item = self.items[self.cur_key]
-            res = self.TABLE.contains(item.name.lower())
+            res = self.table.contains(item.name.lower())
             if res != False:
                 # print(item.name)
                 item.group = res

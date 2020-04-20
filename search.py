@@ -12,7 +12,11 @@ def search(cls, expression, session):
     when = []
     for i in range(len(ids)):
         when.append((ids[i], i))
-    return session.query(cls).filter(cls.id.in_(ids)).order_by(case(when, value=cls.id))
+    return (
+        session.query(cls)
+        .filter(cls.id.in_(ids))
+        .order_by(case(when, value=cls.id))
+    )
 
 
 def get_all(cls, session):
@@ -22,7 +26,11 @@ def get_all(cls, session):
     when = []
     for i in range(len(ids)):
         when.append((ids[i], i))
-    return session.query(cls).filter(cls.id.in_(ids)).order_by(case(when, value=cls.id))
+    return (
+        session.query(cls)
+        .filter(cls.id.in_(ids))
+        .order_by(case(when, value=cls.id))
+    )
 
 
 def add_to_index(index, model):

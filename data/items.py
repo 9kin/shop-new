@@ -10,7 +10,9 @@ class Item(SqlAlchemyBase, SerializerMixin):
     __tablename__ = "items"
     __searchable__ = ["name"]
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    id = sqlalchemy.Column(
+        sqlalchemy.Integer, primary_key=True, autoincrement=True
+    )
 
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     cost = sqlalchemy.Column(sqlalchemy.Float, nullable=True)

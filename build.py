@@ -13,7 +13,10 @@ parser = Parser()
 # sudo systemctl start elasticsearch.service
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument(
-    "--sql", action="store_true", default=False, help="build db from 1c txt file"
+    "--sql",
+    action="store_true",
+    default=False,
+    help="build db from 1c txt file",
 )
 arg_parser.add_argument(
     "--key",
@@ -22,7 +25,10 @@ arg_parser.add_argument(
     help="build path db with keywords (table.INI)",
 )
 arg_parser.add_argument(
-    "--search", action="store_true", default=False, help="index db with elasticsearch"
+    "--search",
+    action="store_true",
+    default=False,
+    help="index db with elasticsearch",
 )
 
 args = arg_parser.parse_args()
