@@ -10,6 +10,10 @@
         <a href="/"><img src="/static/img/logo.png" width="400px"></a>
         <h1>сеть магазинов хозяйственных товаров в г. Перми</h1>
     </div>
+    <label class="mobile-tap" for="nav-button">
+        <p>|||</p>
+    </label>
+    <input id="nav-button" type="checkbox">
     <nav>
         {% if g.search_form %}
             <form class="navbar-form navbar-left" method="get" action="{{ url_for('search_route') }}">
@@ -25,6 +29,10 @@
 
         <a href="/contacts">Контакты</a>
         <a href="/about">О нас</a>
+
+        <label class="mobile-tap" for="nav-button">
+            <p>X</p>
+        </label>
     </nav>
 
 

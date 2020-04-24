@@ -113,3 +113,43 @@ header a:hover {
     color: var(--menu-hover-text-color);
 }
 
+label.mobile-tap {
+    display: none !important;
+}
+
+input#nav-button {
+    display: none;
+}
+
+
+
+
+
+@media screen and (max-width: 925px) {
+
+
+
+label.mobile-tap {
+    display: flex !important;
+}
+
+header nav {
+    display: none !important;
+    
+    position: fixed;
+    background-color: var(--header-bg);
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    z-index: 1;
+}
+
+input#nav-button:checked ~ nav {
+    display: flex !important;
+}
+    
+}
