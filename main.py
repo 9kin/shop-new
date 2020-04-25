@@ -5,30 +5,16 @@ import os
 import flask_admin as admin
 import flask_login as login
 import requests
-from flask import (
-    Flask,
-    g,
-    jsonify,
-    make_response,
-    redirect,
-    render_template,
-    request,
-    url_for,
-    send_from_directory,
-)
-from flask_admin import expose, helpers
+from flask import (Flask, g, jsonify, make_response, redirect, render_template,
+                   request, send_from_directory, url_for)
+from flask_admin import BaseView, expose, helpers
 from flask_admin.contrib import sqla
 from flask_restful import Api, Resource, reqparse
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms import (
-    PasswordField,
-    StringField,
-    SubmitField,
-    TextAreaField,
-    form,
-    validators,
-)
+from wtforms import (PasswordField, StringField, SubmitField, TextAreaField,
+                     form, validators)
 from wtforms.validators import DataRequired
 
 import data.db_session as db
@@ -37,7 +23,6 @@ import search
 from data.images import Image
 from data.items import Item
 from data.users import User
-from data.build import Build
 from keywords import Keyword, KeywordTable, aslist_cronly
 
 config = ext.Parser()
@@ -51,6 +36,28 @@ app.config["JSON_SORT_KEYS"] = False
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
+
+
+class UploadForm(FlaskForm):
+    file = FileField(validators=[FileRequired("File was empty!")])
+
+    file = FileField(
+        validators=[
+            FileRequired("File was empty!"),
+            FileAllowed(["txt"], "txt only!"),
+        ]
+    )
+    submit = SubmitField("Upload")
+
+
+class Build(BaseView):
+    @expose("/", methods=["GET", "POST"])
+    def index(self):
+        form = UploadForm()
+        if form.validate_on_submit():
+            data = form.file.data
+            data.save(config.remains)
+        return self.render("/admin/build.html", form=form)
 
 
 class LoginForm(form.Form):
@@ -130,8 +137,8 @@ session = db.create_session()
 admin.add_view(MyModelView(Item, session))
 admin.add_view(MyModelView(Image, session))
 admin.add_view(MyModelView(User, session))
-#admin.add_view(MyModelView(Build, session))
-admin.add_view(Build(name='Build'))
+# admin.add_view(MyModelView(Build, session))
+admin.add_view(Build(name="Build"))
 
 
 menu = list(map(str.strip, open("menu.txt", "r").readlines()))
@@ -398,10 +405,14 @@ def contacts():
 def about():
     return render_template("about.html")
 
-@app.route('/favicon.ico')
+
+@app.route("/favicon.ico")
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static', 'img'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(
+        os.path.join(app.root_path, "static", "img"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+    )
 
 
 if __name__ == "__main__":

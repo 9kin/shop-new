@@ -2,15 +2,22 @@
 {% block body %}
 {{ super() }}
 
-<form action="/api/gobuild" target="_blank">
-    <h1>Choose args:</h1>
-    <select name="build_args" class="form-control">
-      <option>--sql</option>
-      <option>--key</option>
-      <option>--search</option>
-    </select>
-    <button type="submit" class="btn btn-primary">Submit</button>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+
+
+<title>Upload File</title>
+<h1>Upload 1c file</h1>
+<form method="POST" enctype="multipart/form-data">
+     {{ form.hidden_tag() }}
+     {{ form.file }}
+     {% for error in form.file.errors %}
+         <span style="color: red;">{{ error }}</span>
+     {% endfor %}
+     {{ form.submit }}
 </form>
+
 
 
 {% endblock body %}
