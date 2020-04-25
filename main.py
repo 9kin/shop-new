@@ -1,5 +1,6 @@
 import configparser
 import json
+import os
 
 import flask_admin as admin
 import flask_login as login
@@ -13,6 +14,7 @@ from flask import (
     render_template,
     request,
     url_for,
+    send_from_directory,
 )
 from flask_admin import expose, helpers
 from flask_admin.contrib import sqla
@@ -377,6 +379,11 @@ def contacts():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static', 'img'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 if __name__ == "__main__":
