@@ -1,0 +1,16 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+
+<form action="/api/gobuild" target="_blank">
+    <h1>Choose args:</h1>
+    <select name="build_args" class="form-control">
+      <option>--sql</option>
+      <option>--key</option>
+      <option>--search</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+{% endblock body %}

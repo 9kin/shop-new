@@ -37,6 +37,7 @@ import search
 from data.images import Image
 from data.items import Item
 from data.users import User
+from data.build import Build
 from keywords import Keyword, KeywordTable, aslist_cronly
 
 config = ext.Parser()
@@ -129,6 +130,8 @@ session = db.create_session()
 admin.add_view(MyModelView(Item, session))
 admin.add_view(MyModelView(Image, session))
 admin.add_view(MyModelView(User, session))
+#admin.add_view(MyModelView(Build, session))
+admin.add_view(Build(name='Build'))
 
 
 menu = list(map(str.strip, open("menu.txt", "r").readlines()))
@@ -146,6 +149,7 @@ parser.add_argument("offset")
 parser.add_argument("path")
 parser.add_argument("q")
 parser.add_argument("path")
+parser.add_argument("build_args")
 
 
 def item_to_json(item):
@@ -304,6 +308,19 @@ class Category(Resource):
         return not_found(404)
 
 
+class GoBuild(Resource):
+    def get(self):
+        args = parser.parse_args()
+        args = args["build_args"]
+        if args is None:
+            return "args not found"
+        code = os.system("python3 build.py " + args)
+        if code == 0:
+            return "OK"
+        else:
+            return code
+
+
 class SearchForm(FlaskForm):
     q = StringField("Search", validators=[DataRequired()])
 
@@ -333,6 +350,7 @@ def search_route():
 api.add_resource(Items, "/api/items")
 api.add_resource(Category, "/api/category")
 api.add_resource(Search, "/api/search")
+api.add_resource(GoBuild, "/api/gobuild")
 
 
 @app.route("/items/<string:path>")
