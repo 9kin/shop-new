@@ -60,7 +60,7 @@ class LoginForm(form.Form):
         cur_user = self.get_user()
         if cur_user is None:
             raise validators.ValidationError("Invalid user")
-        if not check_password_hash(user.password, self.password.data):
+        if not check_password_hash(cur_user.password, self.password.data):
             raise validators.ValidationError("Invalid password")
 
     def get_user(self):
