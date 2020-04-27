@@ -201,7 +201,17 @@ flask-admin
 INI
 -----
 
-ini
+форма которая помогает состовлять новын ключевые слова
+
+.. revealjs_fragments::
+
+    * красный - только ini
+    * зелёный - ini и regex
+    * жёлтый - только regex
+
+.. image:: static/ini.png
+    :height: 300px
+
 
 api
 =====
@@ -275,3 +285,9 @@ Search
       }
     }
 
+GoBuild
+----------
+
+запуск build.py из админки
+
+/api/gobuild?build_args=sql
