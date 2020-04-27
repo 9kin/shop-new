@@ -254,3 +254,24 @@ Items path=?
         "Смеситель для раковины"
       ]
     }
+
+Search
+-------------
+
+поиск по слову
+
+.. code-block:: javascript
+
+    // http://dom59reg.ru/api/search?q=Рук
+    {
+      "items": {
+        "Крем д/рук Силиконовый 75мл.": {
+          "cost": 30,
+          "id": 7365,
+          "count": 7,
+          "img": "not.png"
+        },
+        // ...
+      }
+    }
+

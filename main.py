@@ -20,6 +20,7 @@ from wtforms.validators import DataRequired
 import data.db_session as db
 import ext
 import search
+from build import elasticsearch, keywords, sql
 from data.images import Image
 from data.items import Item
 from data.users import User
@@ -28,7 +29,6 @@ from keywords import Keyword, KeywordTable, aslist_cronly
 config = ext.Parser()
 
 db.global_init("db/items.sqlite")
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -47,7 +47,7 @@ class UploadForm(FlaskForm):
             FileAllowed(["txt"], "txt only!"),
         ]
     )
-    submit = SubmitField("Upload")
+    submit = SubmitField("Загрузить")
 
 
 class Build(BaseView):
@@ -321,11 +321,14 @@ class GoBuild(Resource):
         args = args["build_args"]
         if args is None:
             return "args not found"
-        code = os.system("python3 build.py " + args)
-        if code == 0:
-            return "OK"
-        else:
-            return code
+        try:
+            if args == "key":
+                keywords()
+            elif args == "search":
+                elasticsearch()
+        except:
+            return "error"
+        return "ok"
 
 
 class SearchForm(FlaskForm):

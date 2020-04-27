@@ -26,7 +26,7 @@ author = "9kin"
 
 # The full version, including alpha/beta/rc tags
 release = "1.0"
-pygments_style = 'monokai'
+pygments_style = "monokai"
 
 # -- General configuration ---------------------------------------------------
 
@@ -50,16 +50,8 @@ revealjs_script_conf = """
     }
 """
 revealjs_script_plugins = [
-    {
-        "src": "revealjs/plugin/notes/notes.js",
-        "options": "{async: true}",
-    },
-
-    {
-        "src": "revealjs/plugin/zoom-js/zoom.js",
-        "options": "{async: true}",
-    },
-
+    {"src": "revealjs/plugin/notes/notes.js", "options": "{async: true}",},
+    {"src": "revealjs/plugin/zoom-js/zoom.js", "options": "{async: true}",},
     {
         "src": "revealjs/plugin/highlight/highlight.js",
         "options": """{
@@ -69,8 +61,7 @@ revealjs_script_plugins = [
 	        }
 	      }
 	      """,
-    }
-
+    },
 ]
 
 # Add any paths that contain templates here, relative to this directory.
