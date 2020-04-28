@@ -5,21 +5,37 @@ import os
 import flask_admin as admin
 import flask_login as login
 import requests
-from flask import (Flask, g, jsonify, make_response, redirect, render_template,
-                   request, send_from_directory, url_for)
+from flask import (
+    Flask,
+    g,
+    jsonify,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_admin import BaseView, expose, helpers
 from flask_admin.contrib import sqla
 from flask_restful import Api, Resource, reqparse
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms import (PasswordField, StringField, SubmitField, TextAreaField,
-                     form, validators)
+from wtforms import (
+    PasswordField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+    form,
+    validators,
+)
 from wtforms.validators import DataRequired
 
 import data.db_session as db
 import ext
 import search
+from build import elasticsearch, keywords, sql
 from data.images import Image
 from data.items import Item
 from data.users import User
@@ -28,7 +44,6 @@ from keywords import Keyword, KeywordTable, aslist_cronly
 config = ext.Parser()
 
 db.global_init("db/items.sqlite")
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -47,7 +62,7 @@ class UploadForm(FlaskForm):
             FileAllowed(["txt"], "txt only!"),
         ]
     )
-    submit = SubmitField("Upload")
+    submit = SubmitField("Загрузить")
 
 
 class Build(BaseView):
@@ -263,7 +278,7 @@ def ini():
         ini_search = []
         for obj in item:
             res = table.contains(obj.name.lower())
-            if not res:
+            if res != False:
                 if obj == regex_field:
                     obj.full_match = True
                     regex_search.append(obj)
@@ -321,11 +336,16 @@ class GoBuild(Resource):
         args = args["build_args"]
         if args is None:
             return "args not found"
-        code = os.system("python3 build.py " + args)
-        if code == 0:
-            return "OK"
-        else:
-            return code
+        try:
+            if args == "key":
+                keywords()
+            elif args == "search":
+                elasticsearch()
+            elif args == "sql":
+                sql()
+            return "ok"
+        except:
+            return "error"
 
 
 class SearchForm(FlaskForm):

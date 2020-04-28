@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>flask-shop &#8212; документация flask-shop 1.0</title>
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/revealjs/css/reveal.css" type="text/css" />
+    <link rel="stylesheet" href="_static/revealjs/lib/css/zenburn.css" type="text/css" />
+    <link rel="stylesheet" href="_static/revealjs/css/theme/black.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/logo2.ico"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement( "link" );
+        link.rel = "stylesheet";
+        link.type = "text/css";
+        if (window.location.search.match( /print-pdf/gi )) {
+            link.href = "_static/revealjs/css/print/pdf.css";
+        } else {
+            link.href = "_static/revealjs/css/print/paper.css";
+        }
+        document.getElementsByTagName( "head" )[0].appendChild( link );
+    </script>
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+<h1>flask-shop</h1>
+<aside class="notes">
+This is comment in reStructuredText</aside>
+<p><a class="reference internal" href="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"><img alt="build status" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg" /></a> <a class="reference internal" href="https://img.shields.io/github/forks/9kin/shop.svg"><img alt="GitHub forks" src="https://img.shields.io/github/forks/9kin/shop.svg" /></a> <a class="reference internal" href="https://img.shields.io/github/stars/9kin/shop.svg"><img alt="GitHub stars" src="https://img.shields.io/github/stars/9kin/shop.svg" /></a> <a class="reference internal" href="https://img.shields.io/github/watchers/9kin/shop.svg"><img alt="GitHub watchers" src="https://img.shields.io/github/watchers/9kin/shop.svg" /></a> <a class="reference internal" href="https://img.shields.io/github/issues/9kin/shop.svg"><img alt="GitHub issues" src="https://img.shields.io/github/issues/9kin/shop.svg" /></a></p>
+<p>Shop - интернет магазин с базой данных из <code class="docutils literal notranslate"><span class="pre">1c</span></code></p>
+<p>Проект для Яндекс.Лицей.</p>
+</section>
+<section >
+<section>
+<h2>Функционал</h2>
+<ul class="simple">
+<li class="fragment"><p>чтение отсчёта из <code class="docutils literal notranslate"><span class="pre">1c</span></code></p></li>
+<li class="fragment"><p>админ панель</p></li>
+<li class="fragment"><p>поиск товара (elasticsearch)</p></li>
+<li class="fragment"><p>cli утилита для сборки</p></li>
+<li class="fragment"><p>изменение/добавление</p></li>
+</ul>
+</section>
+<section >
+<h3>изменение/добавление</h3>
+<ul class="simple">
+<li class="fragment"><p>файла отсчёта через админ панель</p></li>
+<li class="fragment"><p>изображений</p></li>
+<li class="fragment"><p>администраторов</p></li>
+<li class="fragment"><p>категорий и подкатегорий</p></li>
+<li class="fragment"><p>ключевых слов</p></li>
+</ul>
+</section>
+</section>
+<section >
+<h2>ext.py</h2>
+<dl class="class">
+<dt id="ext.Parser">
+<em class="property">class </em><code class="sig-prename descclassname">ext.</code><code class="sig-name descname">Parser</code></dt>
+<dd><dl class="function">
+<dt id="ext.Parser.next_keyword">
+<code class="sig-name descname">next_keyword</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>следующая обработка строки по ключевым словам</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ext.Parser.next_1c">
+<code class="sig-name descname">next_1c</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>следующая строка для db</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ext.Parser.read_cfg">
+<code class="sig-name descname">read_cfg</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>чтение конфига</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section >
+<section>
+<h2>keywords.py</h2>
+<p>Содержит два класса для проверки слова по шаблону.</p>
+</section>
+<section >
+<h3>Keyword</h3>
+<dl class="class">
+<dt id="Keyword">
+<em class="property">class </em><code class="sig-name descname">Keyword</code><span class="sig-paren">(</span><em class="sig-param">keyword</em>, <em class="sig-param">routing</em><span class="sig-paren">)</span></dt>
+<dd><p>keyword (int) шаблон (регулярное выражение)</p>
+<p>routing (int, str) путь (куда надо вставить)</p>
+<dl class="function">
+<dt id="Keyword.__eq__">
+<code class="sig-name descname">__eq__</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>сравнение с использованием <code class="docutils literal notranslate"><span class="pre">re.fullmatch</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section >
+<h3>KeywordTable</h3>
+<dl class="class">
+<dt id="KeywordTable">
+<em class="property">class </em><code class="sig-name descname">KeywordTable</code><span class="sig-paren">(</span><em class="sig-param">keywords</em><span class="sig-paren">)</span></dt>
+<dd><p>класс ключевых слов</p>
+<dl class="function">
+<dt id="KeywordTable.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param">item</em><span class="sig-paren">)</span></dt>
+<dd><p>проверка, есть ли слово в шаблонах</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section >
+<section>
+<h2>build.py</h2>
+</section>
+<section >
+<h3>Функционал:</h3>
+<ul class="simple">
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">--sql</span></code> собрать базу данных <code class="docutils literal notranslate"><span class="pre">Item</span></code> из отчёта</p></li>
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">--key</span></code> запустить обработку ключевых слов</p></li>
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">--search</span></code> проиндексировать базу данных <code class="docutils literal notranslate"><span class="pre">Item</span></code></p></li>
+</ul>
+</section>
+<section >
+<h3>Использует:</h3>
+<ul class="simple">
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">argparse</span></code>   (аргументы запуска)</p></li>
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code></p></li>
+<li class="fragment"><p><a class="reference external" href="https://github.com/tqdm/tqdm">tqdm</a> Progress Bar</p></li>
+<li class="fragment"><p><a class="reference external" href="https://github.com/elastic/elasticsearch-py">elasticsearch</a> для поиска</p></li>
+<li class="fragment"><p>свой <code class="docutils literal notranslate"><span class="pre">ext.Parser</span></code></p></li>
+</ul>
+</section>
+<section >
+<h3>Как работает:</h3>
+<ul class="simple">
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">--sql</span></code> и <code class="docutils literal notranslate"><span class="pre">--key</span></code> последовательно работают, используя <code class="docutils literal notranslate"><span class="pre">ext.Parser</span></code></p></li>
+<li class="fragment"><p><code class="docutils literal notranslate"><span class="pre">--search</span></code> работает, запуская пул процессов <code class="docutils literal notranslate"><span class="pre">multiprocessing.Pool</span></code> + <code class="docutils literal notranslate"><span class="pre">elasticsearch</span></code> для поиска</p></li>
+</ul>
+</section>
+</section>
+<section >
+<section>
+<h2>main.py</h2>
+</section>
+<section >
+<h3>flask-admin</h3>
+<p>админка для сайта с поддержкой flask-login</p>
+<p>в которой зарегистрированно все модели + Build (для сборки с сайта)</p>
+<a class="reference internal image-reference" href="_images/admin.png"><img alt="_images/admin.png" src="_images/admin.png" style="height: 100px;" /></a>
+<a class="reference internal image-reference" href="_images/admin_build.png"><img alt="_images/admin_build.png" src="_images/admin_build.png" style="height: 100px;" /></a>
+</section>
+<section >
+<h3>поиск</h3>
+<p>использует:</p>
+<ul class="simple">
+<li class="fragment"><p>&#64;app.before_request запускается перед любым запросом</p></li>
+<li class="fragment"><p>api (api/search)</p></li>
+<li class="fragment"><p>ajax (для realtime обновления)</p></li>
+<li class="fragment"><p>SearchForm (flask-wtf) форма для поиска</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/search.png"><img alt="_images/search.png" src="_images/search.png" style="height: 100px;" /></a>
+</section>
+<section >
+<h3>контакты</h3>
+<p>использует: yandex-map-js</p>
+<ul class="simple">
+<li class="fragment"><p>добавленны метки</p></li>
+<li class="fragment"><p>информация на клик (картинка, контакты)</p></li>
+<li class="fragment"><p>позиционирование по центру</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/map.png"><img alt="_images/map.png" src="_images/map.png" style="height: 300px;" /></a>
+</section>
+<section >
+<h3>отображение товаров</h3>
+<p>использует bootstrap (v4) card</p>
+<p>шаблон item.html получает список объктов</p>
+<a class="reference internal image-reference" href="_images/items.png"><img alt="_images/items.png" src="_images/items.png" style="height: 300px;" /></a>
+</section>
+<section >
+<h3>INI</h3>
+<p>форма которая помогает состовлять новын ключевые слова</p>
+<ul class="simple">
+<li class="fragment"><p>красный - только ini</p></li>
+<li class="fragment"><p>зелёный - ini и regex</p></li>
+<li class="fragment"><p>жёлтый - только regex</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/ini.png"><img alt="_images/ini.png" src="_images/ini.png" style="height: 300px;" /></a>
+</section>
+</section>
+<section >
+<section>
+<h2>api</h2>
+</section>
+<section >
+<h3>Items id=?</h3>
+<p>получение товаров по id=?</p>
+<pre><code data-trim data-noescape class="javascript">
+// http://dom59reg.ru/api/items?id=4643
+{
+  &quot;item&quot;: {
+    &quot;Смеситель д/р ORCA \&quot;Тулон\&quot; ORC2421H14&quot;: {
+      &quot;cost&quot;: 1991,
+      &quot;id&quot;: 4643,
+      &quot;count&quot;: 2,
+      &quot;img&quot;: &quot;first.jpg&quot;
+    }
+  },
+  &quot;path&quot;: [
+    &quot;Сантехника (отдел)&quot;,
+    &quot;Смеситель&quot;,
+    &quot;Смеситель для раковины&quot;
+  ]
+}</code></pre>
+</section>
+<section >
+<h3>Items path=?</h3>
+<p>получение товаров по path=?</p>
+<pre><code data-trim data-noescape class="javascript">
+// http://dom59reg.ru/api/items?path=1.1.1
+{
+  &quot;items&quot;: {
+    &quot;Смеситель д/р ORCA \&quot;Тулон\&quot; ORC2421H14&quot;: {
+      &quot;cost&quot;: 1991,
+      &quot;id&quot;: 4643,
+      &quot;count&quot;: 2,
+      &quot;img&quot;: &quot;first.jpg&quot;
+    },
+    // ...
+  },
+  &quot;path&quot;: [
+    &quot;Сантехника (отдел)&quot;,
+    &quot;Смеситель&quot;,
+    &quot;Смеситель для раковины&quot;
+  ]
+}</code></pre>
+</section>
+<section >
+<h3>Search</h3>
+<p>поиск по слову</p>
+<pre><code data-trim data-noescape class="javascript">
+// http://dom59reg.ru/api/search?q=Рук
+{
+  &quot;items&quot;: {
+    &quot;Крем д/рук Силиконовый 75мл.&quot;: {
+      &quot;cost&quot;: 30,
+      &quot;id&quot;: 7365,
+      &quot;count&quot;: 7,
+      &quot;img&quot;: &quot;not.png&quot;
+    },
+    // ...
+  }
+}</code></pre>
+</section>
+<section >
+<h3>GoBuild</h3>
+<p>запуск build.py из админки</p>
+<p>/api/gobuild?build_args=sql</p>
+</section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="_static/revealjs/js/reveal.js"></script>
+    
+    <script>
+        var revealjsConfig = {
+          dependencies: []
+        };
+        Object.assign(revealjsConfig, 
+    {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: "slide",
+        slideNumber: true,
+
+
+    }
+);
+        
+        
+        
+          plugin_0 = {async: true};
+          plugin_0.src = "_static/revealjs/plugin/notes/notes.js";
+          revealjsConfig.dependencies.push(plugin_0);
+          plugin_1 = {async: true};
+          plugin_1.src = "_static/revealjs/plugin/zoom-js/zoom.js";
+          revealjsConfig.dependencies.push(plugin_1);
+          plugin_2 = {
+	        async: true, 
+	        callback: function() {
+	        	hljs.initHighlightingOnLoad(); 
+	        }
+	      };
+          plugin_2.src = "_static/revealjs/plugin/highlight/highlight.js";
+          revealjsConfig.dependencies.push(plugin_2);
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

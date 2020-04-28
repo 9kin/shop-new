@@ -1,105 +1,14 @@
-Shop
-==========
+===============
+flask-shop
+===============
 
+.. This is comment in reStructuredText
 
 |made-with-python| |GitHub forks| |GitHub stars| |GitHub watchers| |GitHub issues|
 
-Shop - сайт собранный из отсчёта ``1c`` 
+Shop - интернет магазин с базой данных из ``1c`` 
 
-Проект для яндекс лицея.
-
-Функционал
-=============
-    
-    * чтение отсчёта из ``1c``
-    * админ панель
-    * поиск (elasticsearch)
-    * cli утилита для сборки 
-    * изменение/добавление:
-    
-        * ``TODO`` файла отсчёта через админ панель
-        * изображений
-        * администраторов
-        * категорий и подкатегорий
-        * ключевых слов
-    * ``TODO`` введение логов        
-
-----------------------------
-
-
-build.py
-=============
-
-Функционал:
--------------
-    
-    * ``--sql`` собрать базу данных ``Item`` из отчёта
-    * ``--key`` запустить обработку ключевых слов
-    * ``--search`` проиндексировать базу данных ``Item``
-    
-Использует:
------------
-
-    * ``argparse``   (аргументы запуска)
-    * ``multiprocessing.Pool``
-    * `tqdm <https://github.com/tqdm/tqdm>`_ Progress Bar
-    * `elasticsearch <https://github.com/elastic/elasticsearch-py>`_ для поиска
-    * свой ``ext.Parser``
-    
-Как работает:
---------------
-
-    * ``--sql`` и ``--key`` последовательно работают, используя ``ext.Parser``
-
-    * ``--search`` работает, запуская пул процессов ``multiprocessing.Pool`` + ``elasticsearch`` для поиска
-
-----------------------------
-
-ext.py
-=======
-
-.. class:: ext.Parser
-    
-
-    используется для чтения и обработки данных
-
-    .. function:: next_keyword
-
-        следующая обработка строки по ключевым словам
-
-    .. function:: next_1c
-
-        следующая строка для db
-
---------------------
-
-keywords.py
-=============
-
-.. class:: Keyword(keyword, routing)
-
-    класс ключевого слова, который хранит:
-
-        * keyword - шаблон (регулярное выражение)
-        * routing - путь (куда надо вставить)
-    
-    .. function:: __eq__ 
-
-        сравнение с использованием ``re.fullmatch``
-          
-
-.. class:: KeywordTable(keywords)
-
-    класс ключевых слов
-    
-    проверка, есть ли слово в шаблонах
-
-
-    .. function:: contains(item)
-
-         проверка, есть ли слово в шаблонах
-
-
+Проект для Яндекс.Лицей.
 
 .. |made-with-python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
     :alt: build status
@@ -121,3 +30,264 @@ keywords.py
 .. |GitHub issues| image:: https://img.shields.io/github/issues/9kin/shop.svg
     :alt: GitHub issues
     :scale: 100%
+
+Функционал
+=============
+
+.. revealjs_fragments::
+
+    * чтение отсчёта из ``1c``
+    * админ панель
+    * поиск товара (elasticsearch)
+    * cli утилита для сборки 
+    * изменение/добавление
+    
+изменение/добавление
+--------------------
+
+.. revealjs_fragments::
+
+    * файла отсчёта через админ панель
+    * изображений
+    * администраторов
+    * категорий и подкатегорий
+    * ключевых слов
+           
+
+ext.py
+=======
+
+.. class:: ext.Parser
+    
+    .. function:: next_keyword
+
+        следующая обработка строки по ключевым словам
+
+    .. function:: next_1c
+
+        следующая строка для db
+
+    .. function:: read_cfg()
+
+        чтение конфига
+
+keywords.py
+=============
+
+Содержит два класса для проверки слова по шаблону.
+
+Keyword
+-------------------------------------
+
+.. class:: Keyword(keyword, routing)
+
+
+    keyword (int) шаблон (регулярное выражение)
+    
+    routing (int, str) путь (куда надо вставить)
+
+    .. function:: __eq__ 
+
+        сравнение с использованием ``re.fullmatch``
+          
+KeywordTable
+----------------------------------
+.. class:: KeywordTable(keywords)
+
+    класс ключевых слов
+
+    .. function:: contains(item)
+
+         проверка, есть ли слово в шаблонах
+
+
+build.py
+=============
+
+Функционал:
+-------------
+
+.. revealjs_fragments::
+    
+    * ``--sql`` собрать базу данных ``Item`` из отчёта
+    
+    * ``--key`` запустить обработку ключевых слов
+    
+    * ``--search`` проиндексировать базу данных ``Item``
+
+    
+Использует:
+-----------
+
+.. revealjs_fragments::
+
+    * ``argparse``   (аргументы запуска)
+    * ``multiprocessing.Pool``
+    * `tqdm <https://github.com/tqdm/tqdm>`_ Progress Bar
+    * `elasticsearch <https://github.com/elastic/elasticsearch-py>`_ для поиска
+    * свой ``ext.Parser``
+    
+Как работает:
+--------------
+
+.. revealjs_fragments::
+
+    * ``--sql`` и ``--key`` последовательно работают, используя ``ext.Parser``
+
+    * ``--search`` работает, запуская пул процессов ``multiprocessing.Pool`` + ``elasticsearch`` для поиска
+
+main.py
+====================
+
+
+flask-admin
+----------------------------------
+
+админка для сайта с поддержкой flask-login
+
+в которой зарегистрированно все модели + Build (для сборки с сайта)
+
+
+.. image:: static/admin.png
+    :height: 100px
+
+
+.. image:: static/admin_build.png
+    :height: 100px
+
+
+
+поиск
+----------------------------------
+
+использует:
+
+.. revealjs_fragments::
+    
+    * @app.before_request запускается перед любым запросом
+    * api (api/search)
+    * ajax (для realtime обновления)
+    * SearchForm (flask-wtf) форма для поиска
+
+.. image:: static/search.png
+    :height: 100px
+
+контакты
+----------------------------------
+
+использует: yandex-map-js
+
+.. revealjs_fragments::
+    
+    *  добавленны метки
+    *  информация на клик (картинка, контакты) 
+    *  позиционирование по центру
+
+.. image:: static/map.png
+    :height: 300px
+
+
+
+отображение товаров
+--------------------
+
+использует bootstrap (v4) card
+
+шаблон item.html получает список объктов
+
+.. image:: static/items.png
+    :height: 300px
+
+INI
+-----
+
+форма которая помогает состовлять новые ключевые слова
+
+.. revealjs_fragments::
+
+    * красный - только ini
+    * зелёный - ini и regex
+    * жёлтый - только regex
+
+.. image:: static/ini.png
+    :height: 300px
+
+
+api
+=====
+
+Items id=? 
+-----------------
+
+получение товаров по id=?  
+
+.. code-block:: javascript
+
+    // http://dom59reg.ru/api/items?id=4643
+    {
+      "item": {
+        "Смеситель д/р ORCA \"Тулон\" ORC2421H14": {
+          "cost": 1991,
+          "id": 4643,
+          "count": 2,
+          "img": "first.jpg"
+        }
+      },
+      "path": [
+        "Сантехника (отдел)",
+        "Смеситель",
+        "Смеситель для раковины"
+      ]
+    }
+
+
+Items path=?
+------------------------
+получение товаров по path=?
+
+.. code-block:: javascript
+
+    // http://dom59reg.ru/api/items?path=1.1.1
+    {
+      "items": {
+        "Смеситель д/р ORCA \"Тулон\" ORC2421H14": {
+          "cost": 1991,
+          "id": 4643,
+          "count": 2,
+          "img": "first.jpg"
+        },
+        // ...
+      },
+      "path": [
+        "Сантехника (отдел)",
+        "Смеситель",
+        "Смеситель для раковины"
+      ]
+    }
+
+Search
+-------------
+
+поиск по слову
+
+.. code-block:: javascript
+
+    // http://dom59reg.ru/api/search?q=Рук
+    {
+      "items": {
+        "Крем д/рук Силиконовый 75мл.": {
+          "cost": 30,
+          "id": 7365,
+          "count": 7,
+          "img": "not.png"
+        },
+        // ...
+      }
+    }
+
+GoBuild
+----------
+
+запуск build.py из админки
+
+/api/gobuild?build_args=sql

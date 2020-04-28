@@ -6,6 +6,45 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#key').click(function(){
+            $.ajax({
+                type: 'GET',
+                url: '/api/gobuild?build_args=key',
+                success: function(data) {
+                    alert(data);
+                }
+            });
+   		});
+
+
+   		$('#search').click(function(){
+            $.ajax({
+                type: 'GET',
+                url: '/api/gobuild?build_args=search',
+                success: function(data) {
+                    alert(data);
+                }
+            });
+   		});
+
+   		$('#sql').click(function(){
+            $.ajax({
+                type: 'GET',
+                url: '/api/gobuild?build_args=sql',
+                success: function(data) {
+                    alert(data);
+                }
+            });
+   		});
+
+
+
+});
+</script>
+
+
 
 <title>Upload File</title>
 <h1>Upload 1c file</h1>
@@ -15,9 +54,13 @@
      {% for error in form.file.errors %}
          <span style="color: red;">{{ error }}</span>
      {% endfor %}
-     {{ form.submit }}
+     {{ form.submit(class="btn btn-success", id="sql") }}
 </form>
 
+
+	<button type="button" class="btn btn-success" id="key">ключевые слова</button>
+
+	<button type="button" class="btn btn-primary" id='search'>поиск</button>
 
 
 {% endblock body %}
