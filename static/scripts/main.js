@@ -1,13 +1,13 @@
 function loadSubcat(obj) {
-    let id = $(obj)[0]["name"];
-    let $obb = $($("div.undercat")[id-1]);
+    let cat_id = $(obj)[0]["name"];
+    let $obb = $($("div.undercat")[cat_id-1]);
     console.log($obb);
 
     $.ajax({
         type: "GET",
         url: "/api/category",
         data: {
-            "path": id,
+            "path": cat_id,
         },
         beforeSend: function() {
             $obb.html("<img src='static/img/load.gif'>");
@@ -16,7 +16,7 @@ function loadSubcat(obj) {
             $obb.html("");
             let subcat = list_of_messages["categories"];
             for(let id in subcat) {
-                $obb.append("<a href='/items/"+id+"'>"/*+id+": "*/+subcat[id]+"</a>");
+                $obb.append("<a href='/items/"+cat_id+"."+id+"'>"/*+id+": "*/+subcat[id]+"</a>");
             }
         },
         error: function(error) {
