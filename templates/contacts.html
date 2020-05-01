@@ -76,10 +76,29 @@ var myPlacemark4 = new ymaps.Placemark([58.035935, 56.143232], {
     preset: 'islands#redIcon',
 });
 
+
+var myPlacemark5 = new ymaps.Placemark([58.008634, 56.247823], {
+    balloonContentHeader: 'Пушкина, 23',
+    balloonContentBody: [
+        'Почта: pushkin23dom6@mail.ru',
+        '<br/>',
+        'Телефон: 233-47-07',
+        '<br/>',
+        '<img width="300px" src="https://i1.photo.2gis.com/images/branch/16/2251799832218432_5fc5.jpg" />'
+    ].join(''),
+    iconCaption: 'Пушкина, 23',
+    }, {
+    preset: 'islands#redIcon',
+});
+
+
+
         myMap.geoObjects.add(myPlacemark1);
         myMap.geoObjects.add(myPlacemark2);
         myMap.geoObjects.add(myPlacemark3);
         myMap.geoObjects.add(myPlacemark4);
+        myMap.geoObjects.add(myPlacemark5);
+
 
         myMap.setBounds(myMap.geoObjects.getBounds(), {checkZoomRange:true})
         .then(function() {
@@ -126,7 +145,7 @@ var myPlacemark4 = new ymaps.Placemark([58.035935, 56.143232], {
       <tr>
         <td>Пушкина, 23</td>
         <td>233-47-07</td>
-        <td>**@mail.ru</td>
+        <td>pushkin23dom6@mail.ru</td>
       </tr>
     </tbody>
   </table>

@@ -356,7 +356,14 @@ def item(path):
     )
     if response.status_code == 200:
         if path.startswith("1.2"):
-            return render_template("item_table.html", data=response.json())
+            response_json = response.json()
+            for name in response_json["items"]:
+                r = [int(s) for s in name.split() if s.isdigit()]
+                if len(r) == 1 and r[0] < 500:
+                    response_json["items"][name]["len"] = r[0]
+                else:
+                    response_json["items"][name]["len"] = "-"
+            return render_template("item_table.html", data=response_json)
         return render_template("item.html", data=response.json())
     return not_found(response.status_code)
 
