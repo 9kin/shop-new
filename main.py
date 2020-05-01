@@ -300,36 +300,6 @@ def ini():
     return render_template("table.html", form=form, menu=menu_map, data=item)
 
 
-class Category(Resource):
-    def get(self):
-        args = parser.parse_args()
-        if args["path"] == "":
-            return jsonify(categories=menu_map, name="")
-        elif args["path"] is not None:
-            json_obj = {}
-            i = 1
-
-            while f'{args["path"]}.{i}' in menu_map:
-                json_obj[i] = menu_map[f'{args["path"]}.{i}']
-                i += 1
-            i -= 1
-            path_list = []
-            prev = ""
-            first = True
-            for i in args["path"].split("."):
-                if first:
-                    first = False
-                else:
-                    prev += "."
-                prev += str(i)
-                if prev in menu_map:
-                    path_list.append(menu_map[prev])
-                else:
-                    return not_found(404)
-            return jsonify(categories=json_obj, name=path_list)
-        return not_found(404)
-
-
 class GoBuild(Resource):
     def get(self):
         args = parser.parse_args()
@@ -375,7 +345,6 @@ def search_route():
 
 
 api.add_resource(Items, "/api/items")
-api.add_resource(Category, "/api/category")
 api.add_resource(Search, "/api/search")
 api.add_resource(GoBuild, "/api/gobuild")
 
@@ -393,29 +362,6 @@ def item(path):
 
 
 @app.route("/")
-@app.route("/index")
-def index():
-    with open("categories.json", "rt", encoding="utf8") as file:
-        categories = json.loads(file.read())
-    return render_template("index.html", categories=categories)
-
-
-@app.route("/api/category", methods=["GET"])
-def get_category():
-    for _ in range(1000000):
-        pass
-    path = parser.parse_args()["path"]
-    response = requests.get(
-        f"http://localhost:{config.port}/api/category?path=" + path
-    )
-
-    if response.status_code == 200:
-        return jsonify(response.json())
-    return make_response(
-        jsonify({"error code": response.status_code}), response.status_code
-    )
-
-
 @app.route("/contacts")
 def contacts():
     return render_template("contacts.html")
