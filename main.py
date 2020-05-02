@@ -319,7 +319,7 @@ class GoBuild(Resource):
 
 
 class SearchForm(FlaskForm):
-    q = StringField("Search", validators=[DataRequired()])
+    q = StringField("поиск товара", validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
         if "formdata" not in kwargs:
@@ -368,6 +368,15 @@ def item(path):
     return not_found(response.status_code)
 
 
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, "static", "img"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+    )
+    
 @app.route("/")
 @app.route("/contacts")
 def contacts():
@@ -379,13 +388,9 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory(
-        os.path.join(app.root_path, "static", "img"),
-        "favicon.ico",
-        mimetype="image/vnd.microsoft.icon",
-    )
+@app.route("/stock")
+def stock():
+    return render_template("stock.html")
 
 
 if __name__ == "__main__":

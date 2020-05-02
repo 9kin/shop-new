@@ -151,5 +151,3 @@ header nav {
 input#nav-button:checked ~ nav {
     display: flex !important;
 }
-    
-}
