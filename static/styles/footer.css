@@ -1,0 +1,8 @@
+footer {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #ccd;
+    color: #333;
+    grid-column-start: 1;
+    grid-column-end: span 2;
+}

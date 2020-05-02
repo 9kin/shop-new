@@ -369,6 +369,10 @@ def item(path):
 
 
 @app.route("/")
+def index():
+    return render_template("index.html")
+
+
 @app.route("/contacts")
 def contacts():
     return render_template("contacts.html")
