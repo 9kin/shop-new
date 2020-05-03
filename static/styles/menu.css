@@ -2,6 +2,11 @@
     --border-color: #55f0;
 }
 
+nav.main-menu {
+    grid-row-start: 2;
+    grid-row-end: span 2;
+}
+
 nav.main-menu > ul {
     border-radius: 10px;
     overflow: hidden;

@@ -23,7 +23,7 @@ body {
     margin: 0;
     display: grid;
     grid-template-columns: 300px auto;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
     background-color: var(--body-bg);
 }
 
@@ -42,6 +42,10 @@ header {
     flex-direction: row;
     align-items: stretch;
     justify-content: space-between;
+}
+
+header div.container-fluid {
+    width: 30vw;
 }
 
 header div.logo {
