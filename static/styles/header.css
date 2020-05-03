@@ -44,11 +44,8 @@ header {
     justify-content: space-between;
 }
 
-header div.container-fluid {
-    width: 30vw;
-}
-
 header div.logo {
+    flex-grow: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -97,7 +94,8 @@ header label svg {
     fill: var(--search-text-color);
 }
 
-header nav {
+header > nav {
+    flex-grow: 1;
     display: flex !important;
     flex-direction: row;
     align-items: center;
@@ -106,6 +104,8 @@ header nav {
 }
 
 header a {
+    font-size: 1.3em;
+    letter-spacing: .1em;
     flex-shrink: 0;
     margin: 0 10px;
     color: var(--menu-text-color);
@@ -137,7 +137,7 @@ label.mobile-tap {
     display: flex !important;
 }
 
-header nav {
+header > nav {
     display: none !important;
     
     position: fixed;
