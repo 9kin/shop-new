@@ -152,7 +152,6 @@ session = db.create_session()
 admin.add_view(MyModelView(Item, session))
 admin.add_view(MyModelView(Image, session))
 admin.add_view(MyModelView(User, session))
-# admin.add_view(MyModelView(Build, session))
 admin.add_view(Build(name="Build"))
 
 
@@ -166,11 +165,13 @@ for el in menu:
 
 parser = reqparse.RequestParser()
 parser.add_argument("id")
-parser.add_argument("limit")
-parser.add_argument("offset")
 parser.add_argument("path")
+parser.add_argument("sortby")
+
+parser.add_argument("path")
+
 parser.add_argument("q")
-parser.add_argument("path")
+
 parser.add_argument("build_args")
 
 
@@ -211,11 +212,37 @@ class Items(Resource):
         all_items = (
             session.query(Item).filter(Item.group == args["path"]).all()
         )
+
         if all_items is None:
             return not_found(404)
         json_objects = {}
         for item in all_items:
             json_objects[item.name] = item_to_json(item)[item.name]
+
+        """
+        d - по убыванию цены
+        i - по возрастанию цены
+        c - по количеству
+        a - по алфавиту
+        """
+        if args["sortby"] is None or args["sortby"] == "d":
+            json_objects = sorted(
+                json_objects.items(), key=lambda x: x[1]["cost"], reverse=True
+            )
+            json_objects = {k: v for k, v in json_objects}
+        elif args["sortby"] == "i":
+            json_objects = sorted(
+                json_objects.items(), key=lambda x: x[1]["cost"]
+            )
+            json_objects = {k: v for k, v in json_objects}
+        elif args["sortby"] == "a":
+            json_objects = sorted(json_objects.items(), key=lambda x: x[0])
+            json_objects = {k: v for k, v in json_objects}
+        elif args["sortby"] == "c":
+            json_objects = sorted(
+                json_objects.items(), key=lambda x: x[1]["count"], reverse=True
+            )
+            json_objects = {k: v for k, v in json_objects}
 
         path_list = []
         prev = ""
@@ -351,9 +378,13 @@ api.add_resource(GoBuild, "/api/gobuild")
 
 @app.route("/items/<string:path>")
 def item(path):
+    args = parser.parse_args()
+    args["path"] = path
+
     response = requests.get(
-        f"http://localhost:{config.port}/api/items?path={path}"
+        f"http://localhost:{config.port}/api/items", params=args,
     )
+    print(response.url)
     if response.status_code == 200:
         if path.startswith("1.2"):
             response_json = response.json()
@@ -368,7 +399,6 @@ def item(path):
     return not_found(response.status_code)
 
 
-
 @app.route("/favicon.ico")
 def favicon():
     return send_from_directory(
@@ -376,7 +406,8 @@ def favicon():
         "favicon.ico",
         mimetype="image/vnd.microsoft.icon",
     )
-    
+
+
 @app.route("/")
 @app.route("/contacts")
 def contacts():
