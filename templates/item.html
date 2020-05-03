@@ -3,11 +3,9 @@
 
 {% block content %}
 
-
-{% import "message.html" as  message %}{{ message.main() }}
-
 <main>
 
+    {% import "message.html" as  message %}{{ message.main() }}
 
     <link rel="stylesheet" href="/static/styles/item.css">
     <script src="/static/scripts/item.js"></script>
@@ -29,6 +27,17 @@
         {% endif %}
     {% endfor %}
     </div>
+
+    <form action="" method="GET">
+        <label for="">Сортировать по:</label>
+        <select id="sortby" name="sortby">
+            <option {% if sortby == "d" %} selected {% endif %} value="d">Убыванию цены</option>
+            <option {% if sortby == "i" %} selected {% endif %} value="i">По возрастанию цены</option>
+            <option {% if sortby == "c" %} selected {% endif %} value="c">По количеству</option>
+            <option {% if sortby == "a" %} selected {% endif %} value="a">По алфовиту</option>
+        </select>
+        <input type="submit">
+    </form>
 
     <div class="container">
     {% for line in range(0, data|length, 4) %}
