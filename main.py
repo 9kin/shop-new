@@ -384,7 +384,6 @@ def item(path):
     response = requests.get(
         f"http://localhost:{config.port}/api/items", params=args,
     )
-    print(response.url)
     if response.status_code == 200:
         if path.startswith("1.2"):
             response_json = response.json()
@@ -394,8 +393,8 @@ def item(path):
                     response_json["items"][name]["len"] = r[0]
                 else:
                     response_json["items"][name]["len"] = "-"
-            return render_template("item_table.html", data=response_json)
-        return render_template("item.html", data=response.json())
+            return render_template("item_table.html", data=response_json, sortby=args["sortby"])
+        return render_template("item.html", data=response.json(), sortby=args["sortby"])
     return not_found(response.status_code)
 
 

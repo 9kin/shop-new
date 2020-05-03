@@ -78,6 +78,5 @@ def query_index(index, query):
             "size": 1000,
         },
     )
-    print(search)
     ids = [int(hit["_id"]) for hit in search["hits"]["hits"]]
     return ids, search["hits"]["total"]
