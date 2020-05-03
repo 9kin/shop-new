@@ -73,8 +73,17 @@ def query_index(index, query):
         index=index,
         doc_type=index,
         body={
-            "query": {"multi_match": {"query": query, "fields": ["*"]}},
-            "from": 0,
+            "query": {
+                "query_string": {
+                    "query": query,
+                    "default_operator": "AND",
+                    "fields": [
+                        "name"
+                    ],
+                    "fuzziness" : 2,
+                }
+            },
+            "from": 0, 
             "size": 1000,
         },
     )

@@ -393,8 +393,12 @@ def item(path):
                     response_json["items"][name]["len"] = r[0]
                 else:
                     response_json["items"][name]["len"] = "-"
-            return render_template("item_table.html", data=response_json, sortby=args["sortby"])
-        return render_template("item.html", data=response.json(), sortby=args["sortby"])
+            return render_template(
+                "item_table.html", data=response_json, sortby=args["sortby"]
+            )
+        return render_template(
+            "item.html", data=response.json(), sortby=args["sortby"]
+        )
     return not_found(response.status_code)
 
 
