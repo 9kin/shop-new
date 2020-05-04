@@ -23,6 +23,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import (
+    SelectField,
     PasswordField,
     StringField,
     SubmitField,
@@ -30,6 +31,7 @@ from wtforms import (
     form,
     validators,
 )
+from wtforms.validators import Optional
 from wtforms.validators import DataRequired
 
 import data.db_session as db
@@ -376,8 +378,24 @@ api.add_resource(Search, "/api/search")
 api.add_resource(GoBuild, "/api/gobuild")
 
 
-@app.route("/items/<string:path>")
-def item(path):
+class SelectForm(FlaskForm):
+    sort = SelectField(
+        "Programming Language",
+        choices=[
+            ("d", "По убыванию цены"),
+            ("i", "По возрастанию цены"),
+            ("c", "По количеству"),
+            ("a", "По алфовиту"),
+        ],
+    )
+    submit = SubmitField("сортировать")
+
+
+@app.route("/items/<string:path>", methods=["GET", "POST"])
+def item(path, sortby="i"):
+    form = SelectForm()
+    if form.validate_on_submit():
+        return redirect(url_for("item", path=path, sortby=form.sort.data))
     args = parser.parse_args()
     args["path"] = path
 
@@ -393,12 +411,8 @@ def item(path):
                     response_json["items"][name]["len"] = r[0]
                 else:
                     response_json["items"][name]["len"] = "-"
-            return render_template(
-                "item_table.html", data=response_json, sortby=args["sortby"]
-            )
-        return render_template(
-            "item.html", data=response.json(), sortby=args["sortby"]
-        )
+            return render_template("item_table.html", data=response_json)
+        return render_template("item.html", data=response.json(), form=form)
     return not_found(response.status_code)
 
 

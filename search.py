@@ -77,13 +77,11 @@ def query_index(index, query):
                 "query_string": {
                     "query": query,
                     "default_operator": "AND",
-                    "fields": [
-                        "name"
-                    ],
-                    "fuzziness" : 2,
+                    "fields": ["name"],
+                    "fuzziness": 2,
                 }
             },
-            "from": 0, 
+            "from": 0,
             "size": 1000,
         },
     )
