@@ -23,16 +23,15 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import (
-    SelectField,
     PasswordField,
+    SelectField,
     StringField,
     SubmitField,
     TextAreaField,
     form,
     validators,
 )
-from wtforms.validators import Optional
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 import data.db_session as db
 import ext
@@ -368,7 +367,7 @@ def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
     response = requests.get(
-        f"http://localhost:{config.port}/api/search?q={g.search_form.q.data}"
+        f"{request.host_url}/api/search?q={g.search_form.q.data}"
     )
     return render_template("item.html", data=response.json())
 
@@ -392,16 +391,14 @@ class SelectForm(FlaskForm):
 
 
 @app.route("/items/<string:path>", methods=["GET", "POST"])
-def item(path, sortby="i"):
+def item(path):
     form = SelectForm()
     if form.validate_on_submit():
         return redirect(url_for("item", path=path, sortby=form.sort.data))
     args = parser.parse_args()
     args["path"] = path
 
-    response = requests.get(
-        f"http://localhost:{config.port}/api/items", params=args,
-    )
+    response = requests.get(f"{request.host_url}/api/items", params=args,)
     if response.status_code == 200:
         if path.startswith("1.2"):
             response_json = response.json()
