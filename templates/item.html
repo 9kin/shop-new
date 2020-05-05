@@ -28,16 +28,22 @@
     {% endfor %}
     </div>
 
+    {% if sortby != "pd" %}
+    <a href="{{ request.path + '?sortby=pd'}}">
+        <i class="fas fa-chevron-up">
+            <span>По цене</span>
+        </i>
+    </a>
+    {% else %}
+    <a href="{{ request.path + '?sortby=pi'}}">
+        <i class="fas fa-chevron-down">
+            <span>По цене</span>
+        </i>
+    </a>
+    {% endif %}
 
-    
 
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.sort(class="form-control form-control-sm") }}
-
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    </form>
-    
+   
 
     <div class="container">
     {% for line in range(0, data|length, 4) %}

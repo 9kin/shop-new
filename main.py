@@ -221,29 +221,32 @@ class Items(Resource):
             json_objects[item.name] = item_to_json(item)[item.name]
 
         """
-        d - по убыванию цены
-        i - по возрастанию цены
-        c - по количеству
-        a - по алфавиту
+        _d - по убыванию (reverse=True)
+        _i - по возрастанию (reverse=False)
+        
+
+        pd - по убыванию цены
+        pi - по возрастанию цены
+        
+        cd - по убыванию количества
+        ci - по возрастанию количества
+
+        a(d/i) - по алфавиту
+
         """
-        if args["sortby"] is None or args["sortby"] == "d":
-            json_objects = sorted(
-                json_objects.items(), key=lambda x: x[1]["cost"], reverse=True
-            )
-            json_objects = {k: v for k, v in json_objects}
-        elif args["sortby"] == "i":
-            json_objects = sorted(
-                json_objects.items(), key=lambda x: x[1]["cost"]
-            )
-            json_objects = {k: v for k, v in json_objects}
-        elif args["sortby"] == "a":
-            json_objects = sorted(json_objects.items(), key=lambda x: x[0])
-            json_objects = {k: v for k, v in json_objects}
-        elif args["sortby"] == "c":
-            json_objects = sorted(
-                json_objects.items(), key=lambda x: x[1]["count"], reverse=True
-            )
-            json_objects = {k: v for k, v in json_objects}
+
+        scheme = {
+            "pd": (lambda x: x[1]["cost"], True),
+            "pi": (lambda x: x[1]["cost"], False),
+            "cd": (lambda x: x[1]["count"], True),
+            "ci": (lambda x: x[1]["count"], False),
+            "ad": (lambda x: x[0], True),
+            "ai": (lambda x: x[0], False),
+            None: (lambda x: x[1]["cost"], True),
+        }
+        cur = scheme[args["sortby"]]
+        json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
+        json_objects = {k: v for k, v in json_objects}
 
         path_list = []
         prev = ""
@@ -377,28 +380,13 @@ api.add_resource(Search, "/api/search")
 api.add_resource(GoBuild, "/api/gobuild")
 
 
-class SelectForm(FlaskForm):
-    sort = SelectField(
-        "Programming Language",
-        choices=[
-            ("d", "По убыванию цены"),
-            ("i", "По возрастанию цены"),
-            ("c", "По количеству"),
-            ("a", "По алфавиту"),
-        ],
-    )
-    submit = SubmitField("сортировать")
-
-
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
-    form = SelectForm()
-    if form.validate_on_submit():
-        return redirect(url_for("item", path=path, sortby=form.sort.data))
+
     args = parser.parse_args()
     args["path"] = path
 
-    response = requests.get(f"{request.host_url}/api/items", params=args,)
+    response = requests.get(f"{request.host_url}/api/items", params=args)
     if response.status_code == 200:
         if path.startswith("1.2"):
             response_json = response.json()
@@ -409,7 +397,10 @@ def item(path):
                 else:
                     response_json["items"][name]["len"] = "-"
             return render_template("item_table.html", data=response_json)
-        return render_template("item.html", data=response.json(), form=form)
+
+        return render_template(
+            "item.html", data=response.json(), form=form, sortby=args["sortby"]
+        )
     return not_found(response.status_code)
 
 
@@ -439,4 +430,4 @@ def stock():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=80)
