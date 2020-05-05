@@ -439,4 +439,4 @@ def stock():
 
 
 if __name__ == "__main__":
-    app.run(port=config.port, host="0.0.0.0")
+    app.run(host="0.0.0.0")
