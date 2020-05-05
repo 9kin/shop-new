@@ -18,18 +18,24 @@ i {
     font-family: "Font Awesome 5 Pro" !important;
 }
 
+html {
+    height: 100vh;
+}
+
 body {
     padding: 0;
     margin: 0;
     display: grid;
     grid-template-columns: 300px auto;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: repeate(4, auto);
     background-color: var(--body-bg);
+    min-height: 100%;
 }
 
 header {
     grid-column-start: 1;
     grid-column-end: span 2;
+    align-self: start;
 
     padding: 10px;
     margin: 0;
