@@ -23,16 +23,15 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import (
-    SelectField,
     PasswordField,
+    SelectField,
     StringField,
     SubmitField,
     TextAreaField,
     form,
     validators,
 )
-from wtforms.validators import Optional
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 import data.db_session as db
 import ext
@@ -222,29 +221,32 @@ class Items(Resource):
             json_objects[item.name] = item_to_json(item)[item.name]
 
         """
-        d - по убыванию цены
-        i - по возрастанию цены
-        c - по количеству
-        a - по алфавиту
+        _d - по убыванию (reverse=True)
+        _i - по возрастанию (reverse=False)
+        
+
+        pd - по убыванию цены
+        pi - по возрастанию цены
+        
+        cd - по убыванию количества
+        ci - по возрастанию количества
+
+        a(d/i) - по алфавиту
+
         """
-        if args["sortby"] is None or args["sortby"] == "d":
-            json_objects = sorted(
-                json_objects.items(), key=lambda x: x[1]["cost"], reverse=True
-            )
-            json_objects = {k: v for k, v in json_objects}
-        elif args["sortby"] == "i":
-            json_objects = sorted(
-                json_objects.items(), key=lambda x: x[1]["cost"]
-            )
-            json_objects = {k: v for k, v in json_objects}
-        elif args["sortby"] == "a":
-            json_objects = sorted(json_objects.items(), key=lambda x: x[0])
-            json_objects = {k: v for k, v in json_objects}
-        elif args["sortby"] == "c":
-            json_objects = sorted(
-                json_objects.items(), key=lambda x: x[1]["count"], reverse=True
-            )
-            json_objects = {k: v for k, v in json_objects}
+
+        scheme = {
+            "pd": (lambda x: x[1]["cost"], True),
+            "pi": (lambda x: x[1]["cost"], False),
+            "cd": (lambda x: x[1]["count"], True),
+            "ci": (lambda x: x[1]["count"], False),
+            "ad": (lambda x: x[0], True),
+            "ai": (lambda x: x[0], False),
+            None: (lambda x: x[1]["cost"], True),
+        }
+        cur = scheme[args["sortby"]]
+        json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
+        json_objects = {k: v for k, v in json_objects}
 
         path_list = []
         prev = ""
@@ -368,7 +370,7 @@ def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
     response = requests.get(
-        f"http://localhost:{config.port}/api/search?q={g.search_form.q.data}"
+        f"{request.host_url}/api/search?q={g.search_form.q.data}"
     )
     return render_template("item.html", data=response.json())
 
@@ -378,30 +380,13 @@ api.add_resource(Search, "/api/search")
 api.add_resource(GoBuild, "/api/gobuild")
 
 
-class SelectForm(FlaskForm):
-    sort = SelectField(
-        "Programming Language",
-        choices=[
-            ("d", "По убыванию цены"),
-            ("i", "По возрастанию цены"),
-            ("c", "По количеству"),
-            ("a", "По алфавиту"),
-        ],
-    )
-    submit = SubmitField("сортировать")
-
-
 @app.route("/items/<string:path>", methods=["GET", "POST"])
-def item(path, sortby="i"):
-    form = SelectForm()
-    if form.validate_on_submit():
-        return redirect(url_for("item", path=path, sortby=form.sort.data))
+def item(path):
+
     args = parser.parse_args()
     args["path"] = path
 
-    response = requests.get(
-        f"http://localhost:{config.port}/api/items", params=args,
-    )
+    response = requests.get(f"{request.host_url}/api/items", params=args)
     if response.status_code == 200:
         if path.startswith("1.2"):
             response_json = response.json()
@@ -412,7 +397,14 @@ def item(path, sortby="i"):
                 else:
                     response_json["items"][name]["len"] = "-"
             return render_template("item_table.html", data=response_json)
-        return render_template("item.html", data=response.json(), form=form)
+
+
+        if args["sortby"] is None:
+            args["sortby"] = "pd"
+        
+        return render_template(
+            "item.html", data=response.json(), form=form, sortby=args["sortby"]
+        )
     return not_found(response.status_code)
 
 
@@ -442,4 +434,4 @@ def stock():
 
 
 if __name__ == "__main__":
-    app.run(port=config.port, host="0.0.0.0")
+    app.run(host="0.0.0.0", port=80)
