@@ -28,6 +28,9 @@
     {% endfor %}
     </div>
 
+
+    
+
     {% if sortby != "pd" %}
     <a href="{{ request.path + '?sortby=pd'}}">
         <i class="fas fa-chevron-up">
@@ -43,22 +46,51 @@
     {% endif %}
 
 
-   
+    {% if sortby != "ad" %}
+    <a href="{{ request.path + '?sortby=ad'}}">
+        <i class="fas fa-chevron-up">
+            <span>по алфавиту</span>
+        </i>
+    </a>
+    {% else %}
+    <a href="{{ request.path + '?sortby=ai'}}">
+        <i class="fas fa-chevron-down">
+            <span>по алфавиту</span>
+        </i>
+    </a>
+    {% endif %}
 
+
+    {% if sortby != "cd" %}
+    <a href="{{ request.path + '?sortby=cd'}}">
+        <i class="fas fa-chevron-up">
+            <span>По количества</span>
+        </i>
+    </a>
+    {% else %}
+    <a href="{{ request.path + '?sortby=ci'}}">
+        <i class="fas fa-chevron-down">
+            <span>По количества</span>
+        </i>
+    </a>
+    {% endif %}
+   
+    <i class="fas fa-th"></i>
+    <i class="fas fa-list"></i>
+    <i class="fas fa-bars"></i>
+    
     <div class="container">
     {% for line in range(0, data|length, 4) %}
         <!--<div class="card-deck">-->
         {% for item in range(4) %}
             {% if line + item < data|length %}
                 <div class="card">
-                    <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' +data[keys[line + item]]['img']) }}" alt="Card image cap">
+                    <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[keys[line + item]]['img']) }}" alt="Card image cap">
                     <div class="card-body">
                         <i class="fas fa-faucet"></i>
-                            <h5 class="card-title">{{ keys[line + item] }}</h5>
-                            <p class="card-text">{{ data[keys[line + item]]['cost'] }} Осталось {{ data[keys[line + item]]['count'] }}</p>
-                            <div class="text-center">
-                                <a href="#" class="btn"></a>
-                            </div>
+                            <h6 class="card-title">{{ keys[line + item] }}</h5>
+                            <p class="card-text text-center"> Осталось {{ data[keys[line + item]]['count'] }}</p>
+                            <p class="card-text text-center"><b>{{ data[keys[line + item]]['cost'] }}</b></p>
                     </div>
                 </div>
             {% endif %}

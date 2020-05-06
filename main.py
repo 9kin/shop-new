@@ -398,6 +398,10 @@ def item(path):
                     response_json["items"][name]["len"] = "-"
             return render_template("item_table.html", data=response_json)
 
+
+        if args["sortby"] is None:
+            args["sortby"] = "pd"
+        
         return render_template(
             "item.html", data=response.json(), form=form, sortby=args["sortby"]
         )
