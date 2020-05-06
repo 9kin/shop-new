@@ -24,7 +24,7 @@ main * {
     overflow: hidden;
 }
 
-main div.container {
+main div.contain {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -33,7 +33,7 @@ main div.container {
     overflow: visible;
 }
 
-main div.container::after {
+main div.contain::after {
     content: "";
     flex: auto;
 }
