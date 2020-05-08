@@ -24,6 +24,10 @@ main * {
     overflow: hidden;
 }
 
+main .sort-checked {
+    color: red;
+}
+
 main div.contain {
     display: flex;
     flex-direction: row;

@@ -28,56 +28,80 @@
     {% endfor %}
     </div>
 
+    <div class="items-panel">
+        <div class="sortby-block">
 
-    
-
-    {% if sortby != "pd" %}
-    <a href="{{ request.path + '?sortby=pd'}}">
-        <i class="fas fa-chevron-up">
-            <span>По цене</span>
-        </i>
-    </a>
-    {% else %}
-    <a href="{{ request.path + '?sortby=pi'}}">
-        <i class="fas fa-chevron-down">
-            <span>По цене</span>
-        </i>
-    </a>
-    {% endif %}
-
-
-    {% if sortby != "ad" %}
-    <a href="{{ request.path + '?sortby=ad'}}">
-        <i class="fas fa-chevron-up">
-            <span>по алфавиту</span>
-        </i>
-    </a>
-    {% else %}
-    <a href="{{ request.path + '?sortby=ai'}}">
-        <i class="fas fa-chevron-down">
-            <span>по алфавиту</span>
-        </i>
-    </a>
-    {% endif %}
+            {% if sortby == "pd" %}
+            <a href="{{ request.path + '?sortby=pi'}}" class="sort-checked">
+                <i class="fas fa-chevron-up">
+                    <span>По цене</span>
+                </i>
+            </a>
+            {% elif sortby == "pi" %}
+            <a href="{{ request.path + '?sortby=pd'}}" class="sort-checked">
+                <i class="fas fa-chevron-down">
+                    <span>По цене</span>
+                </i>
+            </a>
+            {% else %}
+            <a href="{{ request.path + '?sortby=pd'}}">
+                <i class="fas fa-chevron-up">
+                    <span>По цене</span>
+                </i>
+            </a>
+            {% endif %}
 
 
-    {% if sortby != "cd" %}
-    <a href="{{ request.path + '?sortby=cd'}}">
-        <i class="fas fa-chevron-up">
-            <span>По количества</span>
-        </i>
-    </a>
-    {% else %}
-    <a href="{{ request.path + '?sortby=ci'}}">
-        <i class="fas fa-chevron-down">
-            <span>По количества</span>
-        </i>
-    </a>
-    {% endif %}
-   
-    <i class="fas fa-th"></i>
-    <i class="fas fa-list"></i>
-    <i class="fas fa-bars"></i>
+            {% if sortby == "ad" %}
+            <a href="{{ request.path + '?sortby=ai'}}" class="sort-checked">
+                <i class="fas fa-chevron-up">
+                    <span>По алфавиту</span>
+                </i>
+            </a>
+            {% elif sortby == "ai" %}
+            <a href="{{ request.path + '?sortby=ad'}}" class="sort-checked">
+                <i class="fas fa-chevron-down">
+                    <span>По алфавиту</span>
+                </i>
+            </a>
+            {% else %}
+            <a href="{{ request.path + '?sortby=ad'}}">
+                <i class="fas fa-chevron-up">
+                    <span>По алфавиту</span>
+                </i>
+            </a>
+            {% endif %}
+
+
+            {% if sortby == "cd" %}
+            <a href="{{ request.path + '?sortby=ci'}}" class="sort-checked">
+                <i class="fas fa-chevron-up">
+                    <span>По количеству</span>
+                </i>
+            </a>
+            {% elif sortby == "ci" %}
+            <a href="{{ request.path + '?sortby=cd'}}" class="sort-checked">
+                <i class="fas fa-chevron-down">
+                    <span>По количеству</span>
+                </i>
+            </a>
+            {% else %}
+            <a href="{{ request.path + '?sortby=cd'}}">
+                <i class="fas fa-chevron-up">
+                    <span>По количеству</span>
+                </i>
+            </a>
+            {% endif %}
+
+        </div>
+       
+        <div class="view-block">
+            <a href=""><i class="fas fa-th"></i></a>
+            <a href=""><i class="fas fa-list"></i></a>
+            <a href=""><i class="fas fa-bars"></i></a>
+        </div>
+
+    </div>
     
     <div class="contain">
     {% for line in range(0, data|length, 4) %}
