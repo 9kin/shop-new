@@ -8,32 +8,7 @@
     {% set keys = data['items'].keys()|list %}
     {% set data = data['items'] %}
 
-    <div class="path">
-    {% for item in path %}
-        {% if loop.first %}
-        {% else %}
-            <span>></span>
-        {% endif %}
-        {% if loop.last %}
-            <span>{{ item }}</span>
-        {% else %}
-            <a href="#">{{ item }}</a>
-        {% endif %}
-    {% endfor %}
-    </div>
-
-    {% import "message.html" as  message %}{{ message.main() }}
-
-    <form action="" method="GET">
-        <label for="">Сортировать по:</label>
-        <select id="sortby" name="sortby">
-            <option {% if sortby == "d" %} selected {% endif %} value="d">Убыванию цены</option>
-            <option {% if sortby == "i" %} selected {% endif %} value="i">По возрастанию цены</option>
-            <option {% if sortby == "c" %} selected {% endif %} value="c">По количеству</option>
-            <option {% if sortby == "a" %} selected {% endif %} value="a">По алфавиту</option>
-        </select>
-        <input type="submit">
-    </form>
+    {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
 
 <div class="content-table">
   <table class="table">
