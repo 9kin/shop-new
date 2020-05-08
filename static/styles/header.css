@@ -33,6 +33,30 @@ body {
 }
 
 header {
+    grid-column-end: span 2;
+}
+
+header img {
+    max-width: 400px;
+}
+
+header > nav {
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+header div.collapse {
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+}
+
+header a.navbar-brand {
+    flex-shrink: 1 !important;
+}
+
+/*
+
+header {
     grid-column-start: 1;
     grid-column-end: span 2;
     align-self: start;
@@ -165,3 +189,6 @@ header > nav {
 input#nav-button:checked ~ nav {
     display: flex !important;
 }
+
+*/
+

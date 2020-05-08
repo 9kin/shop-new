@@ -6,12 +6,8 @@
 
 
 <header>
-    <div class="logo">
-        <a href="/"><img src="/static/img/logo.png" width="400px"></a>
-        <h1>Сеть магазинов хозяйственных товаров в Перми</h1>
-    </div>
 
-    <input type="checkbox" id="nav-button">
+    <!--<input type="checkbox" id="nav-button">
 
     <label class="mobile-tap" for="nav-button">
         <p>|||</p>
@@ -39,6 +35,44 @@
         <label class="mobile-tap" for="nav-button">
             <p>X</p>
         </label>
+    </nav>-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+                <img src="/static/img/logo.png">
+                <p>Сеть магазинов хозяйственных товаров в Перми</p>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form class="form-inline my-2 my-lg-0" method="get" action="{{ url_for('search_route') }}">
+                <input name="q" class="form-control mr-sm-2" type="search" placeholder="Поиск товара" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+            </form>
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/stock">Акции!</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/contacts">Контакты</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/about">О нас</a>
+                </li>
+                <!--<li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>-->
+            </ul>
+        </div>
     </nav>
 
 
