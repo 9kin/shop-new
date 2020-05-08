@@ -385,6 +385,8 @@ def item(path):
 
     args = parser.parse_args()
     args["path"] = path
+    if args["sortby"] is None:
+        args["sortby"] = "pd"
 
     response = requests.get(f"{request.host_url}/api/items", params=args)
     if response.status_code == 200:
@@ -396,11 +398,10 @@ def item(path):
                     response_json["items"][name]["len"] = r[0]
                 else:
                     response_json["items"][name]["len"] = "-"
-            return render_template("item_table.html", data=response_json)
+            return render_template("item_table.html", data=response_json, sortby=args["sortby"])
 
 
-        if args["sortby"] is None:
-            args["sortby"] = "pd"
+        
         
         return render_template(
             "item.html", data=response.json(), form=form, sortby=args["sortby"]

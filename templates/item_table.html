@@ -8,6 +8,8 @@
     {% set keys = data['items'].keys()|list %}
     {% set data = data['items'] %}
 
+
+    {{ sortby }}
     {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
 
 <div class="content-table">
