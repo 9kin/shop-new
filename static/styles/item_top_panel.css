@@ -16,3 +16,11 @@ div.path > span {
     color: var(--item-path-span-color);
 }
 
+div.items-panel {
+    display: flex;
+    justify-content: space-between;
+}
+
+div.view-block {
+    flex-shrink: 0;
+}
