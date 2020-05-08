@@ -24,3 +24,7 @@ div.items-panel {
 div.view-block {
     flex-shrink: 0;
 }
+
+main .sort-checked {
+    color: red;
+}
