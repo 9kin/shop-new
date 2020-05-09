@@ -62,7 +62,11 @@ function addEvents() {
 }
 
 $(function(){
-    $("input#q")[0].value = "1";
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const q = urlParams.get('q');
+    console.log(q);
+    $("input#q")[0].value = q;
     prev_val = $("input#q")[0].value;
     addEvents();
 });
