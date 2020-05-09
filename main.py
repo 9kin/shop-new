@@ -242,7 +242,7 @@ class Items(Resource):
             "ci": (lambda x: x[1]["count"], False),
             "ad": (lambda x: x[0], True),
             "ai": (lambda x: x[0], False),
-            None: (lambda x: x[1]["cost"], True),
+            None: (lambda x: x[1]["cost"], False),
         }
         cur = scheme[args["sortby"]]
         json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
@@ -268,10 +268,23 @@ class Search(Resource):
             query = search.search(Item, args["q"], session)
             if query is None:
                 return jsonify(items={})
-            json = {}
+            json_objects = {}
             for item in query.all():
-                json[item.name] = item_to_json(item)[item.name]
-            return jsonify(items=json)
+                json_objects[item.name] = item_to_json(item)[item.name]
+            scheme = {
+                "pd": (lambda x: x[1]["cost"], True),
+                "pi": (lambda x: x[1]["cost"], False),
+                "cd": (lambda x: x[1]["count"], True),
+                "ci": (lambda x: x[1]["count"], False),
+                "ad": (lambda x: x[0], True),
+                "ai": (lambda x: x[0], False),
+                None: (lambda x: x[1]["cost"], False),
+            }
+            cur = scheme[args["sortby"]]
+            print(args["sortby"], 'debug')
+            json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
+            json_objects = {k: v for k, v in json_objects}
+            return jsonify(items=json_objects)
         return jsonify({"error": "q Not found"})
 
 
@@ -367,12 +380,17 @@ def before_request():
 
 @app.route("/search")
 def search_route():
+    args = parser.parse_args()
+    if args["sortby"] is None:
+        args["sortby"] = "pi"
+    args['q'] = g.search_form.q.data
+
     if not g.search_form.validate():
         return redirect(url_for("."))
     response = requests.get(
-        f"{request.host_url}/api/search?q={g.search_form.q.data}"
+        f"{request.host_url}/api/search", params=args
     )
-    return render_template("item.html", data=response.json())
+    return render_template("item.html", data=response.json(), sortby=args["sortby"])
 
 
 api.add_resource(Items, "/api/items")
@@ -382,11 +400,10 @@ api.add_resource(GoBuild, "/api/gobuild")
 
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
-
     args = parser.parse_args()
     args["path"] = path
     if args["sortby"] is None:
-        args["sortby"] = "pd"
+        args["sortby"] = "pi"
 
     response = requests.get(f"{request.host_url}/api/items", params=args)
     if response.status_code == 200:

@@ -17,23 +17,31 @@
 {% endfor %}
 </div>
 
+
+{% if request.path == "/search" %}
+    {% set url = request.path + '?q=' + request.args.get('q') + '&' %}
+{% else %}
+    {% set url = request.path + '?'%}
+{% endif %}
+
+
 <div class="items-panel">
     <div class="sortby-block">
 
         {% if sortby == "pd" %}
-        <a href="{{ request.path + '?sortby=pi'}}" class="sort-checked">
+        <a href="{{ url + 'sortby=pi'}}" class="sort-checked">
             <i class="fas fa-chevron-up">
                 <span>По цене</span>
             </i>
         </a>
         {% elif sortby == "pi" %}
-        <a href="{{ request.path + '?sortby=pd'}}" class="sort-checked">
+        <a href="{{ url + 'sortby=pd'}}" class="sort-checked">
             <i class="fas fa-chevron-down">
                 <span>По цене</span>
             </i>
         </a>
         {% else %}
-        <a href="{{ request.path + '?sortby=pd'}}">
+        <a href="{{ url + 'sortby=pd'}}">
             <i class="fas fa-chevron-up">
                 <span>По цене</span>
             </i>
@@ -42,19 +50,19 @@
 
 
         {% if sortby == "ad" %}
-        <a href="{{ request.path + '?sortby=ai'}}" class="sort-checked">
+        <a href="{{ url + 'sortby=ai'}}" class="sort-checked">
             <i class="fas fa-chevron-up">
                 <span>По алфавиту</span>
             </i>
         </a>
         {% elif sortby == "ai" %}
-        <a href="{{ request.path + '?sortby=ad'}}" class="sort-checked">
+        <a href="{{ url + 'sortby=ad'}}" class="sort-checked">
             <i class="fas fa-chevron-down">
                 <span>По алфавиту</span>
             </i>
         </a>
         {% else %}
-        <a href="{{ request.path + '?sortby=ad'}}">
+        <a href="{{ url + 'sortby=ad'}}">
             <i class="fas fa-chevron-up">
                 <span>По алфавиту</span>
             </i>
@@ -63,27 +71,25 @@
 
 
         {% if sortby == "cd" %}
-        <a href="{{ request.path + '?sortby=ci'}}" class="sort-checked">
+        <a href="{{ url + 'sortby=ci'}}" class="sort-checked">
             <i class="fas fa-chevron-up">
                 <span>По количеству</span>
             </i>
         </a>
         {% elif sortby == "ci" %}
-        <a href="{{ request.path + '?sortby=cd'}}" class="sort-checked">
+        <a href="{{ url + 'sortby=cd'}}" class="sort-checked">
             <i class="fas fa-chevron-down">
                 <span>По количеству</span>
             </i>
         </a>
         {% else %}
-        <a href="{{ request.path + '?sortby=cd'}}">
+        <a href="{{ url + 'sortby=cd'}}">
             <i class="fas fa-chevron-up">
                 <span>По количеству</span>
             </i>
         </a>
         {% endif %}
-
     </div>
-   
     <div class="view-block">
         <a href=""><i class="fas fa-th"></i></a>
         <a href=""><i class="fas fa-list"></i></a>
