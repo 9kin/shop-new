@@ -54,6 +54,18 @@ header a.navbar-brand {
     flex-shrink: 1 !important;
 }
 
+@media screen and (max-width: 1065px) {
+
+header img {
+    max-width: 350px;
+}
+
+header p {
+    font-size: .8em;
+}
+
+}
+
 /*
 
 header {
