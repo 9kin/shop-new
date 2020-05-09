@@ -38,16 +38,16 @@ function makeSearch() {
                 code += '<i class="fas fa-faucet"></i>';
                 code += '<h5 class="card-title">';
                 code += name;
-                code += '</h5><p class="card-text">';
-                code += cost;
-                code += ' Осталось ';
+                code += '</h5><p class="card-text text-center"> Осталось ';
                 code += count;
-                code += '</p><div class="text-center"><a href="#" class="btn"></a></div></div></div>';
+                code += '</p><p class="card-text text-center"><b>';
+                code += cost;
+                code += '</b></p></div></div>';
 
                 bigcode += code;
             }
 
-            $("div.container")[0].innerHTML = bigcode;
+            $("div.contain")[0].innerHTML = bigcode;
         },
         error: function(error) {
             console.error(error);
@@ -62,6 +62,7 @@ function addEvents() {
 }
 
 $(function(){
+    $("input#q")[0].value = "1";
     prev_val = $("input#q")[0].value;
     addEvents();
 });

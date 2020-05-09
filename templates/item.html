@@ -25,9 +25,9 @@
                     <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[keys[line + item]]['img']) }}" alt="Card image cap">
                     <div class="card-body">
                         <i class="fas fa-faucet"></i>
-                            <h6 class="card-title">{{ keys[line + item] }}</h5>
-                            <p class="card-text text-center"> Осталось {{ data[keys[line + item]]['count'] }}</p>
-                            <p class="card-text text-center"><b>{{ data[keys[line + item]]['cost'] }}</b></p>
+                        <h5 class="card-title">{{ keys[line + item] }}</h5>
+                        <p class="card-text text-center"> Осталось {{ data[keys[line + item]]['count'] }}</p>
+                        <p class="card-text text-center"><b>{{ data[keys[line + item]]['cost'] }}</b></p>
                     </div>
                 </div>
             {% endif %}
