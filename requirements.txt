@@ -3,8 +3,9 @@ flask_admin
 flask_login
 flask_restful
 flask_wtf
-elasticsearch
 sqlalchemy
+sqlalchemy_serializer
+elasticsearch
 tqdm
 requests
 sphinx_revealjs
