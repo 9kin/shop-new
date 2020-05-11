@@ -251,13 +251,16 @@ class Items(Resource):
         path_list = []
         prev = ""
         first = True
-        for i in args["path"].split("."):
-            if first:
-                first = False
-            else:
-                prev += "."
-            prev += str(i)
-            path_list.append(menu_map[prev])
+        try:
+            for i in args["path"].split("."):
+                if first:
+                    first = False
+                else:
+                    prev += "."
+                prev += str(i)
+                path_list.append(menu_map[prev])
+        except:
+            path_list = []
         return jsonify(items=json_objects, path=path_list)
 
 
