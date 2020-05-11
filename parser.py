@@ -19,7 +19,7 @@ def rec(html):
         div = i.find('div')
         if div is not None:
             children_id, children_out = rec(i)
-            s += f'{t(children_id[:-2])} {div.text}\n{children_out}'
+            s += f'{t(children_id[:-2])} {div.text}\n'
         else:
             a = i.find('a')
             href = a.get('href')
