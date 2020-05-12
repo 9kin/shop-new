@@ -34,6 +34,7 @@ body {
 
 header {
     grid-column-end: span 2;
+    margin-bottom: 3%;
 }
 
 header img {
