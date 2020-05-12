@@ -284,7 +284,6 @@ class Search(Resource):
                 None: (lambda x: x[1]["cost"], False),
             }
             cur = scheme[args["sortby"]]
-            print(args["sortby"], 'debug')
             json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
             json_objects = {k: v for k, v in json_objects}
             return jsonify(items=json_objects)
@@ -453,6 +452,5 @@ def about():
 def stock():
     return render_template("stock.html")
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
+    app.run(port=8000, debug=False)
