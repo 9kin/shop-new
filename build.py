@@ -6,7 +6,10 @@ from tqdm import tqdm
 import search
 from data.__all_models import *
 from ext import Parser
+import os
+from dotenv import load_dotenv, set_key
 
+load_dotenv()
 parser = Parser()
 
 # sudo systemctl start elasticsearch.service
@@ -43,13 +46,17 @@ def indexing(new_item):
     search.add_to_index("items", new_item)
 
 
-def elasticsearch():
+def elasticsearch(c, processes):
+    # TODO use limit
     try:
         search.elasticsearch.indices.delete("items")
     except:
         pass
     new_items = parser.session.query(items.Item).all()
-    with Pool(processes=100) as p:
+    if c != -1:
+        new_items = new_items[:c]
+
+    with Pool(processes=processes) as p:
         bar = tqdm(
             range(len(new_items)),
             desc="elasticsearch add",
@@ -81,14 +88,35 @@ if __name__ == "__main__":
         help="index db with elasticsearch",
     )
 
+    arg_parser.add_argument(
+        "--bench",
+        action="store_true",
+        default=False,
+        help="benchmark elasticsearch",
+    )
+
+    arg_parser.add_argument(
+        "--pool", type=int, default=int(os.getenv("POLL_PROCESSES")),
+        required=False
+    )
     args = arg_parser.parse_args()
+    print(os.getenv("POLL_PROCESSES"))
+    if args.pool != int(os.getenv("POLL_PROCESSES")):
+        # TODO type
+        set_key(".env", "POLL_PROCESSES", str(args.pool))
+        exit(0)
+    if args.bench:
+        elasticsearch(
+            int(os.getenv("COUNT_SEARCH")), int(os.getenv("POLL_PROCESSES"))
+        )
+        exit(0)
 
     if args.sql:
         sql()
     if args.key:
         keywords()
     if args.search:
-        elasticsearch()
+        elasticsearch(-1, args.pool)
     if not args.sql and not args.key and not args.search:
         sql()
         keywords()

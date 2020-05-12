@@ -284,7 +284,9 @@ class Search(Resource):
                 None: (lambda x: x[1]["cost"], False),
             }
             cur = scheme[args["sortby"]]
-            json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
+            json_objects = sorted(
+                json_objects.items(), key=cur[0], reverse=cur[1]
+            )
             json_objects = {k: v for k, v in json_objects}
             return jsonify(items=json_objects)
         return jsonify({"error": "q Not found"})
@@ -385,14 +387,14 @@ def search_route():
     args = parser.parse_args()
     if args["sortby"] is None:
         args["sortby"] = "pi"
-    args['q'] = g.search_form.q.data
+    args["q"] = g.search_form.q.data
 
     if not g.search_form.validate():
         return redirect(url_for("."))
-    response = requests.get(
-        f"{request.host_url}/api/search", params=args
+    response = requests.get(f"{request.host_url}/api/search", params=args)
+    return render_template(
+        "item.html", data=response.json(), sortby=args["sortby"]
     )
-    return render_template("item.html", data=response.json(), sortby=args["sortby"])
 
 
 api.add_resource(Items, "/api/items")
@@ -417,11 +419,10 @@ def item(path):
                     response_json["items"][name]["len"] = r[0]
                 else:
                     response_json["items"][name]["len"] = "-"
-            return render_template("item_table.html", data=response_json, sortby=args["sortby"])
+            return render_template(
+                "item_table.html", data=response_json, sortby=args["sortby"]
+            )
 
-
-        
-        
         return render_template(
             "item.html", data=response.json(), form=form, sortby=args["sortby"]
         )
@@ -451,6 +452,7 @@ def about():
 @app.route("/stock")
 def stock():
     return render_template("stock.html")
+
 
 if __name__ == "__main__":
     app.run(port=8000, debug=False)
