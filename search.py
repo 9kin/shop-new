@@ -37,7 +37,7 @@ def add_to_index(index, model):
     payload = {}
     for field in model.__searchable__:
         payload[field] = getattr(model, field)
-    elasticsearch.index(index=index, doc_type=index, id=model.id, body=payload)
+    elasticsearch.index(index=index, doc_type=index, id=model.id, body=payload, timeout='10000s')
 
 
 def remove_from_index(index, model):
