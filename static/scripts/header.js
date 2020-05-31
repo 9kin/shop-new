@@ -19,11 +19,12 @@ function makeSearch() {
         beforeSend: function() {
         },
         success: function(data) {
-            console.log(data);
+            
             let items = data["items"];
             let bigcode = "";
 
             for (const name in items) {
+                console.log(name)
                 let cost = items[name]["cost"];
                 let count = items[name]["count"];
                 let id = items[name]["id"];
@@ -37,7 +38,7 @@ function makeSearch() {
                 code += '<div class="card-body">';
                 code += '<i class="fas fa-faucet"></i>';
                 code += '<h5 class="card-title">';
-                code += name;
+                code += items[name]["name"];
                 code += '</h5><p class="card-text text-center"> Осталось ';
                 code += count;
                 code += '</p><p class="card-text text-center"><b>';
@@ -65,7 +66,6 @@ $(function(){
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const q = urlParams.get('q');
-    console.log(q);
     $("input#q")[0].value = q;
     prev_val = $("input#q")[0].value;
     addEvents();

@@ -9,13 +9,19 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
 
 
-{{ md |safe  }}
+{{ md |safe }}
 
-{{ table }}
+<div style="width: 1000px; height: 400px">
+	{{ table }}
+</div>
+
 <script type="text/javascript">
 $(document).ready(function() {
     $('.table').DataTable( {
-    	"pageLength": -1
+    	"pageLength": -1,
+    	"searching": false,
+    	"paging": false,
+    	"info": false,
     });
 });
 </script>

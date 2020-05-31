@@ -428,9 +428,11 @@ def item(path):
 
             for line in tabel:
                 if type(line["cost"]) == str:
-                    line["cost"] = find_item(response_json, line["cost"])[
-                        "cost"
-                    ]
+                    it = find_item(response_json, line["cost"])
+                    if it is not None:
+                        line["cost"] = it["cost"]
+                    else:
+                        line["cost"] = "-"
 
             table = curent_class.tabel_cls(tabel)
             return render_template(

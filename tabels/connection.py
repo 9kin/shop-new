@@ -1,7 +1,9 @@
 from flask_table import Table, Col, create_table, BoolCol
 
 tbl_options = dict(
-    classes=["table table-striped table-bordered"],
+    classes=[
+        "table table-striped table-bordered table-sm text-center table-hover"
+    ],
     thead_classes=["thead-dark"],
 )
 

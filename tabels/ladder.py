@@ -1,11 +1,17 @@
 from flask_table import Table, Col, create_table, BoolCol
 
-tbl_options = dict(classes=["table"], thead_classes=["thead-dark"])
+tbl_options = dict(
+    classes=[
+        "table table-striped table-bordered table-sm text-center table-hover"
+    ],
+    thead_classes=["thead-dark"],
+)
 
 cls = (
     create_table("TableCls", options=tbl_options)
     .add_column("name", Col("Арт."))
     .add_column("steps", Col("Кол-во ступеней"))
+    .add_column("cost", Col("Цена"))
     .add_column("weight", Col("Вес, кг"))
     .add_column("platform_height", Col("высота до платформы, мм"))
     .add_column("working_height", Col("рабочая высота, мм"))
@@ -13,7 +19,6 @@ cls = (
         "belt", BoolCol("Страховочная лента", yes_display="+", no_display="-"),
     )
     .add_column("max_load", Col("Max нагрузка, кг"))
-    .add_column("cost", Col("Цена"))
 )
 
 tabel = [
@@ -45,7 +50,7 @@ tabel = [
         working_height=3270,
         belt=True,
         max_load=150,
-        cost=0,
+        cost="Стремянка широкие 5 ступеней (металл). СМ5",
     ),
     dict(
         name="СМ6",
@@ -55,7 +60,7 @@ tabel = [
         working_height=3490,
         belt=True,
         max_load=120,
-        cost=0,
+        cost="Стремянка широкие 6 ступеней (металл). СМ6",
     ),
     dict(
         name="СМ7",
@@ -65,7 +70,7 @@ tabel = [
         working_height=3710,
         belt=True,
         max_load=120,
-        cost=0,
+        cost="Стремянка широкие 7 ступеней (металл). СМ7",
     ),
     dict(
         name="СМ8",
@@ -75,6 +80,6 @@ tabel = [
         working_height=3920,
         belt=True,
         max_load=120,
-        cost=0,
+        cost="Стремянка широкие 8 ступеней (металл). СМ8",
     ),
 ]
