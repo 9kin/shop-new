@@ -419,7 +419,7 @@ def item(path):
 
         if config.Route().routing(path) is not None:
             response_json = response.json()
-            
+
             curent_class = config.Route().routing(path)
             if type(curent_class.tabel) == bool:
                 curent_class.tabel = response_json["items"]

@@ -1,6 +1,7 @@
 import tabels.all as tabels
 import re
 
+
 class Ladder:
     id = "6.2"
     tabel_cls = tabels.ladder_cls
@@ -22,7 +23,7 @@ class ConnectionMixer:
     id = "1.2.*"
     tabel_cls = tabels.connection_cls
     tabel = tabels.connection
-    text = ''
+    text = ""
 
 
 class Route:
@@ -34,6 +35,5 @@ class Route:
     def routing(self, key):
         for pattern in self.route_map:
             if re.fullmatch(pattern, key):
-                 return self.route_map[pattern]
+                return self.route_map[pattern]
         return None
-

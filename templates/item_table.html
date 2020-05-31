@@ -4,12 +4,22 @@
 <main>
 <link rel="stylesheet" href="/static/styles/item_table.css">
 
+<script src='https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js'></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
 
-{% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
 
 {{ md |safe  }}
 
 {{ table }}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.table').DataTable( {
+    	"pageLength": -1
+    });
+});
+</script>
+
 
 </main>
 
