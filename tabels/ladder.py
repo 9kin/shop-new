@@ -2,7 +2,7 @@ from flask_table import Table, Col, create_table, BoolCol
 
 tbl_options = dict(classes=["table"], thead_classes=["thead-dark"])
 
-ladder_cls = (
+cls = (
     create_table("TableCls", options=tbl_options)
     .add_column("name", Col("Арт."))
     .add_column("steps", Col("Кол-во ступеней"))
@@ -16,7 +16,7 @@ ladder_cls = (
     .add_column("cost", Col("Цена"))
 )
 
-ladder = [
+tabel = [
     dict(
         name="СМ3",
         steps="3",

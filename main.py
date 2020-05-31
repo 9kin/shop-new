@@ -1,5 +1,7 @@
 from flask_table import Table, Col, create_table, BoolCol
 import tabels.all as tabels
+import config
+import markdown
 
 import configparser
 import json
@@ -45,7 +47,7 @@ from data.items import Item
 from data.users import User
 from keywords import Keyword, KeywordTable, aslist_cronly
 
-config = ext.Parser()
+CONFIG = ext.Parser()
 
 db.global_init("db/items.sqlite")
 
@@ -75,7 +77,7 @@ class Build(BaseView):
         form = UploadForm()
         if form.validate_on_submit():
             data = form.file.data
-            data.save(config.remains)
+            data.save(CONFIG.remains)
         return self.render("/admin/build.html", form=form)
 
 
@@ -397,15 +399,6 @@ api.add_resource(Search, "/api/search")
 api.add_resource(GoBuild, "/api/gobuild")
 
 
-class ItemTable(Table):
-    name = Col("Название")
-    cost = Col("Цена")
-    count = Col("Количество")
-
-    classes = ["table"]
-    thead_classes = ["thead-dark"]
-
-
 def find_item(json, name):
     items = json["items"]
     for item in items:
@@ -424,30 +417,14 @@ def item(path):
     response = requests.get(f"{request.host_url}/api/items", params=args)
     if response.status_code == 200:
 
-        if path.startswith("1.2"):
+        if config.Route().routing(path) is not None:
             response_json = response.json()
+            
+            curent_class = config.Route().routing(path)
+            if type(curent_class.tabel) == bool:
+                curent_class.tabel = response_json["items"]
 
-            tbl_options = dict(classes=["table"], thead_classes=["thead-dark"])
-
-            TableCls = (
-                create_table("TableCls", options=tbl_options)
-                .add_column("name", Col("Название"))
-                .add_column("cost", Col("Цена"))
-                .add_column("count", Col("Количество"))
-            )
-
-            table = TableCls(response_json["items"])
-
-            return render_template(
-                "item_table.html",
-                data=response_json,
-                sortby=args["sortby"],
-                table=table,
-            )
-        elif path == "6.2":
-            response_json = response.json()
-
-            tabel = tabels.ladder.copy()
+            tabel = curent_class.tabel.copy()
 
             for line in tabel:
                 if type(line["cost"]) == str:
@@ -455,13 +432,13 @@ def item(path):
                         "cost"
                     ]
 
-            table = tabels.ladder_cls(tabel)
-
+            table = curent_class.tabel_cls(tabel)
             return render_template(
                 "item_table.html",
-                data=response_json,
+                path=response_json["path"],
                 sortby=args["sortby"],
                 table=table,
+                md=markdown.markdown(curent_class.text),
             )
 
         return render_template(

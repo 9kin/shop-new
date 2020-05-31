@@ -4,14 +4,12 @@
 <main>
 <link rel="stylesheet" href="/static/styles/item_table.css">
 
-{% set path = data['path'] %}
-    {% set data = data['items'] %}
 
+{% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
 
-    {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
+{{ md |safe  }}
 
-{{ table}}
-
+{{ table }}
 
 </main>
 

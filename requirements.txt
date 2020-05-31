@@ -12,3 +12,4 @@ tqdm
 requests
 BeautifulSoup
 sphinx_revealjs
+markdown
