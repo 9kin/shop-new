@@ -5,39 +5,13 @@
 <link rel="stylesheet" href="/static/styles/item_table.css">
 
 {% set path = data['path'] %}
-    {% set keys = data['items'].keys()|list %}
     {% set data = data['items'] %}
 
 
     {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
 
-<div class="content-table">
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">Длина</th>
-        <th scope="col">Название</th>
-        <th scope="col">Цена</th>
-        <th scope="col">Количество</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for line in data %}
-          <tr>
-            <td>{{data[line]['len']}}</td>
-            <td>{{line}}</td>
-            <td>{{data[line]['cost']}}</td>
-            <td>{{data[line]['count']}}</td>
-          </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{{ table}}
 
-  <div class="content-img">
-    <img src="/static/img/gibkaya-podvodka.jpg" width="400px">
-    <img src="/static/img/gibkaya-podvodka-d-smesitelya.jpg" width="400px">
-  </div>
-</div>
 
 </main>
 

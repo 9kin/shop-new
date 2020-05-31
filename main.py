@@ -1,3 +1,6 @@
+from flask_table import Table, Col, create_table, BoolCol
+import tabels.all as tabels
+
 import configparser
 import json
 import os
@@ -178,13 +181,59 @@ parser.add_argument("build_args")
 
 def item_to_json(item):
     json_obj = {}
-    json_obj[item.name] = item.to_dict(only=(["id", "cost", "count"]))
+    json_obj = item.to_dict(only=(["id", "cost", "count"]))
     img_sql = session.query(Image).filter(Image.name == item.name).first()
     if img_sql is None:
-        json_obj[item.name]["img"] = "not.png"
+        json_obj["img"] = "not.png"
     else:
-        json_obj[item.name]["img"] = img_sql.path
+        json_obj["img"] = img_sql.path
+    json_obj["name"] = item.name
     return json_obj
+
+
+"""
+_d - по убыванию (reverse=True)
+_i - по возрастанию (reverse=False)
+
+
+pd - по убыванию цены
+pi - по возрастанию цены
+
+cd - по убыванию количества
+ci - по возрастанию количества
+
+a(d/i) - по алфавиту
+
+"""
+
+
+def items_sort(items, sortby):
+    scheme = {
+        "pd": (lambda x: x["cost"], True),
+        "pi": (lambda x: x["cost"], False),
+        "cd": (lambda x: x["count"], True),
+        "ci": (lambda x: x["count"], False),
+        "ad": (lambda x: x["name"], True),
+        "ai": (lambda x: x["name"], False),
+        None: (lambda x: x["cost"], False),
+    }
+    cur = scheme[sortby]
+    items.sort(key=cur[0], reverse=cur[1])
+    return items
+
+
+def items_path(path):
+    path_list = []
+    prev = ""
+    try:
+        for i in enumerate(path.split(".")):
+            if i[0] != 0:
+                prev += "."
+            prev += str(i[1])
+            path_list.append(menu_map[prev])
+    except:
+        path_list = []
+    return path_list
 
 
 class Items(Resource):
@@ -196,100 +245,45 @@ class Items(Resource):
             )
             if item is None:
                 return not_found(404)
-            path_list = []
-            prev = ""
-            first = True
-            for i in item.group.split("."):
-                if first:
-                    first = False
-                else:
-                    prev += "."
-                prev += str(i)
-                path_list.append(menu_map[prev])
-            if item is not None:
-                return jsonify(item=item_to_json(item), path=path_list)
-            return not_found(404)
+            return jsonify(
+                item=item_to_json(item), path=items_path(item.group)
+            )
 
-        all_items = (
-            session.query(Item).filter(Item.group == args["path"]).all()
-        )
+        elif args["path"] is not None:
+            all_items = (
+                session.query(Item).filter(Item.group == args["path"]).all()
+            )
 
-        if all_items is None:
-            return not_found(404)
-        json_objects = {}
-        for item in all_items:
-            json_objects[item.name] = item_to_json(item)[item.name]
+            if all_items is None:
+                return not_found(404)
 
-        """
-        _d - по убыванию (reverse=True)
-        _i - по возрастанию (reverse=False)
-        
+            json_objects = items_sort(
+                [item_to_json(item) for item in all_items], args["sortby"]
+            )
 
-        pd - по убыванию цены
-        pi - по возрастанию цены
-        
-        cd - по убыванию количества
-        ci - по возрастанию количества
-
-        a(d/i) - по алфавиту
-
-        """
-
-        scheme = {
-            "pd": (lambda x: x[1]["cost"], True),
-            "pi": (lambda x: x[1]["cost"], False),
-            "cd": (lambda x: x[1]["count"], True),
-            "ci": (lambda x: x[1]["count"], False),
-            "ad": (lambda x: x[0], True),
-            "ai": (lambda x: x[0], False),
-            None: (lambda x: x[1]["cost"], False),
-        }
-        cur = scheme[args["sortby"]]
-        json_objects = sorted(json_objects.items(), key=cur[0], reverse=cur[1])
-        json_objects = {k: v for k, v in json_objects}
-
-        path_list = []
-        prev = ""
-        first = True
-        try:
-            for i in args["path"].split("."):
-                if first:
-                    first = False
-                else:
-                    prev += "."
-                prev += str(i)
-                path_list.append(menu_map[prev])
-        except:
-            path_list = []
-        return jsonify(items=json_objects, path=path_list)
+            return jsonify(items=json_objects, path=items_path(args["path"]))
+        return not_found(404)
 
 
 class Search(Resource):
     def get(self):
         args = parser.parse_args()
         if args["q"] is not None:
-            query = search.search(Item, args["q"], session)
+            query = search.search(Item, args["q"].lower(), session)
             if query is None:
                 return jsonify(items={})
-            json_objects = {}
-            for item in query.all():
-                json_objects[item.name] = item_to_json(item)[item.name]
-            scheme = {
-                "pd": (lambda x: x[1]["cost"], True),
-                "pi": (lambda x: x[1]["cost"], False),
-                "cd": (lambda x: x[1]["count"], True),
-                "ci": (lambda x: x[1]["count"], False),
-                "ad": (lambda x: x[0], True),
-                "ai": (lambda x: x[0], False),
-                None: (lambda x: x[1]["cost"], False),
-            }
-            cur = scheme[args["sortby"]]
-            json_objects = sorted(
-                json_objects.items(), key=cur[0], reverse=cur[1]
+
+            all_items = query.all()
+
+            if all_items is None:
+                return not_found(404)
+
+            json_objects = items_sort(
+                [item_to_json(item) for item in all_items], args["sortby"]
             )
-            json_objects = {k: v for k, v in json_objects}
+
             return jsonify(items=json_objects)
-        return jsonify({"error": "q Not found"})
+        return jsonify({"error": "Not found"})
 
 
 @app.errorhandler(404)
@@ -309,7 +303,8 @@ def ini():
     item = session.query(Item).all()
     form = ReForm()
     if form.validate_on_submit():
-        regex_field = form.regex_field.data
+        regex_field = form.regex_field.data.lower()
+        print(regex_field)
         ini_field = form.ini_field.data
         config = configparser.ConfigParser()
         config.read_string(ini_field)
@@ -402,6 +397,23 @@ api.add_resource(Search, "/api/search")
 api.add_resource(GoBuild, "/api/gobuild")
 
 
+class ItemTable(Table):
+    name = Col("Название")
+    cost = Col("Цена")
+    count = Col("Количество")
+
+    classes = ["table"]
+    thead_classes = ["thead-dark"]
+
+
+def find_item(json, name):
+    items = json["items"]
+    for item in items:
+        if item["name"] == name:
+            return item
+    return None
+
+
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
     args = parser.parse_args()
@@ -411,16 +423,45 @@ def item(path):
 
     response = requests.get(f"{request.host_url}/api/items", params=args)
     if response.status_code == 200:
+
         if path.startswith("1.2"):
             response_json = response.json()
-            for name in response_json["items"]:
-                r = [int(s) for s in name.split() if s.isdigit()]
-                if len(r) == 1 and r[0] < 500:
-                    response_json["items"][name]["len"] = r[0]
-                else:
-                    response_json["items"][name]["len"] = "-"
+
+            tbl_options = dict(classes=["table"], thead_classes=["thead-dark"])
+
+            TableCls = (
+                create_table("TableCls", options=tbl_options)
+                .add_column("name", Col("Название"))
+                .add_column("cost", Col("Цена"))
+                .add_column("count", Col("Количество"))
+            )
+
+            table = TableCls(response_json["items"])
+
             return render_template(
-                "item_table.html", data=response_json, sortby=args["sortby"]
+                "item_table.html",
+                data=response_json,
+                sortby=args["sortby"],
+                table=table,
+            )
+        elif path == "6.2":
+            response_json = response.json()
+
+            tabel = tabels.ladder.copy()
+
+            for line in tabel:
+                if type(line["cost"]) == str:
+                    line["cost"] = find_item(response_json, line["cost"])[
+                        "cost"
+                    ]
+
+            table = tabels.ladder_cls(tabel)
+
+            return render_template(
+                "item_table.html",
+                data=response_json,
+                sortby=args["sortby"],
+                table=table,
             )
 
         return render_template(

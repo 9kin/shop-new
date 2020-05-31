@@ -11,22 +11,22 @@
     <script src="/static/scripts/item.js"></script>
 
     {% set path = data['path'] %}
-    {% set keys = data['items'].keys()|list %}
     {% set data = data['items'] %}
 
     {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
     
+
     <div class="contain">
     {% for line in range(0, data|length, 4) %}
         <!--<div class="card-deck">-->
         {% for item in range(4) %}
             {% if line + item < data|length %}
                 <div class="card">
-                    <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[keys[line + item]]['img']) }}" alt="Card image cap">
+                    <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[item]['img']) }}" alt="Card image cap">
                     <div class="card-body">
                         <i class="fas fa-faucet"></i>
-                        <h5 class="card-title">{{ keys[line + item] }}</h5>
-                        <p class="card-text text-center"><b>{{ data[keys[line + item]]['cost'] }}</b></p>
+                        <h5 class="card-title">{{ data[item]["name"] }}</h5>
+                        <p class="card-text text-center"><b>{{ data[item]['cost'] }}</b></p>
                     </div>
                 </div>
             {% endif %}

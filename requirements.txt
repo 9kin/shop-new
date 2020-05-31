@@ -1,4 +1,5 @@
 flask
+flask-table
 flask_admin
 flask_login
 flask_restful

@@ -96,8 +96,10 @@ if __name__ == "__main__":
     )
 
     arg_parser.add_argument(
-        "--pool", type=int, default=int(os.getenv("POLL_PROCESSES")),
-        required=False
+        "--pool",
+        type=int,
+        default=int(os.getenv("POLL_PROCESSES")),
+        required=False,
     )
     args = arg_parser.parse_args()
     print(os.getenv("POLL_PROCESSES"))

@@ -80,7 +80,6 @@ class Parser:
             item = self.items[self.cur_key]
             res = self.table.contains(item.name.lower())
             if res != False:
-                # print(item.name)
                 item.group = res
             self.cur_key += 1
 
