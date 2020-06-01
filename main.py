@@ -415,16 +415,21 @@ def item(path):
         args["sortby"] = "pi"
 
     response = requests.get(f"{request.host_url}/api/items", params=args)
+    print(response.url)
     if response.status_code == 200:
 
         if config.Route().routing(path) is not None:
             response_json = response.json()
 
             curent_class = config.Route().routing(path)
-            if type(curent_class.tabel) == bool:
-                curent_class.tabel = response_json["items"]
+            
+            tabel = curent_class.tabel
 
-            tabel = curent_class.tabel.copy()
+            if type(tabel) == bool:
+                tabel = response_json["items"]
+            else:
+                tabel = tabel.copy()
+
 
             for line in tabel:
                 if type(line["cost"]) == str:
