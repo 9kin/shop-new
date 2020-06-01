@@ -59,6 +59,23 @@ app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 
 
+from flask_profiler import Profiler
+
+profiler = Profiler()
+
+app.config["DEBUG"] = True
+
+app.config["flask_profiler"] = {
+    "enabled": app.config["DEBUG"],
+    "storage": {"engine": "sqlite"},
+    "basicAuth": {"enabled": True, "username": "admin", "password": "admin"},
+    "ignore": ["^/static/.*"],
+}
+
+profiler = Profiler()  # You can have this in another module
+profiler.init_app(app)
+
+
 class UploadForm(FlaskForm):
     file = FileField(validators=[FileRequired("File was empty!")])
 
@@ -422,14 +439,13 @@ def item(path):
             response_json = response.json()
 
             curent_class = config.Route().routing(path)
-            
+
             tabel = curent_class.tabel
 
             if type(tabel) == bool:
                 tabel = response_json["items"]
             else:
                 tabel = tabel.copy()
-
 
             for line in tabel:
                 if type(line["cost"]) == str:
@@ -480,4 +496,4 @@ def stock():
 
 
 if __name__ == "__main__":
-    app.run(port=8000, debug=False)
+    app.run(port=8000)

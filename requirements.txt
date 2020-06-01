@@ -13,3 +13,4 @@ requests
 BeautifulSoup
 sphinx_revealjs
 markdown
+flask_profiler
