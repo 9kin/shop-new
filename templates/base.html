@@ -19,10 +19,29 @@
             webvisor:true
        });
     </script>
+
+
+    <!-- Cleversite chat button -->
+    <script type='text/javascript'>
+        (function() { 
+            var s = document['createElement']('script');
+            s.type = 'text/javascript'; 
+            s.async = true; 
+            s.charset = 'utf-8';    
+            s.src = '//cleversite.ru/cleversite/widget_new.php?supercode=1&referer_main='+encodeURIComponent(document.referrer)+'&clid=64545NfFkZ&siteNew=84378'; 
+            var ss = document['getElementsByTagName']('script')[0]; 
+            if(ss) {
+                ss.parentNode.insertBefore(s, ss);
+            } else {
+                document.documentElement.firstChild.appendChild(s);
+            };
+        })(); 
+    </script>
+<!-- / End of Cleversite chat button -->
+
     <noscript><div><img src="https://mc.yandex.ru/watch/62401654" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
 
-    <script src="//code-ya.jivosite.com/widget/rzObZJBea5" async></script>
     	
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>{{title}}</title>
