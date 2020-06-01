@@ -4,8 +4,6 @@
 {% block content %}
 
 
-<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
-
 <main>
 
  {% import "message.html" as  message %}{{ message.main() }}
@@ -19,62 +17,42 @@
     {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
 
 
-<div class="button-group sort-by-button-group">
-  <button data-sort-by="original-order">original order</button>
-  <button data-sort-by="name">name</button>
-  <button data-sort-by="cost">cost</button>
-</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 
 
+<div id="users">
 
-<div class="grid">
-    {% for line in range(data|length) %}
-        <div class="card element-item">
-            
-            <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[line]['img']) }}" alt="Card image cap">
-            <div class="card-body">
-                <i class="fas fa-faucet"></i>
-                <h5 class="name card-title">{{ data[line]["name"] }}</h5>
-                <p class="cost card-text text-center"><b>{{ data[line]['cost'] }}</b></p>
+
+    <button class="sort btn btn-primary btn-sm" data-sort="cost">цена</button>
+    <button class="sort btn btn-primary btn-sm" data-sort="name">имя</button>
+
+    <div class="list contain">
+        {% for line in range(data|length) %}
+            <div class="card">
+                <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[line]['img']) }}" alt="Card image cap">
+                <div class="card-body">
+                    <i class="fas fa-faucet"></i>
+                    <h5 class="name card-title">{{ data[line]["name"] }}</h5>
+                    <p class="cost card-text text-center"><b>{{ data[line]['cost'] }}</b></p>
+                </div>
             </div>
-        </div>
+        {% endfor %}
+    </div>
 
-    {% endfor %}
 
-  
 </div>
+
 
 <script type="text/javascript">
 
-var $grid = $('.grid').isotope({
-  itemSelector: '.element-item',
-  getSortData: {
-    name: '.name',
-    cost: '.cost parseFloat'
-  }
-});
+    var options = {
+      valueNames: ['cost', 'name']
+    };
 
-
-$('.sort-by-button-group').on( 'click', 'button', function() {
-  var sortByValue = $(this).attr('data-sort-by');
-  $grid.isotope({ sortBy: sortByValue });
-});
-
+    var userList = new List('users', options);
 
 </script>
-
-    <div class="contain">
-    {% for line in range(data|length) %}
-        <div class="card">
-            <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[line]['img']) }}" alt="Card image cap">
-            <div class="card-body">
-                <i class="fas fa-faucet"></i>
-                <h5 class="card-title">{{ data[line]["name"] }}</h5>
-                <p class="card-text text-center"><b>{{ data[line]['cost'] }}</b></p>
-            </div>
-        </div>
-    {% endfor %}
-    </div>
 
 </main>
 
