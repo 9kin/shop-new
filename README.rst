@@ -1,8 +1,26 @@
-Shop
-==========
+====
+shop
+====
 
 
-|made-with-python| |GitHub forks| |GitHub stars| |GitHub watchers| |GitHub issues|
+.. image:: https://img.shields.io/pypi/v/shop.svg
+        :target: https://pypi.python.org/pypi/shop
+
+.. image:: https://img.shields.io/travis/9kin/shop.svg
+        :target: https://travis-ci.com/9kin/shop
+
+.. image:: https://readthedocs.org/projects/shop/badge/?version=latest
+        :target: https://shop.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
+
+
+.. image:: https://pyup.io/repos/github/9kin/shop/shield.svg
+     :target: https://pyup.io/repos/github/9kin/shop/
+     :alt: Updates
+
+
+
+very simple and fast flask shop
 
 Shop - сайт собранный из отсчёта ``1c`` 
 
@@ -26,24 +44,20 @@ Shop - сайт собранный из отсчёта ``1c``
 
 ----------------------------
 
-
-.. |made-with-python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
-    :alt: build status
-    :scale: 100%
+* Free software: MIT license
+* Documentation: https://shop.readthedocs.io.
 
 
-.. |GitHub forks| image:: https://img.shields.io/github/forks/9kin/shop.svg
-    :alt: GitHub forks
-    :scale: 100%
 
-.. |GitHub stars| image:: https://img.shields.io/github/stars/9kin/shop.svg
-    :alt: GitHub stars
-    :scale: 100%
+Features
+--------
 
-.. |GitHub watchers| image:: https://img.shields.io/github/watchers/9kin/shop.svg
-    :alt: GitHub watchers
-    :scale: 100%
+* TODO
 
-.. |GitHub issues| image:: https://img.shields.io/github/issues/9kin/shop.svg
-    :alt: GitHub issues
-    :scale: 100%
+Credits
+-------
+
+This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
