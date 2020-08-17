@@ -4,10 +4,10 @@ from multiprocessing import Pool
 from tqdm import tqdm
 
 import search
-from data.__all_models import *
 from ext import Parser
 import os
 from dotenv import load_dotenv, set_key
+from database import Item
 
 load_dotenv()
 parser = Parser()
@@ -17,7 +17,9 @@ parser = Parser()
 
 def sql():
     parser.delete_items()
-    parser.get_data()
+
+    parser.load_data()
+
     bar = tqdm(
         range(len(parser.data)),
         desc="parse 1c",
@@ -26,11 +28,11 @@ def sql():
     )
     for i in bar:
         parser.next_1c()
-    parser.session.commit()
+    parser.save_1c_database()
 
 
 def keywords():
-    parser.get_items()
+    parser.load_items()
     bar = tqdm(
         range(len(parser.items)),
         desc="keywords",
@@ -39,7 +41,6 @@ def keywords():
     )
     for i in bar:
         parser.next_keyword()
-    parser.session.commit()
 
 
 def indexing(new_item):
@@ -47,25 +48,32 @@ def indexing(new_item):
 
 
 def elasticsearch(c, processes):
-    # TODO use limit
     try:
         search.elasticsearch.indices.delete("items")
     except:
         pass
-    new_items = parser.session.query(items.Item).all()
-    if c != -1:
-        new_items = new_items[:c]
+    items = [item for item in Item.select()]
+    
 
+
+
+    c = 3
+
+    if c != -1:
+        items = items[:c]
+    for i in items:
+        print(i.name)
     with Pool(processes=processes) as p:
         bar = tqdm(
-            range(len(new_items)),
+            range(len(items)),
             desc="elasticsearch add",
             unit="line",
             bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
         )
-        for i, _ in enumerate(p.imap_unordered(indexing, new_items)):
+        for i, _ in enumerate(p.imap_unordered(indexing, items)):
             bar.update()
-
+    print('=====')
+    search.search(items[0], "21276MH G/2 FGD")
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
@@ -102,7 +110,6 @@ if __name__ == "__main__":
         required=False,
     )
     args = arg_parser.parse_args()
-    print(os.getenv("POLL_PROCESSES"))
     if args.pool != int(os.getenv("POLL_PROCESSES")):
         # TODO type
         set_key(".env", "POLL_PROCESSES", str(args.pool))
@@ -122,4 +129,4 @@ if __name__ == "__main__":
     if not args.sql and not args.key and not args.search:
         sql()
         keywords()
-        elasticsearch()
+        elasticsearch(-1, args.pool)

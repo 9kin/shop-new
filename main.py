@@ -1,14 +1,12 @@
-from flask_table import Table, Col, create_table, BoolCol
-import tabels.all as tabels
-import config
-import markdown
-
 import configparser
 import json
 import os
+import time
+from pprint import pprint
 
 import flask_admin as admin
 import flask_login as login
+import markdown
 import requests
 from flask import (
     Flask,
@@ -22,8 +20,10 @@ from flask import (
     url_for,
 )
 from flask_admin import BaseView, expose, helpers
-from flask_admin.contrib import sqla
+from flask_admin.contrib.peewee import ModelView
+from flask_profiler import Profiler
 from flask_restful import Api, Resource, reqparse
+from flask_table import BoolCol, Col, Table, create_table
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField, FileRequired
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -38,18 +38,16 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Optional
 
-import data.db_session as db
+import config
 import ext
 import search
 from build import elasticsearch, keywords, sql
-from data.images import Image
-from data.items import Item
-from data.users import User
+from database import Config, Image, Item, User
+from form.forms import UploadForm
 from keywords import Keyword, KeywordTable, aslist_cronly
 
 CONFIG = ext.Parser()
 
-db.global_init("db/items.sqlite")
 
 app = Flask(__name__)
 api = Api(app)
@@ -58,8 +56,6 @@ app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 
-
-from flask_profiler import Profiler
 
 profiler = Profiler()
 
@@ -76,18 +72,6 @@ profiler = Profiler()  # You can have this in another module
 profiler.init_app(app)
 
 
-class UploadForm(FlaskForm):
-    file = FileField(validators=[FileRequired("File was empty!")])
-
-    file = FileField(
-        validators=[
-            FileRequired("File was empty!"),
-            FileAllowed(["txt"], "txt only!"),
-        ]
-    )
-    submit = SubmitField("Загрузить")
-
-
 class Build(BaseView):
     @expose("/", methods=["GET", "POST"])
     def index(self):
@@ -95,10 +79,11 @@ class Build(BaseView):
         if form.validate_on_submit():
             data = form.file.data
             data.save(CONFIG.remains)
+            # TODO
         return self.render("/admin/build.html", form=form)
 
 
-class LoginForm(form.Form):
+class LoginForm(FlaskForm):
     login = StringField()
     password = PasswordField()
 
@@ -110,23 +95,16 @@ class LoginForm(form.Form):
             raise validators.ValidationError("Invalid password")
 
     def get_user(self):
-        session = db.create_session()
-        return session.query(User).filter_by(login=self.login.data).first()
+        return User.get(User.login == self.login.data)
 
 
-def init_login():
-    login_manager = login.LoginManager()
-    login_manager.init_app(app)
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        session = db.create_session()
-        return session.query(User).get(user_id)
+login_manager = login.LoginManager()
+login_manager.init_app(app)
 
 
-class MyModelView(sqla.ModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(User.id == user_id)
 
 
 class MyAdminIndexView(admin.AdminIndexView):
@@ -153,28 +131,29 @@ class MyAdminIndexView(admin.AdminIndexView):
         return redirect(url_for(".index"))
 
 
-init_login()
-
-
 admin = admin.Admin(
     app, "admin", index_view=MyAdminIndexView(), base_template="my_master.html"
 )
 
 
 def create_admin():
-    session = db.create_session()
-    if session.query(User).filter_by(login="admin").count() < 1:
-        user = User(login="admin", password=generate_password_hash("admin"))
-        session.add(user)
-        session.commit()
+    is_admin = User.select().where(User.login == "admin").count() == 1
+    if not is_admin:
+        User.create(login="admin", password=generate_password_hash("admin"))
 
 
 create_admin()
 
-session = db.create_session()
-admin.add_view(MyModelView(Item, session))
-admin.add_view(MyModelView(Image, session))
-admin.add_view(MyModelView(User, session))
+
+class MyModelView(ModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated
+
+
+admin.add_view(MyModelView(Item))
+admin.add_view(MyModelView(Image))
+admin.add_view(MyModelView(User))
+admin.add_view(MyModelView(Config))
 admin.add_view(Build(name="Build"))
 
 
@@ -189,56 +168,13 @@ for el in menu:
 parser = reqparse.RequestParser()
 parser.add_argument("id")
 parser.add_argument("path")
-parser.add_argument("sortby")
-
-parser.add_argument("path")
 
 parser.add_argument("q")
 
 parser.add_argument("build_args")
 
 
-def item_to_json(item):
-    json_obj = {}
-    json_obj = item.to_dict(only=(["id", "cost", "count"]))
-    img_sql = session.query(Image).filter(Image.name == item.name).first()
-    if img_sql is None:
-        json_obj["img"] = "not.png"
-    else:
-        json_obj["img"] = img_sql.path
-    json_obj["name"] = item.name
-    return json_obj
-
-
-"""
-_d - по убыванию (reverse=True)
-_i - по возрастанию (reverse=False)
-
-
-pd - по убыванию цены
-pi - по возрастанию цены
-
-cd - по убыванию количества
-ci - по возрастанию количества
-
-a(d/i) - по алфавиту
-
-"""
-
-
-def items_sort(items, sortby):
-    scheme = {
-        "pd": (lambda x: x["cost"], True),
-        "pi": (lambda x: x["cost"], False),
-        "cd": (lambda x: x["count"], True),
-        "ci": (lambda x: x["count"], False),
-        "ad": (lambda x: x["name"], True),
-        "ai": (lambda x: x["name"], False),
-        None: (lambda x: x["cost"], False),
-    }
-    cur = scheme[sortby]
-    items.sort(key=cur[0], reverse=cur[1])
-    return items
+s = 0
 
 
 def items_path(path):
@@ -255,59 +191,56 @@ def items_path(path):
     return path_list
 
 
+def extract_items(path):
+    items = Item.select().where(Item.group == path)
+    if items:
+        items = [i for i in items]
+        m = {item.id: item for item in items}
+        imgs = Image.select().where(Image.name.in_(items))
+        for i in imgs:
+            m[i.name_id].img = i.path
+        l = []
+        for key in m:
+            item = m[key]
+            l.append(
+                {
+                    "name": item.name,
+                    "count": item.count,
+                    "cost": item.cost,
+                    "img": item.img,
+                    "id": item.id,
+                }
+            )
+
+        l.sort(key=lambda x: x["cost"])
+        return jsonify(items=l, path=items_path(path))
+    return not_found(404)
+
+
 class Items(Resource):
-    def get(self):
-        args = parser.parse_args()
-        if args["id"] is not None:
-            item = (
-                session.query(Item).filter(Item.id == int(args["id"])).first()
-            )
-            if item is None:
-                return not_found(404)
-            return jsonify(
-                item=item_to_json(item), path=items_path(item.group)
-            )
+    def get(self, path):
+        return extract_items(path)
 
-        elif args["path"] is not None:
-            all_items = (
-                session.query(Item).filter(Item.group == args["path"]).all()
-            )
+def search_items(query):
+    if query is not None:
+        query = search.search(Item, query.lower())
+        return jsonify(items={})
 
-            if all_items is None:
-                return not_found(404)
+        if query is None:
+            return jsonify(items={})
 
-            json_objects = items_sort(
-                [item_to_json(item) for item in all_items], args["sortby"]
-            )
+        all_items = query.all()
 
-            return jsonify(items=json_objects, path=items_path(args["path"]))
-        return not_found(404)
+        if all_items is None:
+            return not_found(404)
 
+        json_objects = items_sort(
+            [item_to_json(item) for item in all_items], args["sortby"]
+        )
 
-class Search(Resource):
-    def get(self):
-        args = parser.parse_args()
-        if args["q"] is not None:
-            query = search.search(Item, args["q"].lower(), session)
-            if query is None:
-                return jsonify(items={})
+        return jsonify(items=json_objects)
+    return jsonify({"error": "Not found"})
 
-            all_items = query.all()
-
-            if all_items is None:
-                return not_found(404)
-
-            json_objects = items_sort(
-                [item_to_json(item) for item in all_items], args["sortby"]
-            )
-
-            return jsonify(items=json_objects)
-        return jsonify({"error": "Not found"})
-
-
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({"error": "Not found"}), error)
 
 
 class ReForm(FlaskForm):
@@ -323,7 +256,6 @@ def ini():
     form = ReForm()
     if form.validate_on_submit():
         regex_field = form.regex_field.data.lower()
-        print(regex_field)
         ini_field = form.ini_field.data
         config = configparser.ConfigParser()
         config.read_string(ini_field)
@@ -398,22 +330,12 @@ def before_request():
 
 @app.route("/search")
 def search_route():
-    args = parser.parse_args()
-    if args["sortby"] is None:
-        args["sortby"] = "pi"
-    args["q"] = g.search_form.q.data
-
     if not g.search_form.validate():
         return redirect(url_for("."))
-    response = requests.get(f"{request.host_url}/api/search", params=args)
-    return render_template(
-        "item.html", data=response.json(), sortby=args["sortby"]
-    )
+    return render_template("item.html", data=search_items(g.search_form.q.data))
 
 
-api.add_resource(Items, "/api/items")
-api.add_resource(Search, "/api/search")
-api.add_resource(GoBuild, "/api/gobuild")
+
 
 
 def find_item(json, name):
@@ -426,48 +348,38 @@ def find_item(json, name):
 
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
-    args = parser.parse_args()
-    args["path"] = path
-    if args["sortby"] is None:
-        args["sortby"] = "pi"
+    response = extract_items(path)
+    if response.status_code != 200:
+        return not_found(response.status_code)
 
-    response = requests.get(f"{request.host_url}/api/items", params=args)
-    print(response.url)
-    if response.status_code == 200:
+    response_json = response.get_json()
+    if config.Route().routing(path) is not None:
+        curent_class = config.Route().routing(path)
+        data = curent_class.table.data
+        if data is None:
+            data = response_json["items"]
+        else:
+            data = data.copy()
 
-        if config.Route().routing(path) is not None:
-            response_json = response.json()
+        for line in data:
+            if type(line["cost"]) == str:
+                it = find_item(response_json, line["cost"])
+                if it is not None:
+                    line["cost"] = it["cost"]
+                else:
+                    line["cost"] = "-"
 
-            curent_class = config.Route().routing(path)
-
-            tabel = curent_class.tabel
-
-            if type(tabel) == bool:
-                tabel = response_json["items"]
-            else:
-                tabel = tabel.copy()
-
-            for line in tabel:
-                if type(line["cost"]) == str:
-                    it = find_item(response_json, line["cost"])
-                    if it is not None:
-                        line["cost"] = it["cost"]
-                    else:
-                        line["cost"] = "-"
-
-            table = curent_class.tabel_cls(tabel)
-            return render_template(
-                "item_table.html",
-                path=response_json["path"],
-                sortby=args["sortby"],
-                table=table,
-                md=markdown.markdown(curent_class.text),
-            )
+        table = curent_class.table.table(data)
 
         return render_template(
-            "item.html", data=response.json(), form=form, sortby=args["sortby"]
+            "item_table.html",
+            path=response_json["path"],
+            table=table,
+            md=markdown.markdown(curent_class.text),
         )
-    return not_found(response.status_code)
+    # TODO  md for all items
+
+    return render_template("item.html", data=response_json, form=form)
 
 
 @app.route("/favicon.ico")
@@ -494,6 +406,13 @@ def about():
 def stock():
     return render_template("stock.html")
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({"error": "Not found"}), 404)
+
+api.add_resource(Items, "/api/items/<string:path>")
+#api.add_resource(Search, "/api/search")  TODO
+api.add_resource(GoBuild, "/api/gobuild")
 
 if __name__ == "__main__":
     app.run(port=8000)

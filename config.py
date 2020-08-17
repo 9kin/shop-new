@@ -1,11 +1,10 @@
-import tabels.all as tabels
+from tables import Base, Ladder
 import re
 
 
 class Ladder:
     id = "6.2"
-    tabel_cls = tabels.ladder_cls
-    tabel = tabels.ladder
+    table = Ladder()
     text = """- Надежная металлическая конструкция.
 - Удобные широкие ступени.
 - Страховочная лента (в моделях СМ5, СМ6, СМ7, СМ8).
@@ -21,13 +20,18 @@ Cтремянка предназначена для бытового испол�
 
 class ConnectionMixer:
     id = "1.2.*"
-    tabel_cls = tabels.connection_cls
-    tabel = tabels.connection
+    table = Base()
+    text = ""
+
+
+class PPR:
+    id = "1.3.1"
+    table = Base()
     text = ""
 
 
 class Route:
-    cl = [Ladder, ConnectionMixer]
+    cl = [Ladder, ConnectionMixer, PPR]
     route_map = {}
     for i in cl:
         route_map[i.id] = i

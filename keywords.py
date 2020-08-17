@@ -25,3 +25,10 @@ class KeywordTable:
             if key == item:
                 return key.routing
         return False
+
+    def test_contains(self, item):
+        l = set()
+        for key in self.keywords:
+            if key == item:
+                l.add(key.routing)
+        return l
