@@ -1,5 +1,6 @@
-from tables import Base, Ladder
 import re
+
+from .tables import Base, Ladder
 
 
 class Ladder:

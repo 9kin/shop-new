@@ -1,13 +1,13 @@
 import argparse
+import os
 from multiprocessing import Pool
 
+from dotenv import load_dotenv, set_key
 from tqdm import tqdm
 
-import search
-from ext import Parser
-import os
-from dotenv import load_dotenv, set_key
-from database import Item
+from . import search
+from .database import Item
+from .ext import Parser
 
 load_dotenv()
 parser = Parser()
@@ -53,9 +53,6 @@ def elasticsearch(c, processes):
     except:
         pass
     items = [item for item in Item.select()]
-    
-
-
 
     c = 3
 
@@ -72,8 +69,9 @@ def elasticsearch(c, processes):
         )
         for i, _ in enumerate(p.imap_unordered(indexing, items)):
             bar.update()
-    print('=====')
+    print("=====")
     search.search(items[0], "21276MH G/2 FGD")
+
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()

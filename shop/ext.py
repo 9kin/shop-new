@@ -1,8 +1,9 @@
 import configparser
 
-from database import Item, db
-from keywords import Keyword, KeywordTable, aslist_cronly
 from peewee import chunked
+
+from .database import Item, db
+from .keywords import Keyword, KeywordTable, aslist_cronly
 
 total = None
 
@@ -55,8 +56,9 @@ class Parser:
         return list(filter(lambda x: x.count(" ") != len(x), line))
 
     def read_cfg(self):
+        # add pewee database  TODO
         config = configparser.ConfigParser()
-        config.read("config.INI")
+        config.read("shop/config.INI")
         self.table = KeywordTable(
             [
                 Keyword(keyword, key)

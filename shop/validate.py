@@ -1,10 +1,11 @@
-from database import Item, db, Config
 import configparser
-from keywords import Keyword, KeywordTable, aslist_cronly
-from tqdm import tqdm
-from rich.console import Console
-from pprint import pprint
 import os
+from pprint import pprint
+
+from database import Config, Item, db
+from keywords import Keyword, KeywordTable, aslist_cronly
+from rich.console import Console
+from tqdm import tqdm
 
 db.create_tables([Config])
 configs = [config for config in Config.select()]

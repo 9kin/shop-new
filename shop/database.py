@@ -1,15 +1,16 @@
 import re
+
+from flask_login import UserMixin
 from peewee import (
     CharField,
+    FloatField,
+    ForeignKeyField,
+    IntegerField,
     Model,
     SqliteDatabase,
     TextField,
     chunked,
-    FloatField,
-    IntegerField,
-    ForeignKeyField,
 )
-from flask_login import UserMixin
 
 db = SqliteDatabase("db/items.sqlite", check_same_thread=False)
 
@@ -30,8 +31,8 @@ class Item(BaseModel):
 
     full_match = False
 
-    __tablename__ = 'item'
-    __searchable__ = ['name']
+    __tablename__ = "item"
+    __searchable__ = ["name"]
 
     def __eq__(self, other):
         return re.fullmatch(other, self.name.lower())

@@ -38,18 +38,26 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Optional
 
-import config
-import ext
-import search
-from build import elasticsearch, keywords, sql
-from database import Config, Image, Item, User
 from form.forms import UploadForm
-from keywords import Keyword, KeywordTable, aslist_cronly
+
+from . import config, ext, search
+from .build import elasticsearch, keywords, sql
+from .database import Config, Image, Item, User
+from .keywords import Keyword, KeywordTable, aslist_cronly
 
 CONFIG = ext.Parser()
 
 
-app = Flask(__name__)
+import os
+
+# https://stackoverflow.com/a/48040453/13156381
+APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATE_PATH = os.path.join(APP_PATH, "templates/")
+app = Flask(
+    __name__,
+    template_folder=TEMPLATE_PATH,
+    static_folder=os.path.join(APP_PATH, "static/"),
+)
 api = Api(app)
 app.config["JSON_SORT_KEYS"] = False
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
@@ -157,7 +165,7 @@ admin.add_view(MyModelView(Config))
 admin.add_view(Build(name="Build"))
 
 
-menu = list(map(str.strip, open("menu.txt", "r").readlines()))
+menu = list(map(str.strip, open("shop/menu.txt", "r").readlines()))
 
 menu_map = {"others": "x"}
 for el in menu:
@@ -221,6 +229,7 @@ class Items(Resource):
     def get(self, path):
         return extract_items(path)
 
+
 def search_items(query):
     if query is not None:
         query = search.search(Item, query.lower())
@@ -240,7 +249,6 @@ def search_items(query):
 
         return jsonify(items=json_objects)
     return jsonify({"error": "Not found"})
-
 
 
 class ReForm(FlaskForm):
@@ -332,10 +340,9 @@ def before_request():
 def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
-    return render_template("item.html", data=search_items(g.search_form.q.data))
-
-
-
+    return render_template(
+        "item.html", data=search_items(g.search_form.q.data)
+    )
 
 
 def find_item(json, name):
@@ -406,12 +413,14 @@ def about():
 def stock():
     return render_template("stock.html")
 
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
 
+
 api.add_resource(Items, "/api/items/<string:path>")
-#api.add_resource(Search, "/api/search")  TODO
+# api.add_resource(Search, "/api/search")  TODO
 api.add_resource(GoBuild, "/api/gobuild")
 
 if __name__ == "__main__":

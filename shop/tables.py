@@ -1,4 +1,4 @@
-from flask_table import Table, Col, create_table, BoolCol
+from flask_table import BoolCol, Col, Table, create_table
 
 table_option = dict(
     classes=[

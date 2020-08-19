@@ -21,7 +21,6 @@ def search(cls, expression):
     )
 
 
-
 def add_to_index(index, model):
     payload = {}
     for field in model.__searchable__:
@@ -41,8 +40,6 @@ def remove_from_index(index, model):
 
 def process_hits(hits):
     return [int(item["_id"]) for item in hits]
-
-
 
 
 def query_index(index, query):
