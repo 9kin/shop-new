@@ -199,29 +199,48 @@ def items_path(path):
     return path_list
 
 
-def extract_items(path):
+# ext TODO
+def validate_path(path: str):
+    # SQL INJECTION
+    for char in path:
+        if not (char.isdigit() or char == "."):
+            return False
+    return True
+
+
+#  TODO ext
+
+
+def items2json(items):
+    m = {item.id: item for item in items}
+    imgs = Image.select().where(Image.name.in_(items))
+    for i in imgs:
+        m[i.name_id].img = i.path
+    l = []
+    for key in m:
+        item = m[key]
+        l.append(
+            {
+                "name": item.name,
+                "count": item.count,
+                "cost": item.cost,
+                "img": item.img,
+                "id": item.id,
+            }
+        )
+
+    l.sort(key=lambda x: x["cost"])
+    return l
+
+
+def extract_items(path: str):
+    if not validate_path(path):
+        return not_found(404)
     items = Item.select().where(Item.group == path)
     if items:
         items = [i for i in items]
-        m = {item.id: item for item in items}
-        imgs = Image.select().where(Image.name.in_(items))
-        for i in imgs:
-            m[i.name_id].img = i.path
-        l = []
-        for key in m:
-            item = m[key]
-            l.append(
-                {
-                    "name": item.name,
-                    "count": item.count,
-                    "cost": item.cost,
-                    "img": item.img,
-                    "id": item.id,
-                }
-            )
 
-        l.sort(key=lambda x: x["cost"])
-        return jsonify(items=l, path=items_path(path))
+        return jsonify(items=items2json(items), path=items_path(path))
     return not_found(404)
 
 
@@ -232,23 +251,9 @@ class Items(Resource):
 
 def search_items(query):
     if query is not None:
-        query = search.search(Item, query.lower())
-        return jsonify(items={})
-
-        if query is None:
-            return jsonify(items={})
-
-        all_items = query.all()
-
-        if all_items is None:
-            return not_found(404)
-
-        json_objects = items_sort(
-            [item_to_json(item) for item in all_items], args["sortby"]
-        )
-
-        return jsonify(items=json_objects)
-    return jsonify({"error": "Not found"})
+        items = search.search("items", Item, query.lower())
+        return items2json(items)
+    return []
 
 
 class ReForm(FlaskForm):
@@ -341,7 +346,7 @@ def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
     return render_template(
-        "item.html", data=search_items(g.search_form.q.data)
+        "item.html", data={"items": search_items(g.search_form.q.data)}
     )
 
 
@@ -386,7 +391,7 @@ def item(path):
         )
     # TODO  md for all items
 
-    return render_template("item.html", data=response_json, form=form)
+    return render_template("item.html", data=response_json)
 
 
 @app.route("/favicon.ico")
