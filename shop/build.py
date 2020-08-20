@@ -1,4 +1,5 @@
 import argparse
+from pprint import pprint
 import os
 
 from elasticsearch.helpers import bulk
@@ -11,35 +12,31 @@ from .ext import Parser
 parser = Parser()
 
 # sudo systemctl start elasticsearch.service
-
+def parse_price(string):
+    return float(string.replace("'", ""))
 
 def sql():
     parser.delete_items()
-
-    parser.load_data()
-
-    bar = tqdm(
-        range(len(parser.data)),
-        desc="parse 1c",
-        unit="line",
-        bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
-    )
-    for i in bar:
-        parser.next_1c()
-    parser.save_1c_database()
+    for i, item in enumerate(parser.data()):
+        item = parser.split_(item)
+        try:
+            parser.database.append(
+                {
+                    "name": item[0],
+                    "cost": parse_price(item[2]),
+                    "count": float(item[3]),
+                }
+            )
+        except:
+            parser.ban.append(i)
+    parser.save_database()
 
 
 def keywords():
-    parser.load_items()
-    bar = tqdm(
-        range(len(parser.items)),
-        desc="keywords",
-        unit="line",
-        bar_format="{desc}: {percentage:.3f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
-    )
-    for i in bar:
-        parser.next_keyword()
-
+    items = parser.items()
+    for item in items:
+        item.group = parser.table.contains(item.name.lower())
+    Item.bulk_update(items, fields=[Item.group])
 
 def indexing(new_item):
     search.add_to_index("items", new_item)
@@ -61,7 +58,7 @@ def elasticsearch():
     except:
         pass
 
-    items = [item for item in Item.select()]
+    items = parser.items()
     bulk(search.elasticsearch, gendata(items))
 
 

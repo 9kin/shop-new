@@ -230,57 +230,6 @@ def search_items(query):
     return []
 
 
-class ReForm(FlaskForm):
-    regex_field = StringField("regex search", validators=[DataRequired()])
-    ini_field = TextAreaField("INI")
-
-    submit = SubmitField("найти")
-
-
-@app.route("/ini", methods=["GET", "POST"])
-def ini():
-    item = session.query(Item).all()
-    form = ReForm()
-    if form.validate_on_submit():
-        regex_field = form.regex_field.data.lower()
-        ini_field = form.ini_field.data
-        config = configparser.ConfigParser()
-        config.read_string(ini_field)
-
-        table = KeywordTable(
-            [
-                Keyword(keyword, key)
-                for key in config["table"]
-                for keyword in aslist_cronly(config["table"][key])
-            ]
-        )
-
-        regex_search = []
-        ini_search = []
-        for obj in item:
-            res = table.contains(obj.name.lower())
-            if res != False:
-                if obj == regex_field:
-                    obj.full_match = True
-                    regex_search.append(obj)
-                else:
-                    obj.full_match = False
-                    ini_search.append(obj)
-            elif obj == regex_field:
-                obj.full_match = False
-                regex_search.append(obj)
-            else:
-                obj.full_match = False
-        return render_template(
-            "table.html",
-            form=form,
-            menu=menu_map,
-            data=regex_search,
-            ini=ini_search,
-        )
-    return render_template("table.html", form=form, menu=menu_map, data=item)
-
-
 class GoBuild(Resource):
     def get(self):
         args = parser.parse_args()

@@ -24,7 +24,7 @@ class KeywordTable:
         for key in self.keywords:
             if key == item:
                 return key.routing
-        return False
+        return ''
 
     def test_contains(self, item):
         l = set()
