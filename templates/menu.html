@@ -1,6 +1,6 @@
 {% macro main() %}
 
-<link rel="stylesheet" href="/static/styles/menu.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/menu.css') }}">
 
 
 
@@ -326,6 +326,6 @@
         </ul>
     </nav>
 
-<script src="/static/scripts/menu.js"></script>
+<script src="{{ url_for('static', filename='scripts/menu.js') }}"></script>
 
 {% endmacro %}

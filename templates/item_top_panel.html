@@ -1,7 +1,6 @@
-{% macro main(path, sortby) %}
+{% macro main(path) %}
 
-<link rel="stylesheet" href="/static/styles/item_top_panel.css">
-<!--<script src="/static/scripts/item_top_panel.js"></script>-->
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/item_top_panel.css') }}">
 
 <div class="path">
 {% for item in path %}

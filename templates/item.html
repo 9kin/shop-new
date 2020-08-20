@@ -8,13 +8,11 @@
 
  {% import "message.html" as  message %}{{ message.main() }}
 
-    <link rel="stylesheet" href="/static/styles/item.css">
-    <script src="/static/scripts/item.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/item.css') }}">
+    <script src="{{ url_for('static', filename='scripts/item.js') }}"></script>
 
-    {% set path = data['path'] %}
-    {% set data = data['items'] %}
 
-    {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
+    {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path) }}
 
 
 
@@ -28,13 +26,13 @@
     <button class="sort btn btn-primary btn-sm" data-sort="name">имя</button>
 
     <div class="list contain">
-        {% for line in range(data|length) %}
+        {% for line in range(items|length) %}
             <div class="card">
-                <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + data[line]['img']) }}" alt="Card image cap">
+                <img class="card-img-top" src="{{ url_for('static',  filename= 'img/' + items[line]['img']) }}" alt="Card image cap">
                 <div class="card-body">
                     <i class="fas fa-faucet"></i>
-                    <h5 class="name card-title">{{ data[line]["name"] }}</h5>
-                    <p class="cost card-text text-center"><b>{{ data[line]['cost'] }}</b></p>
+                    <h5 class="name card-title">{{ items[line]["name"] }}</h5>
+                    <p class="cost card-text text-center"><b>{{ items[line]['cost'] }}</b></p>
                 </div>
             </div>
         {% endfor %}

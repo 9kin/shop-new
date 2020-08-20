@@ -2,15 +2,14 @@
 {% block content %}
 
 <main>
-<link rel="stylesheet" href="/static/styles/item_table.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/item_table.css') }}">
 
 <script src='https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
 <script src='https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js'></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
 
 
-
-{% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path, sortby) }}
+{% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path) }}
 
 {{ md |safe }}
 

@@ -51,10 +51,10 @@ import os
 
 # https://stackoverflow.com/a/48040453/13156381
 APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMPLATE_PATH = os.path.join(APP_PATH, "templates/")
 app = Flask(
     __name__,
-    template_folder=TEMPLATE_PATH,
+    static_url_path="",
+    template_folder=os.path.join(APP_PATH, "templates/"),
     static_folder=os.path.join(APP_PATH, "static/"),
 )
 api = Api(app)
@@ -193,8 +193,6 @@ def validate_path(path: str):
 
 
 #  TODO ext
-
-
 def items2json(items):
     m = {item.id: item for item in items}
     imgs = Image.select().where(Image.name.in_(items))
@@ -212,25 +210,17 @@ def items2json(items):
                 "id": item.id,
             }
         )
-
     l.sort(key=lambda x: x["cost"])
     return l
 
 
 def extract_items(path: str):
     if not validate_path(path):
-        return not_found(404)
+        return []
     items = Item.select().where(Item.group == path)
     if items:
-        items = [i for i in items]
-
-        return jsonify(items=items2json(items), path=items_path(path))
-    return not_found(404)
-
-
-class Items(Resource):
-    def get(self, path):
-        return extract_items(path)
+        return items2json([i for i in items])
+    return []
 
 
 def search_items(query):
@@ -330,7 +320,7 @@ def search_route():
     if not g.search_form.validate():
         return redirect(url_for("."))
     return render_template(
-        "item.html", data={"items": search_items(g.search_form.q.data)}
+        "item.html", items=search_items(g.search_form.q.data)
     )
 
 
@@ -344,16 +334,13 @@ def find_item(json, name):
 
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
-    response = extract_items(path)
-    if response.status_code != 200:
-        return not_found(response.status_code)
+    items = extract_items(path)
 
-    response_json = response.get_json()
     if config.Route().routing(path) is not None:
         curent_class = config.Route().routing(path)
         data = curent_class.table.data
         if data is None:
-            data = response_json["items"]
+            data = items
         else:
             data = data.copy()
 
@@ -365,17 +352,14 @@ def item(path):
                 else:
                     line["cost"] = "-"
 
-        table = curent_class.table.table(data)
-
         return render_template(
             "item_table.html",
-            path=response_json["path"],
-            table=table,
+            path=items_path(path),
+            table=curent_class.table.table(data),
             md=markdown.markdown(curent_class.text),
         )
     # TODO  md for all items
-
-    return render_template("item.html", data=response_json)
+    return render_template("item.html", items=items, path=items_path(path))
 
 
 @app.route("/favicon.ico")
@@ -408,7 +392,7 @@ def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
 
 
-api.add_resource(Items, "/api/items/<string:path>")
+# api.add_resource(Items, "/api/items/<string:path>")
 # api.add_resource(Search, "/api/search")  TODO
 api.add_resource(GoBuild, "/api/gobuild")
 
