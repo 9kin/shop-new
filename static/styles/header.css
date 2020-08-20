@@ -1,5 +1,3 @@
-@import url('/static/styles/fonts/Montserrat.css');
-
 ::-webkit-scrollbar {
     background-color: var(--scrollbar-bg);
 }
@@ -10,9 +8,7 @@
     background-color: var(--scrollbar-thumb-bg);
 }
 
-* {
-    font-family: 'Montserrat', sans-serif !important;
-}
+* { font-family: Verdana; }
 
 i {
     font-family: "Font Awesome 5 Pro" !important;

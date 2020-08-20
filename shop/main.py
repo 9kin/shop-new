@@ -335,7 +335,6 @@ def find_item(json, name):
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
     items = extract_items(path)
-
     if config.Route().routing(path) is not None:
         curent_class = config.Route().routing(path)
         data = curent_class.table.data
@@ -343,15 +342,14 @@ def item(path):
             data = items
         else:
             data = data.copy()
-
-        for line in data:
-            if type(line["cost"]) == str:
-                it = find_item(response_json, line["cost"])
-                if it is not None:
-                    line["cost"] = it["cost"]
-                else:
-                    line["cost"] = "-"
-
+            names = []
+            for item in data:
+                names.append(item["cost"])
+            m = {}
+            for item in Item.select().where(Item.name.in_(names)):
+                m[item.name] = item.cost
+            for item in data:
+                item["cost"] = m[item["cost"]]
         return render_template(
             "item_table.html",
             path=items_path(path),
