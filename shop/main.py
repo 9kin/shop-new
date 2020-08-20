@@ -39,9 +39,10 @@ from wtforms.validators import DataRequired, Optional
 
 from form.forms import UploadForm
 
-from . import config, ext, search
+from . import ext, search
 from .build import elasticsearch, keywords, sql
 from .database import Config, Image, Item, User
+from .ext import Route, get_table
 from .keywords import Keyword, KeywordTable, aslist_cronly
 
 CONFIG = ext.Parser()
@@ -215,8 +216,6 @@ def items2json(items):
 
 
 def extract_items(path: str):
-    if not validate_path(path):
-        return []
     items = Item.select().where(Item.group == path)
     if items:
         return items2json([i for i in items])
@@ -283,10 +282,13 @@ def find_item(json, name):
 
 @app.route("/items/<string:path>", methods=["GET", "POST"])
 def item(path):
+    if not validate_path(path):
+        return not_found(404)
     items = extract_items(path)
-    if config.Route().routing(path) is not None:
-        curent_class = config.Route().routing(path)
-        data = curent_class.table.data
+    if "table" in Route().routing(path):
+        curent = Route().routing(path)
+        table = get_table(curent["table"])
+        data = table.data
         if data is None:
             data = items
         else:
@@ -299,11 +301,15 @@ def item(path):
                 m[item.name] = item.cost
             for item in data:
                 item["cost"] = m[item["cost"]]
+        if "md" in curent:
+            md = markdown.markdown(curent["md"])
+        else:
+            md = ""
         return render_template(
             "item_table.html",
             path=items_path(path),
-            table=curent_class.table.table(data),
-            md=markdown.markdown(curent_class.text),
+            table=table.table(data),
+            md=md,
         )
     # TODO  md for all items
     return render_template("item.html", items=items, path=items_path(path))

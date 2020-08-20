@@ -1,5 +1,4 @@
 import argparse
-from pprint import pprint
 import os
 
 from elasticsearch.helpers import bulk
@@ -14,6 +13,7 @@ parser = Parser()
 # sudo systemctl start elasticsearch.service
 def parse_price(string):
     return float(string.replace("'", ""))
+
 
 def sql():
     parser.delete_items()
@@ -37,6 +37,7 @@ def keywords():
     for item in items:
         item.group = parser.table.contains(item.name.lower())
     Item.bulk_update(items, fields=[Item.group])
+
 
 def indexing(new_item):
     search.add_to_index("items", new_item)
