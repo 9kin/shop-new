@@ -2,6 +2,7 @@ import configparser
 import json
 import os
 import time
+from copy import deepcopy
 from pprint import pprint
 
 import flask_admin as admin
@@ -286,13 +287,13 @@ def item(path):
         return not_found(404)
     items = extract_items(path)
     if "table" in Route().routing(path):
-        curent = Route().routing(path)
+        curent = Route().routing(path).copy()
         table = get_table(curent["table"])
         data = table.data
         if data is None:
             data = items
         else:
-            data = data.copy()
+            data = deepcopy(data)
             names = []
             for item in data:
                 names.append(item["cost"])
