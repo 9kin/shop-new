@@ -21,7 +21,6 @@ from flask import (
 )
 from flask_admin import BaseView, expose, helpers
 from flask_admin.contrib.peewee import ModelView
-from flask_profiler import Profiler
 from flask_restful import Api, Resource, reqparse
 from flask_table import BoolCol, Col, Table, create_table
 from flask_wtf import FlaskForm
@@ -63,21 +62,6 @@ app.config["JSON_SORT_KEYS"] = False
 app.config["SECRET_KEY"] = "yandexlyceum_secret_key"
 app.config["JSON_AS_ASCII"] = False
 app.config["FLASK_ADMIN_SWATCH"] = "cerulean"
-
-
-profiler = Profiler()
-
-app.config["DEBUG"] = True
-
-app.config["flask_profiler"] = {
-    "enabled": app.config["DEBUG"],
-    "storage": {"engine": "sqlite"},
-    "basicAuth": {"enabled": True, "username": "admin", "password": "admin"},
-    "ignore": ["^/static/.*"],
-}
-
-profiler = Profiler()  # You can have this in another module
-profiler.init_app(app)
 
 
 class Build(BaseView):
@@ -428,5 +412,10 @@ api.add_resource(Items, "/api/items/<string:path>")
 # api.add_resource(Search, "/api/search")  TODO
 api.add_resource(GoBuild, "/api/gobuild")
 
-if __name__ == "__main__":
+
+def main():
     app.run(port=8000)
+
+
+if __name__ == "__main__":
+    main()

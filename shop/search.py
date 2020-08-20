@@ -26,6 +26,7 @@ def add_to_index(index, model):
         timeout="10000s",
     )
 
+
 def remove_from_index(index, model):
     elasticsearch.delete(index=index, doc_type=index, id=model.id)
 

@@ -10,13 +10,13 @@ with open("README.rst") as readme_file:
 requirements = [
     "flask",
     "flask-table",  # easy html table
-    "flask_admin",  # admin panel
     "flask_login",  # simple flask login
     "flask_restful",  # rest api
-    "flask_wtf",  # wtforms
-    "flask-wtf",
+    "Flask-WTF",  # wtforms
     "python-dotenv",  # .env
     "peewee",  # simple and small ORM
+    "wtf-peewee",  # for flask_admin
+    "flask_admin",  # admin panel
     "elasticsearch==7.9.0",  # we also want to improve  to version 9.x + asyncio + aiohttp + fast_indexing
     "tqdm",  # progressbar
     "sphinx_revealjs",  # TODO remove (for docs)
@@ -25,7 +25,6 @@ requirements = [
     "rich",  # cli
     "black",  # TODO remove (for lint)
     "isort",  # TODO remove (for lint)
-    "wtf-peewee",  # for flask_admin
     "Click>=7.0",
 ]
 
