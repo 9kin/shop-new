@@ -147,3 +147,30 @@ def search_items(query):
         items = search("items", Item, query.lower())
         return items2json(items)
     return []
+
+
+def parse_config(config_text):
+    config = configparser.ConfigParser()
+    config.read_string(config_text)
+    keywords = []
+    for path in config:
+        if path == "DEFAULT":
+            continue
+        for key in config[path]:
+            if key == "regex":
+                for regex in aslist_cronly(config[path][key]):
+                    keywords.append(Keyword(regex, path))
+    table = KeywordTable(keywords)
+
+    m = {}
+    warnings = []
+    for item in Item.select():
+        res = table.test_contains(item.name.lower())
+        if len(res) != 0:
+            if len(res) != 1:
+                warnings.append([item, res])
+            group = list(res)[0]
+            if group not in m:
+                m[group] = set()
+            m[group].add(item.name)
+    return m, warnings

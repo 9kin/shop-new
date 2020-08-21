@@ -8,6 +8,7 @@ from PyInquirer import prompt as pypromt
 from rich import print
 
 from .database import Config, Item, db
+from .ext import parse_config
 from .keywords import Keyword, KeywordTable, aslist_cronly
 
 
@@ -74,33 +75,6 @@ def input_file():
     )
 
 
-def parse_config(model):
-    config = configparser.ConfigParser()
-    config.read_string(model.config)
-    keywords = []
-    for path in config:
-        if path == "DEFAULT":
-            continue
-        for key in config[path]:
-            if key == "regex":
-                for regex in aslist_cronly(config[path][key]):
-                    keywords.append(Keyword(regex, path))
-    table = KeywordTable(keywords)
-
-    m = {}
-    warnings = []
-    for item in Item.select():
-        res = table.test_contains(item.name.lower())
-        if len(res) != 0:
-            if len(res) != 1:
-                warnings.append([item, res])
-            group = list(res)[0]
-            if group not in m:
-                m[group] = set()
-            m[group].add(item.name)
-    return m, warnings
-
-
 def main():
     db.create_tables([Config])
 
@@ -138,8 +112,8 @@ def main():
     first = choose_config()
     second = choose_config(not_valid=[first.id - 1])
 
-    m1, warnings1 = parse_config(first)
-    m2, warnings2 = parse_config(second)
+    m1, warnings1 = parse_config(first.config)
+    m2, warnings2 = parse_config(second.config)
     cnt_1, cnt_2 = 0, 0
 
     keys = sorted(list(set(m1.keys()) | set(m2.keys())))

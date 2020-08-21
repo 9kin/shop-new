@@ -25,6 +25,7 @@ requirements = [
     "rich",  # cli
     "black",  # TODO remove (for lint)
     "isort",  # TODO remove (for lint)
+    "PyQT5",
     "Click>=7.0",
 ]
 
