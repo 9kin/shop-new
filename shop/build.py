@@ -2,7 +2,6 @@ import argparse
 import os
 
 from elasticsearch.helpers import bulk
-from tqdm import tqdm
 
 from . import search
 from .database import Item

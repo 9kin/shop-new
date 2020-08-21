@@ -43,7 +43,15 @@ from form.forms import UploadForm
 from . import ext, search
 from .build import elasticsearch, keywords, sql
 from .database import Config, Image, Item, User
-from .ext import Route, get_table
+from .ext import (
+    Route,
+    extract_items,
+    get_table,
+    items2json,
+    items_path,
+    search_items,
+    validate_path,
+)
 from .keywords import Keyword, KeywordTable, aslist_cronly
 
 CONFIG = ext.Parser()
@@ -73,7 +81,6 @@ class Build(BaseView):
         if form.validate_on_submit():
             data = form.file.data
             data.save(CONFIG.remains)
-            # TODO
         return self.render("/admin/build.html", form=form)
 
 
@@ -160,74 +167,7 @@ for el in menu:
 
 
 parser = reqparse.RequestParser()
-parser.add_argument("id")
-parser.add_argument("path")
-
-parser.add_argument("q")
-
 parser.add_argument("build_args")
-
-
-s = 0
-
-
-def items_path(path):
-    path_list = []
-    prev = ""
-    try:
-        for i in enumerate(path.split(".")):
-            if i[0] != 0:
-                prev += "."
-            prev += str(i[1])
-            path_list.append(menu_map[prev])
-    except:
-        path_list = []
-    return path_list
-
-
-# ext TODO
-def validate_path(path: str):
-    # SQL INJECTION
-    for char in path:
-        if not (char.isdigit() or char == "."):
-            return False
-    return True
-
-
-#  TODO ext
-def items2json(items):
-    m = {item.id: item for item in items}
-    imgs = Image.select().where(Image.name.in_(items))
-    for i in imgs:
-        m[i.name_id].img = i.path
-    l = []
-    for key in m:
-        item = m[key]
-        l.append(
-            {
-                "name": item.name,
-                "count": item.count,
-                "cost": item.cost,
-                "img": item.img,
-                "id": item.id,
-            }
-        )
-    l.sort(key=lambda x: x["cost"])
-    return l
-
-
-def extract_items(path: str):
-    items = Item.select().where(Item.group == path)
-    if items:
-        return items2json([i for i in items])
-    return []
-
-
-def search_items(query):
-    if query is not None:
-        items = search.search("items", Item, query.lower())
-        return items2json(items)
-    return []
 
 
 class GoBuild(Resource):
@@ -271,14 +211,6 @@ def search_route():
     return render_template(
         "item.html", items=search_items(g.search_form.q.data)
     )
-
-
-def find_item(json, name):
-    items = json["items"]
-    for item in items:
-        if item["name"] == name:
-            return item
-    return None
 
 
 @app.route("/items/<string:path>", methods=["GET", "POST"])
@@ -346,8 +278,6 @@ def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
 
 
-# api.add_resource(Items, "/api/items/<string:path>")
-# api.add_resource(Search, "/api/search")  TODO
 api.add_resource(GoBuild, "/api/gobuild")
 
 

@@ -2,8 +2,9 @@ import configparser
 
 from peewee import chunked
 
-from .database import Config, Item, db
+from .database import Config, Image, Item, db
 from .keywords import Keyword, KeywordTable, aslist_cronly
+from .search import search
 from .tables import Base, Ladder
 
 table_map = {}
@@ -87,3 +88,62 @@ class Route:
 
 def get_table(name):
     return table_map[name]
+
+
+def items_path(path):
+    path_list = []
+    prev = ""
+    try:
+        for i in enumerate(path.split(".")):
+            if i[0] != 0:
+                prev += "."
+            prev += str(i[1])
+            path_list.append(menu_map[prev])
+    except:
+        path_list = []
+    return path_list
+
+
+# ext TODO
+def validate_path(path: str):
+    # SQL INJECTION
+    for char in path:
+        if not (char.isdigit() or char == "."):
+            return False
+    return True
+
+
+#  TODO ext
+def items2json(items):
+    m = {item.id: item for item in items}
+    imgs = Image.select().where(Image.name.in_(items))
+    for i in imgs:
+        m[i.name_id].img = i.path
+    l = []
+    for key in m:
+        item = m[key]
+        l.append(
+            {
+                "name": item.name,
+                "count": item.count,
+                "cost": item.cost,
+                "img": item.img,
+                "id": item.id,
+            }
+        )
+    l.sort(key=lambda x: x["cost"])
+    return l
+
+
+def extract_items(path: str):
+    items = Item.select().where(Item.group == path)
+    if items:
+        return items2json([i for i in items])
+    return []
+
+
+def search_items(query):
+    if query is not None:
+        items = search("items", Item, query.lower())
+        return items2json(items)
+    return []
