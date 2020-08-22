@@ -8,6 +8,8 @@ with open("README.rst") as readme_file:
     readme = readme_file.read()
 
 requirements = [
+    "openpyxl",
+    "pillow",
     "flask",
     "flask-table",  # easy html table
     "flask_login",  # simple flask login
