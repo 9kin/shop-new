@@ -4,7 +4,7 @@ table_option = dict(
     classes=[
         "table table-striped table-bordered table-sm text-center table-hover"
     ],
-    thead_classes=["thead-dark"],
+    thead_classes=["thead-dark thead-f"],
 )
 
 
@@ -22,16 +22,15 @@ class Ladder:
     table = (
         create_table("TableCls", options=table_option)
         .add_column("name", Col("Арт."))
-        .add_column("steps", Col("Кол-во ступеней"))
         .add_column("cost", Col("Цена"))
-        .add_column("weight", Col("Вес, кг"))
-        .add_column("platform_height", Col("высота до платформы, мм"))
-        .add_column("working_height", Col("рабочая высота, мм"))
+        .add_column("steps", Col("Кол-во ступеней"))
+        .add_column("weight", Col("Вес"))
+        .add_column("platform_height", Col("высота до платформы"))
+        .add_column("working_height", Col("высота"))
         .add_column(
             "belt",
             BoolCol("Страховочная лента", yes_display="+", no_display="-"),
         )
-        .add_column("max_load", Col("Max нагрузка, кг"))
     )
 
     data = [

@@ -22,5 +22,13 @@ main img {
     flex-shrink: 0;
     margin: 10px;
     border-radius: 20px;
-    box-shadow: var(--item-table-img-shadow);
+}
+
+.thead-f {
+    font-size: 10px;
+}
+
+.carousel {
+  height: 420px;
+  width: 420px;
 }

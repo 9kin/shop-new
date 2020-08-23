@@ -1,4 +1,6 @@
-# from .main import main
+# from .image_compression import main
+
+from .main import main
 
 # from .build import main
 
@@ -6,6 +8,7 @@
 
 # from .ui import main
 
-from .parser import main
+# from .parser import main
+
 
 main()

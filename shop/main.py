@@ -3,6 +3,7 @@ import json
 import os
 import time
 from copy import deepcopy
+from pathlib import Path
 from pprint import pprint
 
 import flask_admin as admin
@@ -57,15 +58,14 @@ from .keywords import Keyword, KeywordTable, aslist_cronly
 CONFIG = ext.Parser()
 
 
-import os
-
 # https://stackoverflow.com/a/48040453/13156381
-APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+APP_DIR = Path(__file__).resolve().parent.parent
+IMG_DIR = Path("img/")
 app = Flask(
     __name__,
     static_url_path="",
-    template_folder=os.path.join(APP_PATH, "templates/"),
-    static_folder=os.path.join(APP_PATH, "static/"),
+    template_folder=str(APP_DIR.joinpath("templates/")),
+    static_folder=str(APP_DIR.joinpath("static/")),
 )
 api = Api(app)
 app.config["JSON_SORT_KEYS"] = False
@@ -158,14 +158,6 @@ admin.add_view(MyModelView(Config))
 admin.add_view(Build(name="Build"))
 
 
-menu = list(map(str.strip, open("shop/menu.txt", "r").readlines()))
-
-menu_map = {"others": "x"}
-for el in menu:
-    ind = el.find(" ")
-    menu_map[el[:ind]] = el[ind + 1 :]
-
-
 parser = reqparse.RequestParser()
 parser.add_argument("build_args")
 
@@ -238,11 +230,17 @@ def item(path):
             md = markdown.markdown(curent["md"])
         else:
             md = ""
+        images = []
+        if "images" in curent:
+            for image_path in curent["images"].split(","):
+                images.append(IMG_DIR.joinpath(image_path.strip()))
+
         return render_template(
             "item_table.html",
             path=items_path(path),
             table=table.table(data),
             md=md,
+            images=images,
         )
     # TODO  md for all items
     return render_template("item.html", items=items, path=items_path(path))
@@ -251,7 +249,7 @@ def item(path):
 @app.route("/favicon.ico")
 def favicon():
     return send_from_directory(
-        os.path.join(app.root_path, "static", "img"),
+        str(Path(app.root_path).joinpath("static", "img")),
         "favicon.ico",
         mimetype="image/vnd.microsoft.icon",
     )

@@ -8,24 +8,54 @@
 <script src='https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js'></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
 
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 
 {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path) }}
 
 {{ md |safe }}
 
-<div style="width: 1000px; height: 400px">
-	{{ table }}
+<div class="d-flex flex-row">
+    {% if images|length != 0 %}
+    <div class="carousel">
+
+        {% for image_src in images %}
+
+        <div class="carousel-cell">
+            <img height="400px" data-flickity-lazyload="{{ url_for('static', filename=image_src) }}">
+        </div>
+
+        {% endfor %}
+    </div>
+
+    {% endif %}
+
+    <div style="width: 600px; height: 400px">
+        {{ table }}
+    </div>
 </div>
 
+
+
 <script type="text/javascript">
+
+$('.carousel').flickity({
+  cellAlign: 'left',
+  wrapAround: true,
+  lazyLoad: true
+});
+
 $(document).ready(function() {
     $('.table').DataTable( {
-    	"pageLength": -1,
-    	"searching": false,
-    	"paging": false,
-    	"info": false,
+        "pageLength": -1,
+        "searching": false,
+        "paging": false,
+        "info": false,
     });
 });
+
+
+
 </script>
 
 

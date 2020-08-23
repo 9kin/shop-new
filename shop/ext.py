@@ -11,6 +11,12 @@ table_map = {}
 for table in [Base, Ladder]:
     table_map[table.__name__] = table
 
+menu = list(map(str.strip, open("shop/menu.txt", "r").readlines()))
+menu_map = {"others": "x"}
+for el in menu:
+    ind = el.find(" ")
+    menu_map[el[:ind]] = el[ind + 1 :]
+
 
 def parse_price(string):
     return float(string.replace("'", ""))
