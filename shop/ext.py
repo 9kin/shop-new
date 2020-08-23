@@ -169,14 +169,17 @@ def parse_config(config_text):
     table = KeywordTable(keywords)
 
     m = {}
+    name_group_map = {}
     warnings = []
     for item in Item.select():
         res = table.test_contains(item.name.lower())
         if len(res) != 0:
             if len(res) != 1:
                 warnings.append([item, res])
+                continue
             group = list(res)[0]
+            name_group_map[item.name] = group
             if group not in m:
                 m[group] = set()
             m[group].add(item.name)
-    return m, warnings
+    return m, warnings, name_group_map

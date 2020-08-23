@@ -1,7 +1,10 @@
+# https://www.w3schools.com/colors/colors_hex.asp
 import re
 import sys
+from pprint import pprint
+from random import shuffle
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -17,6 +20,11 @@ from PyQt5.QtWidgets import (
 from .database import Config, Item
 from .ext import parse_config
 
+colors = list(
+    map(lambda x: x.strip(), open("shop/color.txt", "r").readlines()[::2])
+)
+shuffle(colors)
+
 
 class RegexEdit(QLineEdit):
     def __init__(self, qw):
@@ -25,16 +33,13 @@ class RegexEdit(QLineEdit):
 
     def keyPressEvent(self, event):
         QLineEdit.keyPressEvent(self, event)
-        self.qw.searh()
+        self.qw.search()
 
 
 class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-
-    def e(self):
-        print("e")
 
     def initUI(self):
         self.setWindowTitle("parser")
@@ -43,13 +48,14 @@ class Example(QWidget):
         regex_layout = QVBoxLayout()
 
         self.regex_editor = RegexEdit(self)
-        self.regex_editor.setText(".*стремянка.*")
+        self.regex_editor.setText(".*шланг.*")
 
         tab_widget = QTabWidget()
-        self.search_edit = QTextEdit()
+        self.search_tree = QTreeWidget()
+        self.search_tree.setHeaderLabels(["name"])
         menu = QTextEdit()
 
-        tab_widget.addTab(self.search_edit, "db")
+        tab_widget.addTab(self.search_tree, "db")
         tab_widget.addTab(menu, "menu")
 
         self.text_edit = QTextEdit()
@@ -89,10 +95,21 @@ class Example(QWidget):
         main_layout.addLayout(regex_layout)
         self.setLayout(main_layout)
 
-        # self.setStyleSheet(
-        #    "QWidget {background-color: #3C3F41; color: #BBBBBB; }"
-        # )
-        self.resize(1000, 480)
+        self.search_tree.setStyleSheet(
+            """
+            QTreeWidget QHeaderView::section {
+                font-size: 20px;
+                background-color: #3C3F41;
+                color:#BBBBBB;
+            }
+            QTreeWidget{
+                font-size: 20px;
+                font-weight:bold;
+                background-color: #3C3F41;
+                color:#BBBBBB;
+            }"""
+        )
+        self.resize(1600, 1000)
 
         self.load_config()
 
@@ -112,33 +129,73 @@ class Example(QWidget):
         )
         menu = list(map(str.strip, open("shop/menu.txt", "r").readlines()))
 
-        self.menu_map = {"others": "x"}
+        self.menu_map = {"others": "x (no items)"}
         for el in menu:
             ind = el.find(" ")
             self.menu_map[el[:ind]] = el[ind + 1 :]
         self.parse()
-        self.searh()
 
-    def searh(self):
-        s = ""
+    def get_color(self, my_path):
+        for i, other_path in enumerate(self.keys):
+            if other_path == my_path:
+                return colors[i]
+
+    def search(self):
         regex = self.regex_editor.text()
+        name_group = {"others": []}  # name: 1.1.1
         for item in Item.select():
             name = item.name
-            try:
-                if re.fullmatch(regex, name.lower()):
-                    s += name + "\n"
-            except:
-                self.search_edit.setText("<b>ERROR</b>")
-                return 0
-        self.search_edit.setText(s)
+            # try:
+            if re.fullmatch(regex, name.lower()):
+                if name not in self.name_group_map:
+                    name_group["others"].append(name)
+                else:
+                    group = self.name_group_map[name]
+                    if group not in name_group:
+                        name_group[group] = []
+                    name_group[group].append(name)
+        #  self.search_tree
+        keys = sorted(name_group.keys())
+        keys.remove("others")
+        keys.insert(0, "others")
+        for i, path in enumerate(keys):
+            top = QtWidgets.QTreeWidgetItem(
+                self.search_tree,
+                [f"{path} {self.menu_map[path]}  {len(name_group[path])}"],
+            )
+
+            if path in self.keys:
+                top.setForeground(
+                    0, QtGui.QBrush(QtGui.QColor(self.get_color(path)))
+                )
+            for name in name_group[path]:
+                QtWidgets.QTreeWidgetItem(top, [name])
+
+    def parse(self):
+        self.tree.clear()
+        try:
+            m, warnings, self.name_group_map = parse_config(
+                self.editor.toPlainText()
+            )
+        except:
+            return 0
+        self.keys = sorted(m.keys())
+        for i, path in enumerate(self.keys):
+            top = QtWidgets.QTreeWidgetItem(
+                self.tree, [f"{path} {self.menu_map[path]}  {len(m[path])}"]
+            )
+            top.setForeground(0, QtGui.QBrush(QtGui.QColor(colors[i])))
+            for name in m[path]:
+                QtWidgets.QTreeWidgetItem(top, [name])
+        self.search()
 
     def load_config(self):
-        cnt = (
+        if (
             Config.select()
             .where(Config.name == self.config_name.text())
             .count()
-        )
-        if cnt == 1:
+            == 1
+        ):
             self.editor.setText(
                 Config.select()
                 .where(Config.name == self.config_name.text())
@@ -147,12 +204,12 @@ class Example(QWidget):
             )
 
     def save_config(self):
-        cnt = (
+        if (
             Config.select()
             .where(Config.name == self.config_name.text())
             .count()
-        )
-        if cnt == 0:
+            == 0
+        ):
             cfg = Config(
                 name=self.config_name.text(), config=self.editor.toPlainText()
             )
@@ -164,20 +221,6 @@ class Example(QWidget):
             )
             cfg.config = self.editor.toPlainText()
         cfg.save()
-
-    def parse(self):
-        self.tree.clear()
-        try:
-            m, warnings1 = parse_config(self.editor.toPlainText())
-        except:
-            return 0
-        keys = sorted(m.keys())
-        for path in keys:
-            top = QtWidgets.QTreeWidgetItem(
-                self.tree, [f"{path} {self.menu_map[path]}  {len(m[path])}"]
-            )
-            for names in m[path]:
-                QtWidgets.QTreeWidgetItem(top, [names])
 
 
 def main():
