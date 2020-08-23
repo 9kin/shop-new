@@ -32,8 +32,10 @@ class RegexEdit(QLineEdit):
         super().__init__()
 
     def keyPressEvent(self, event):
+        prev = self.text()
         QLineEdit.keyPressEvent(self, event)
-        self.qw.search()
+        if prev != self.text():
+            self.qw.search()
 
 
 class Example(QWidget):
@@ -141,6 +143,7 @@ class Example(QWidget):
                 return colors[i]
 
     def search(self):
+        self.search_tree.clear()
         regex = self.regex_editor.text()
         name_group = {"others": []}  # name: 1.1.1
         for item in Item.select():
@@ -154,7 +157,6 @@ class Example(QWidget):
                     if group not in name_group:
                         name_group[group] = []
                     name_group[group].append(name)
-        #  self.search_tree
         keys = sorted(name_group.keys())
         keys.remove("others")
         keys.insert(0, "others")
@@ -180,6 +182,11 @@ class Example(QWidget):
         except:
             return 0
         self.keys = sorted(m.keys())
+
+        cnt = 0
+        for path in self.keys:
+            cnt += len(m[path])
+
         for i, path in enumerate(self.keys):
             top = QtWidgets.QTreeWidgetItem(
                 self.tree, [f"{path} {self.menu_map[path]}  {len(m[path])}"]

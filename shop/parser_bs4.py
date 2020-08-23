@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 
 text = open("templates/menu.html").read()[20:-15]
 soup = BeautifulSoup(text, "html.parser")
-out = open("menu.txt", "w")
+out = open("shop/menu.txt", "w")
 
 
 def t(string):
