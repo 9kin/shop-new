@@ -6,7 +6,9 @@
 
 <main>
 
- {% import "message.html" as  message %}{{ message.main() }}
+
+{% import "message.html" as message %}{{ message.main(date) }}
+
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/item.css') }}">
     <script src="{{ url_for('static', filename='scripts/item.js') }}"></script>

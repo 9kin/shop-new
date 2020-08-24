@@ -1,9 +1,22 @@
-{% macro main() %}
+{% macro main(date) %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/message.css') }}">
+
+<style>
+section {
+    padding: 20px 15px 0;
+}
+
+section p {
+    color: #f00;
+    font-weight: bold;
+    font-size: 1.1em;
+    letter-spacing: .1em;
+    text-shadow: 0 0 .5em #fff;
+}
+</style>
 
 <section>
-	<p>Уточняйте цену по телефону в магазине</p>
+	<p>Уточняйте цену по телефону. {{ date }}</p>
 </section>
 
 {% endmacro %}

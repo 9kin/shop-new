@@ -58,13 +58,14 @@
 
 <body>
 
-{% import "header.html" as  header %}{{ header.main() }}
+{% include "header.html" %}
 
-{% import "menu.html" as  menu %}{{ menu.main() }}
+{% include "menu.html" %}
 
 {% block content %}{% endblock %}
 
-{% import "footer.html" as  footer %}{{ footer.main() }}
+{% include "footer.html" %}
+
 
 </body>
 

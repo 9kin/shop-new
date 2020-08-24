@@ -9,6 +9,7 @@ with open("README.rst") as readme_file:
 
 requirements = [
     "bs4",
+    "arrow",  # datetime humanize
     "openpyxl",
     "pillow",
     "flask",

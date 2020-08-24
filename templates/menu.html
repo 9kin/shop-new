@@ -1,12 +1,8 @@
-{% macro main() %}
+
 
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/menu.css') }}">
 
 
-
-
-
-</script>
     <nav class="main-menu">
         <ul>
             <li id='parse'> <!--1-->
@@ -49,7 +45,7 @@
                                         <a href="/items/1.2.3">подводка для газа</a>
                                     </li>
                                     <li class="drop-end">
-                                        <a href="/items/1.2.4">шланг стиральной машине</a>
+                                        <a href="/items/1.2.4">шланг к стиральной машине</a>
                                     </li>
                                     <li class="drop-end">
                                         <a href="/items/1.2.5">шланг для душа</a>
@@ -330,5 +326,3 @@
     </nav>
 
 <script src="{{ url_for('static', filename='scripts/menu.js') }}"></script>
-
-{% endmacro %}

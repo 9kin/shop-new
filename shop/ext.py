@@ -110,7 +110,6 @@ def items_path(path):
     return path_list
 
 
-# ext TODO
 def validate_path(path: str):
     # SQL INJECTION
     for char in path:
@@ -119,7 +118,6 @@ def validate_path(path: str):
     return True
 
 
-#  TODO ext
 def items2json(items):
     m = {item.id: item for item in items}
     imgs = Image.select().where(Image.name.in_(items))

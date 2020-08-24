@@ -3,13 +3,16 @@ import json
 import os
 import time
 from copy import deepcopy
+from os import getenv
 from pathlib import Path
 from pprint import pprint
 
+import arrow
 import flask_admin as admin
 import flask_login as login
 import markdown
 import requests
+from dotenv import load_dotenv
 from flask import (
     Flask,
     g,
@@ -58,8 +61,16 @@ from .keywords import Keyword, KeywordTable, aslist_cronly
 CONFIG = ext.Parser()
 
 
-# https://stackoverflow.com/a/48040453/13156381
 APP_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(dotenv_path=APP_DIR / ".env")
+
+DATE_DB_UPDATE = arrow.get(getenv("DATE_DB_UPDATE")).replace(tzinfo="local")
+
+
+def get_date():
+    return f"Цены верны на {DATE_DB_UPDATE.format('DD.MM')} ({DATE_DB_UPDATE.humanize(locale='ru')})."
+
+
 IMG_DIR = Path("img/")
 app = Flask(
     __name__,
@@ -139,8 +150,17 @@ admin = admin.Admin(
 
 def create_admin():
     is_admin = User.select().where(User.login == "admin").count() == 1
+    admin_password = getenv("ADMIN_PASSWORD")
     if not is_admin:
-        User.create(login="admin", password=generate_password_hash("admin"))
+        User.create(
+            login="admin", password=generate_password_hash(admin_password)
+        )
+    else:
+        admin = User.select().where(User.login == "admin").get()
+        password_hash = generate_password_hash(admin_password)
+        if admin.password != password_hash:
+            admin.password = password_hash
+            admin.save()
 
 
 create_admin()
@@ -209,7 +229,7 @@ def search_route():
 def item(path):
     if not validate_path(path):
         return not_found(404)
-    items = extract_items(path)
+    items = sorted(extract_items(path), key=lambda x: float(x["cost"]))
     if "table" in Route().routing(path):
         curent = Route().routing(path).copy()
         table = get_table(curent["table"])
@@ -230,20 +250,23 @@ def item(path):
             md = markdown.markdown(curent["md"])
         else:
             md = ""
-        images = []
-        if "images" in curent:
-            for image_path in curent["images"].split(","):
-                images.append(IMG_DIR.joinpath(image_path.strip()))
+        carousel_imgs = []
+        if "carousel_imgs" in curent:
+            for image_path in aslist_cronly(curent["carousel_imgs"]):
+                carousel_imgs.append(IMG_DIR.joinpath(image_path.strip()))
 
         return render_template(
             "item_table.html",
             path=items_path(path),
             table=table.table(data),
             md=md,
-            images=images,
+            carousel_imgs=carousel_imgs,
+            date=get_date(),
         )
     # TODO  md for all items
-    return render_template("item.html", items=items, path=items_path(path))
+    return render_template(
+        "item.html", items=items, path=items_path(path), date=get_date()
+    )
 
 
 @app.route("/favicon.ico")
