@@ -119,10 +119,10 @@ def validate_path(path: str):
 
 
 def items2json(items):
-    m = {item.id: item for item in items}
-    imgs = Image.select().where(Image.name.in_(items))
+    m = {item.name: item for item in items}
+    imgs = Image.select().where(Image.name.in_([item.name for item in items]))    
     for i in imgs:
-        m[i.name_id].img = i.path
+        m[i.name].img = i.path
     l = []
     for key in m:
         item = m[key]

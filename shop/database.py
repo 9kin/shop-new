@@ -39,7 +39,7 @@ class Item(BaseModel):
 
 
 class Image(BaseModel):
-    name = ForeignKeyField(Item, backref="images")
+    name = TextField()
     path = TextField(default="not.png")
 
 
