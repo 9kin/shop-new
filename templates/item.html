@@ -3,25 +3,19 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/item.css') }}">
+<script src="{{ url_for('static', filename='scripts/item.js') }}"></script>
 
 <main>
 
-
 {% import "message.html" as message %}{{ message.main(date) }}
+{% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path) }}
 
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/item.css') }}">
-    <script src="{{ url_for('static', filename='scripts/item.js') }}"></script>
-
-
-    {% import "item_top_panel.html" as  item_top_panel %}{{ item_top_panel.main(path) }}
-
-
+{{ md |safe }}
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 
-
-<div id="users">
+<div id="items">
 
 
     <button class="sort btn btn-primary btn-sm" data-sort="cost">цена</button>
@@ -50,7 +44,7 @@
       valueNames: ['cost', 'name']
     };
 
-    var userList = new List('users', options);
+    var userList = new List('items', options);
 
 </script>
 

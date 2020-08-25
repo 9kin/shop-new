@@ -1,6 +1,7 @@
 import configparser
 from pathlib import Path
 
+import markdown
 from peewee import chunked
 
 from .database import Config, Image, Item, db
@@ -184,3 +185,10 @@ def parse_config(config_text):
                 m[group] = set()
             m[group].add(item.name)
     return m, warnings, name_group_map
+
+
+def get_markdown(curent):
+    if "md" in curent:
+        return markdown.markdown(curent["md"])
+    else:
+        return ""

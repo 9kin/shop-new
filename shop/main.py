@@ -10,8 +10,6 @@ from pprint import pprint
 import arrow
 import flask_admin as admin
 import flask_login as login
-import markdown
-import requests
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -42,20 +40,20 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Optional
 
-from form.forms import UploadForm
-
 from . import ext, search
 from .build import elasticsearch, keywords, sql
 from .database import Config, Image, Item, User
 from .ext import (
     Route,
     extract_items,
+    get_markdown,
     get_table,
     items2json,
     items_path,
     search_items,
     validate_path,
 )
+from .forms import LoginForm, SearchForm, UploadForm
 from .keywords import Keyword, KeywordTable, aslist_cronly
 
 CONFIG = ext.Parser()
@@ -92,21 +90,6 @@ class Build(BaseView):
             data = form.file.data
             data.save(CONFIG.remains)
         return self.render("/admin/build.html", form=form)
-
-
-class LoginForm(FlaskForm):
-    login = StringField()
-    password = PasswordField()
-
-    def validate_login(self, field):
-        cur_user = self.get_user()
-        if cur_user is None:
-            raise validators.ValidationError("Invalid user")
-        if not check_password_hash(cur_user.password, self.password.data):
-            raise validators.ValidationError("Invalid password")
-
-    def get_user(self):
-        return User.get(User.login == self.login.data)
 
 
 login_manager = login.LoginManager()
@@ -199,17 +182,6 @@ class GoBuild(Resource):
             return "error"
 
 
-class SearchForm(FlaskForm):
-    q = StringField("поиск товара", validators=[DataRequired()])
-
-    def __init__(self, *args, **kwargs):
-        if "formdata" not in kwargs:
-            kwargs["formdata"] = request.args
-        if "csrf_enabled" not in kwargs:
-            kwargs["csrf_enabled"] = False
-        super(SearchForm, self).__init__(*args, **kwargs)
-
-
 @app.before_request
 def before_request():
     g.search_form = SearchForm()
@@ -229,8 +201,9 @@ def item(path):
     if not validate_path(path):
         return not_found(404)
     items = sorted(extract_items(path), key=lambda x: float(x["cost"]))
-    if "table" in Route().routing(path):
-        curent = Route().routing(path).copy()
+    curent = Route().routing(path).copy()
+    md = get_markdown(curent)
+    if curent is not None and "table" in curent:
         table = get_table(curent["table"])
         data = table.data
         if data is None:
@@ -244,11 +217,7 @@ def item(path):
             for item in Item.select().where(Item.name.in_(names)):
                 m[item.name] = item.cost
             for item in data:
-                item["cost"] = m[item["cost"]]
-        if "md" in curent:
-            md = markdown.markdown(curent["md"])
-        else:
-            md = ""
+                item["cost"] = m[item["cost"]] if item["cost"] in m else "-"
         carousel_imgs = []
         if "carousel_imgs" in curent:
             for image_path in aslist_cronly(curent["carousel_imgs"]):
@@ -262,9 +231,12 @@ def item(path):
             carousel_imgs=carousel_imgs,
             date=get_date(),
         )
-    # TODO  md for all items
     return render_template(
-        "item.html", items=items, path=items_path(path), date=get_date()
+        "item.html",
+        path=items_path(path),
+        items=items,
+        md=md,
+        date=get_date(),
     )
 
 

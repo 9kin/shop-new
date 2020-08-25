@@ -43,7 +43,7 @@ def main():
     IMG_DIR = STATIC_DIR.joinpath("img")
     IMG_FULL_DIR = STATIC_DIR.joinpath("img_full")
 
-    jpg_files = [file for file in IMG_FULL_DIR.rglob("*.jpg")]
+    jpg_files = list(IMG_FULL_DIR.rglob("*.jpg"))
     JSON_DATA = json.load(open(JSON_PATH, "r"))
 
     rmtree(str(IMG_DIR), ignore_errors=True)
@@ -59,11 +59,13 @@ def main():
             im.thumbnail(size, Image.ANTIALIAS)
             im.save(f'{path.with_suffix("")}_{size[0]}x{size[1]}.jpg')
 
-    png_files = [file for file in IMG_FULL_DIR.rglob("*.png")]
+    png_files = list(IMG_FULL_DIR.rglob("*.png"))
     for file_name in png_files:
         pngquant(file_name)
 
-    webp_files = [file for file in IMG_FULL_DIR.rglob("*.webp")]
-    for file_name in webp_files:
+    copy_files = list(IMG_FULL_DIR.rglob("*.webp")) + list(
+        IMG_FULL_DIR.rglob("*.ico")
+    )
+    for file_name in copy_files:
         file_name.parent.mkdir(parents=True, exist_ok=True)
         copyfile(str(file_name), str(file_name).replace("img_full", "img"))
