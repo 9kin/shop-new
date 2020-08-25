@@ -201,7 +201,7 @@ def item(path):
     if not validate_path(path):
         return not_found(404)
     items = sorted(extract_items(path), key=lambda x: float(x["cost"]))
-    curent = Route().routing(path).copy()
+    curent = Route().routing(path)
     md = get_markdown(curent)
     if curent is not None and "table" in curent:
         table = get_table(curent["table"])

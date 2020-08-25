@@ -13,7 +13,6 @@ class Base:
         create_table("TableCls", options=table_option)
         .add_column("name", Col("Название"))
         .add_column("cost", Col("Цена"))
-        .add_column("count", Col("Количество"))
     )
     data = None
 

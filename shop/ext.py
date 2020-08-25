@@ -188,7 +188,7 @@ def parse_config(config_text):
 
 
 def get_markdown(curent):
-    if "md" in curent:
+    if curent is not None and "md" in curent:
         return markdown.markdown(curent["md"])
     else:
         return ""
