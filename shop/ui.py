@@ -1,6 +1,7 @@
 # https://www.w3schools.com/colors/colors_hex.asp
 import re
 import sys
+from pathlib import Path
 from pprint import pprint
 from random import shuffle
 
@@ -40,6 +41,12 @@ class RegexEdit(QLineEdit):
 
 class Example(QWidget):
     def __init__(self):
+        menu_file = Path(__file__).parent.joinpath("menu.txt")
+        menu = list(map(str.strip, open(menu_file, "r").readlines()))
+        self.menu_map = {"others": "x (no items)"}
+        for el in menu:
+            ind = el.find(" ")
+            self.menu_map[el[:ind]] = el[ind + 1 :]
         super().__init__()
         self.initUI()
 
@@ -129,12 +136,7 @@ class Example(QWidget):
                 color:#BBBBBB;
             }"""
         )
-        menu = list(map(str.strip, open("shop/menu.txt", "r").readlines()))
 
-        self.menu_map = {"others": "x (no items)"}
-        for el in menu:
-            ind = el.find(" ")
-            self.menu_map[el[:ind]] = el[ind + 1 :]
         self.parse()
 
     def get_color(self, my_path):
@@ -186,7 +188,6 @@ class Example(QWidget):
         cnt = 0
         for path in self.keys:
             cnt += len(m[path])
-
         for i, path in enumerate(self.keys):
             top = QtWidgets.QTreeWidgetItem(
                 self.tree, [f"{path} {self.menu_map[path]}  {len(m[path])}"]

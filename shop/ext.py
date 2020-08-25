@@ -1,4 +1,5 @@
 import configparser
+from pathlib import Path
 
 from peewee import chunked
 
@@ -11,7 +12,9 @@ table_map = {}
 for table in [Base, Ladder]:
     table_map[table.__name__] = table
 
-menu = list(map(str.strip, open("shop/menu.txt", "r").readlines()))
+menu_file = Path(__file__).parent.joinpath("menu.txt")
+
+menu = list(map(str.strip, open(menu_file, "r").readlines()))
 menu_map = {"others": "x"}
 for el in menu:
     ind = el.find(" ")
@@ -120,7 +123,7 @@ def validate_path(path: str):
 
 def items2json(items):
     m = {item.name: item for item in items}
-    imgs = Image.select().where(Image.name.in_([item.name for item in items]))    
+    imgs = Image.select().where(Image.name.in_([item.name for item in items]))
     for i in imgs:
         m[i.name].img = i.path
     l = []

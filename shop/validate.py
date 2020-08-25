@@ -88,13 +88,14 @@ def main():
     )
 
     if not confirm:
-        question = {
-            "type": "rawlist",
-            "name": "list",
-            "message": "What do you want to do?",
-            "choices": ["Edit config", "Create new config",],
-        }
-        choose = prompt(question)
+        choose = prompt(
+            {
+                "type": "rawlist",
+                "name": "list",
+                "message": "What do you want to do?",
+                "choices": ["Edit config", "Create new config",],
+            }
+        )
         if choose == "Edit config":
             config = choose_config()
         else:

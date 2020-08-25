@@ -1,9 +1,5 @@
 from bs4 import BeautifulSoup
 
-text = open("templates/menu.html").read()[20:-15]
-soup = BeautifulSoup(text, "html.parser")
-out = open("shop/menu.txt", "w")
-
 
 def t(string):
     """
@@ -33,9 +29,14 @@ def rec(html):
     return id, s
 
 
-parse = soup.findAll("li", id="parse")
+def main():
+    text = open("templates/menu.html").read()[20:-15]
+    soup = BeautifulSoup(text, "html.parser")
+    out = open("shop/menu.txt", "w")
 
-for j in range(len(parse)):
-    _, s = rec(parse[j])
-    s = f"{j + 1} {parse[j].find('div').text}\n" + s
-    out.write(s)
+    parse = soup.findAll("li", id="parse")
+
+    for j in range(len(parse)):
+        _, s = rec(parse[j])
+        s = f"{j + 1} {parse[j].find('div').text}\n" + s
+        out.write(s)

@@ -60,7 +60,6 @@ from .keywords import Keyword, KeywordTable, aslist_cronly
 
 CONFIG = ext.Parser()
 
-
 APP_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=APP_DIR / ".env")
 
@@ -304,7 +303,3 @@ api.add_resource(GoBuild, "/api/gobuild")
 
 def main():
     app.run(port=8000)
-
-
-if __name__ == "__main__":
-    main()
