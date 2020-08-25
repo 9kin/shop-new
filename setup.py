@@ -21,7 +21,7 @@ requirements = [
     "peewee",  # simple and small ORM
     "wtf-peewee",  # for flask_admin
     "flask_admin",  # admin panel
-    "elasticsearch==7.9.0",  # we also want to improve  to version 9.x + asyncio + aiohttp + fast_indexing
+    "elasticsearch==7.6.0",  # we also want to improve  to version 9.x + asyncio + aiohttp + fast_indexing
     "PyInquirer",
     "sphinx_revealjs",  # TODO remove (for docs)
     "markdown",  # (rst ?)
